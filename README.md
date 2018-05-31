@@ -1,7 +1,5 @@
-template
+maketext
 ========
-
-a web template, for simple web service. it contains a simple webserver, watch daemon. It uses jade, stylus and livescript to build a web page.
 
 
 Usage
