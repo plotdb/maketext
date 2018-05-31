@@ -1,7 +1,7 @@
 (->
   config = do
     name: \maketext
-    domain: \maketext.local
+    domain: \dev.local
     scheme: \http
     debug: true
     is-production: false
