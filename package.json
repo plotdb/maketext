@@ -1,12 +1,12 @@
 {
-  "author": "zbryikt",
-  "name": "servlet",
-  "description": "a simple web framework",
+  "author": "PlotDB Ltd.",
+  "name": "maketext",
+  "description": "making up your text",
   "version": "0.0.1",
-  "homepage": "https://github.com/zbryikt/servlet",
+  "homepage": "https://github.com/plotdb/maketext",
   "repository": {
     "type": "git",
-    "url": "https://github.com/zbryikt/servlet"
+    "url": "https://github.com/plotdb/maketext"
   },
   "engines": {
     "node": "=9.5.0",
@@ -40,7 +40,7 @@
     "jsonwebtoken": "=8.1.0",
     "markdown": "=0.5.0",
     "marked": "^0.3.19",
-    "moment": "=2.18.1",
+    "moment": "=2.19.3",
     "moment-timezone": "=0.5.13",
     "node-minify": "=2.0.4",
     "node-uuid": "^1.4.8",
@@ -66,9 +66,10 @@
     "sharp": "=0.18.0",
     "stylus": "=0.50.0",
     "svgo": "^0.7.2",
-    "uglify-js": "=2.4.16",
+    "uglify-js": "=2.6.0",
     "uglifycss": "=0.0.15",
     "websocket-json-stream": "0.0.3",
-    "ws": "^5.1.0"
+    "ws": "^5.1.0",
+    "hoek": "=4.2.1"
   }
 }
