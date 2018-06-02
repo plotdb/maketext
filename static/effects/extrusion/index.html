@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 150"><defs xmlns="http://www.w3.org/2000/svg">
+  <filter id="extrusion" x="-100%" y="-100%" width="300%" height="300%">
+    <feFlood result="color1" flood-color="#f0f"></feFlood>
+    <feConvolveMatrix order="8,8" divisor="1" kernelMatrix="1 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 1 " in="SourceAlpha" result="BEVEL"/>
+    <feComposite in="color1" in2="BEVEL" result="BEVEL2" operator="in"/>
+    <feOffset dx="4" dy="4" in="BEVEL2" result="OFFSET"/>
+    <feMerge>
+      <feMergeNode in="OFFSET"/>
+      <feMergeNode in="SourceGraphic"/>
+    </feMerge>
+  </filter>
+</defs>
+<text x="250" y="75" filter="url(#extrusion)" fill="#eee">Hello World!</text></svg>

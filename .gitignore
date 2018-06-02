@@ -5,3 +5,4 @@ secret.ls
 !.gitignore
 npm-debug.log
 config/nginx/local.config
+static/assets/fonts/ttf/

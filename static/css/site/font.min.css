@@ -1,0 +1,33 @@
+#font-picker .line > .inner {
+  width: 100%;
+}
+#font-picker .line > .inner .item {
+  width: 276px;
+  height: 110px;
+  padding: 8px;
+}
+#font-picker .line > .inner .item .img {
+  width: 100%;
+  height: 25px;
+  margin: 10px 0 20px;
+  background: url("/assets/fonts/all.png") center center no-repeat;
+}
+#font-picker .line > .inner .item .inner {
+  cursor: pointer;
+  padding: 8px;
+  width: 100%;
+  height: 100%;
+  background: #fff;
+  text-align: center;
+  position: relative;
+}
+#font-picker .line > .inner .item .inner:after {
+  content: " ";
+  display: block;
+  z-index: 1;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}

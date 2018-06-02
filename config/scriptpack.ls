@@ -2,7 +2,7 @@
   config = css: {}, js: {}
   config.css <<< do
     base: <[
-      /assets/bootstrap/4.0.0-beta/css/bootstrap.min.css
+      /assets/bootstrap/4.0.0/css/bootstrap.min.css
       /assets/fontawesome/4.7.0/css/font-awesome.min.css
       /assets/ldcolorpicker/0.1.4/ldcp.css
       /assets/clusterize/0.18.1/clusterize.css
@@ -20,9 +20,13 @@
       /assets/clusterize/0.18.1/clusterize.min.js
       /assets/ion-rangeslider/2.1.7/js/ion.rangeSlider.min.js
       /assets/smiltool/latest/index.js
-      /js/ldBase/index.js
-      /js/ldBase/util.js
-      /js/index.js
+      /effects/effects.js
+      /assets/fonts/fonts.js
+      /assets/tmp/palettes.js
+      /js/editor/index.js
+      /js/editor/palette.js
+      /js/editor/font.js
+      /js/editor/download.js
     ]>
   if module? => module.exports = config
 )!

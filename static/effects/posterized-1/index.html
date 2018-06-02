@@ -1,0 +1,40 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 150"><defs>
+  <filter id="posterized-1">
+    <!-- COLORS -->
+    <feFlood flood-color="#551C0B" result="COLOR-outline"></feFlood>
+    <!-- COLORS END -->
+
+    <!-- OUTLINE -->
+    <feMorphology in="SourceAlpha" operator="dilate" radius="5" result="OUTLINE_10"></feMorphology>
+    <feComposite in="COLOR-outline" operator="in" in2="OUTLINE_10" result="OUTLINE_20"></feComposite>
+    <!-- OUTLINE END -->
+
+    <!-- LIGHTING EFFECTS -->
+    <feGaussianBlur stdDeviation="8" in="SourceAlpha" result="LIGHTING-EFFECTS-10"></feGaussianBlur>
+    <feSpecularLighting surfaceScale="9" specularConstant="0.9" specularExponent="10" lighting-color="#blue" in="LIGHTING-EFFECTS-10" result="LIGHTING-EFFECTS-20">
+      <fePointLight x="-100" y="-200" z="100"></fePointLight>
+    </feSpecularLighting>
+    <feComposite operator="in" in="LIGHTING-EFFECTS-20" in2="SourceAlpha" result="LIGHTING-EFFECTS-30"></feComposite>
+    <feComposite in="SourceGraphic" in2="LIGHTING-EFFECTS-30" operator="arithmetic" k1="0" k2="1" k3="1" k4="0" result="LIGHTING-EFFECTS-40"></feComposite>
+    <!-- LIGHTING EFFECTS END-->
+
+    <!-- COLOR EFFECTS -->
+    <feComponentTransfer in="LIGHTING-EFFECTS-40" result="COLOR-EFFECTS_10">
+      <feFuncR id="RedT" type="table" tableValues="0 6 1 0 3"></feFuncR>
+      <feFuncG id="GrnT" type="table" tableValues="2 0 1 3 2"></feFuncG>
+      <feFuncB id="BluT" type="table" tableValues="1 -1 0 1 1"></feFuncB>
+    </feComponentTransfer>
+
+    <feColorMatrix type="matrix" values="0.6 0.2 0 -0.3 0,
+    -0.5 1 0 -0.1 0,
+    -0.4 0.5 0.7 0 0,
+    0 0 0 1 0" in="COLOR-EFFECTS_10" result="COLOR-EFFECTS_20"></feColorMatrix>
+    <!-- COLOR EFFECTS END-->
+
+    <feMerge>
+      <feMergeNode in="OUTLINE_20"></feMergeNode>
+      <feMergeNode in="COLOR-EFFECTS_20"></feMergeNode>
+    </feMerge>
+  </filter>
+</defs>
+<text x="250" y="75" filter="url(#posterized-1)" fill="#444">Hello World!</text></svg>

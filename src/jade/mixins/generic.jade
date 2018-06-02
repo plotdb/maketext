@@ -17,9 +17,18 @@ mixin slider(model,config,size)
   .irs-switch(ng-click=value + " = !!!" + value)
     .icon-form-slider-left(ng-show="!" + value)
     .icon-form-inputbox(ng-show=value)
-  .up.irs-input: input.form-control(class="input-" + size,
+  .up.irs-input: input.form-control(class="form-control-" + size,
   ng-ion-slider,ng-value=model,config=config,ng-switch=value,default-switch="false")
-mixin color-input(model,idx,context)
+
+mixin color-input(name,size)
+  - if(!size) size = "sm"
+  .color 
+    input.form-control(class="form-control-" + size,
+    name=name,value="#f0f0f0",data-cpclass="no-button compact-palette flat",
+    data-toggle="colorpicker",data-context="random",data-exclusive="true")
+    .inner
+
+mixin ng-color-input(model,idx,context)
   - if(!context) context = "random";
   div(style="position:relative")
     input.form-control(ng-model=model,ng-idx=idx,ldColorPicker

@@ -1,0 +1,14 @@
+<defs xmlns="http://www.w3.org/2000/svg">
+  <filter id="beveled" filterUnits="objectBoundingBox" primitiveUnits="userSpaceOnUse">
+    <feGaussianBlur stdDeviation="5" in="SourceGraphic" result="BLUR"/>
+
+      <feSpecularLighting surfaceScale="6" specularConstant="1" specularExponent="30" lighting-color="#white" in="BLUR" result="SPECULAR">
+        <fePointLight x="40" y="-30" z="200"/>
+      </feSpecularLighting>
+      <feComposite operator="in" in="SPECULAR" in2="SourceGraphic" result="COMPOSITE"/>
+      <feMerge>
+            <feMergeNode in="SourceGraphic"/>
+            <feMergeNode in="COMPOSITE"/>
+          </feMerge>
+  </filter>
+</defs>

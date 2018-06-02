@@ -1,0 +1,102 @@
+@import '../vars.styl'
+@import '../basic.styl'
+
+body.editing
+  overflow: hidden
+
+#editor
+  position: fixed
+  top: -75px
+  left: 0
+  width: 100%
+  height: 75px
+  z-index: index(order, 'editor')
+  background: #fff
+  font-size: .8em
+  padding: 10px 0
+  overflow: hidden
+  box-shadow: 0 1px 2px rgba(0,0,0,.2)
+  transition: all 0.3s ease-in-out
+  .footer
+    padding: 30px 0
+    border-top: 1px solid #ccc
+    position: fixed
+    z-index: -1
+    opacity: 0
+    width: 100%
+    bottom: -100px
+    transition: all 0.3s ease-in-out
+    .btn-group
+      width: 300px
+      .btn
+        flex-grow: 1
+  label
+    margin-bottom: 0
+  &.on
+    top: 0
+
+#cooltext
+  width: 600px
+  height: 170px
+  position: absolute
+  z-index: -1
+  top: 50%
+  left: 50%
+  transform: translate(-50%,-50%)
+  opacity: 0
+  transition: opacity 0.3s ease-in-out
+
+#cooltext svg
+  display: block
+  margin: auto
+  width: 600px
+
+body.editing
+  #editor
+    height: 100%
+    top: 0
+  .gallery .item svg
+    visibility: hidden
+  #editor
+    .footer
+      opacity: 1
+      z-index: 1
+      bottom: 0
+      position: fixed
+  #cooltext
+    opacity: 1
+    position: fixed
+
+.full-picker > .inner
+  position: fixed
+  width: 90%
+  height: 90%
+  top: 0
+  left: 0
+  right: 0
+  bottom: 0
+  margin: auto
+  background: #fff
+
+.ldColorPicker
+  z-index: index(order, 'ldcp')
+
+#svg-work-area
+  overflow: hidden
+  height: 1px
+  width: 0
+
+#download.modal .card
+  centered()
+  width: 90%
+  height: 90%
+  max-width: 640px
+  min-height: 360px
+  max-height: 360px
+  text-align: center
+  .result
+    width: 500px
+    height: 170px
+    background: center center no-repeat
+    background-size: contain
+    margin: auto

@@ -1,0 +1,34 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 150"><defs>
+  <filter id="posterized-3" height="220%">
+    <!-- COLORS -->
+    <feFlood flood-color="#551C0B" result="COLOR-outline"></feFlood>
+    <!-- COLORS END-->
+
+    <!-- OUTLINE -->
+    <feMorphology operator="dilate" radius="3" in="SourceAlpha" result="OUTLINE_10"></feMorphology>
+    <feComposite operator="in" in="COLOR-outline" in2="OUTLINE_10" result="OUTLINE_20"></feComposite>
+    <!-- OUTLINE END -->
+
+    <!-- LIGHTING EFFECTS -->
+    <feGaussianBlur stdDeviation="4" in="SourceAlpha" result="LIGHTING-EFFECTS_10"></feGaussianBlur>
+    <feSpecularLighting surfaceScale="5" specularConstant="0.5" specularExponent="7.5" lighting-color="#white" in="LIGHTING-EFFECTS_10" result="LIGHTING-EFFECTS_20">
+    <fePointLight x="750" y="-50" z="300"></fePointLight>
+    </feSpecularLighting>
+    <feComposite in2="SourceAlpha" operator="in" in="LIGHTING-EFFECTS_20" result="LIGHTING-EFFECTS_30"></feComposite>
+    <feComposite operator="arithmetic" k1="0" k2="1" k3="1" k4="0" in="SourceGraphic" in2="LIGHTING-EFFECTS_30" result="LIGHTING-EFFECTS_40"></feComposite>
+    <!-- LIGHTING EFFECTS END -->
+
+    <!-- COLOR EFFECTS -->
+    <feComponentTransfer in="LIGHTING-EFFECTS_40" result="COLOR-EFFECTS_10">
+      <feFuncR type="gamma" offset="-1.3" amplitude="10" exponent="4.84"></feFuncR>
+      <feFuncB type="gamma" offset="-1.3" amplitude="10.1" exponent="40.84"></feFuncB>
+    </feComponentTransfer>
+    <!-- COLOR EFFECTS END -->
+
+    <feMerge>
+      <feMergeNode in="OUTLINE_20"></feMergeNode>
+      <feMergeNode in="COLOR-EFFECTS_10"></feMergeNode>
+    </feMerge>
+  </filter>
+</defs>
+<text x="250" y="75" filter="url(#posterized-3)" fill="#444">Hello World!</text></svg>

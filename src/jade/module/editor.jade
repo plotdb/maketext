@@ -1,0 +1,44 @@
+//- module
+include /module/font-picker.jade
+include /module/palette-picker.jade
+include /module/download.jade
+#editor
+  .row(style="max-width:1024px;margin:auto")
+    .col
+      label Text
+      input#text-input.form-control.form-control-sm(value="Hello World!")
+    .col-sm
+      label Font
+      .btn.btn-sm.btn-outline-dark.mr-1.block(data-toggle="modal",data-target="#font-picker") Choose ...
+    .col-sm
+      label Font Size
+      +slider
+    .col-sm
+      label Background
+      +color-input('background')
+  .advanced
+    #editor-option-sample(style="display:none")
+      #editor-option-sample-color.col-sm
+        label Color
+        +color-input('color')
+    .row.mt-3(style="max-width:1024px;margin:auto;display:flex")
+      .col-sm-3
+        label Palette
+        #palette-btn.palette(data-toggle="modal",data-target="#palette-picker")
+          each i in ['#f00','#0f0','#00f','#0ff']
+            .color(style="background:#{i}")
+      #editor-custom-options.col-sm-9.row(style="margin-left:0;padding:0")
+    hr
+    br
+    #cooltext
+    .footer.text-center
+      .inline-block.text-left
+        label Download As ...
+        .block.mr-2(style="display:inline-block;width:300px")
+          .btn-group
+            .btn.btn-outline-dark(onclick="convert.svg()") SVG
+            .btn.btn-outline-dark(onclick="convert.png()") PNG
+      .inline-block
+        //-.btn.btn-outline-dark.mr-2 Save Config
+        .btn.btn-outline-dark.mr-2(
+        onclick="document.body.classList.remove('editing')") #[big(style="line-height:1em") &times;] Close

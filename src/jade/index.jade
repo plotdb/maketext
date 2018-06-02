@@ -1,1 +1,24 @@
-span Hello World!
+extends /base.jade
+block vars
+  - navbar = false
+block head
+block body
+  include /module/editor.jade
+  #landing.text-center
+    .inner
+      div(style="border-bottom:1px solid #ccc;display:inline-block;padding:10px 30px;margin:0 0 10px") Let's make text cool again
+      h1 Cool Text Generator
+      +nbr(2)
+      div
+        big Type some texts to start with:
+        +nbr(2)
+        .input-group(style="transform:scale(1.3)")
+          input.form-control.input-lg(type="text")
+          .input-group-append
+            .btn.btn-outline-secondary(onclick="scrollto('#top')") Make Text Cooler
+  hr
+  #top
+  br
+  .text-center: .big then, pick one effect you'd like to use
+  +nbr(3)
+  #gallery.gallery

@@ -1,0 +1,34 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 150"><defs>
+  <filter id="patrol">
+    <!-- COLORS -->
+      <feFlood flood-color="#582D1B" result="COLOR-red"></feFlood>
+    <!-- COLORS END -->
+
+    <!-- FRACTAL TEXTURE -->
+      <feTurbulence baseFrequency=".05,.004" top="-50%" type="fractalNoise" numOctaves="4" seed="0" result="FRACTAL-TEXTURE_10"></feTurbulence>
+      <feColorMatrix type="matrix" values="0 0 0 0 0,
+      0 0 0 0 0,
+      0 0 0 0 0,
+      0 0 0 -1.2 1.1" in="FRACTAL-TEXTURE_10" result="FRACTAL-TEXTURE_20"></feColorMatrix>
+    <!-- FRACTAL TEXTURE END -->
+
+    <!-- STROKE -->
+      <feMorphology operator="dilate" radius="4" in="SourceAlpha" result="STROKE_10"></feMorphology>
+    <!-- STROKE END -->
+
+    <!-- EXTRUDED BEVEL -->
+     <feConvolveMatrix order="8,8" divisor="1" kernelMatrix="1 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 1" in="STROKE_10" result="BEVEL_20"></feConvolveMatrix>
+
+      <feOffset dx="4" dy="4" in="BEVEL_20" result="BEVEL_25"></feOffset>
+      <feComposite operator="out" in="BEVEL_25" in2="STROKE_10" result="BEVEL_30"></feComposite>
+      <feComposite in="COLOR-red" in2="BEVEL_30" operator="in" result="BEVEL_40"></feComposite>
+      <feMerge result="BEVEL_50">
+        <feMergeNode in="BEVEL_40"></feMergeNode>
+        <feMergeNode in="SourceGraphic"></feMergeNode>
+      </feMerge>
+     <!-- EXTRUDED BEVEL END -->
+
+    <feComposite in2="FRACTAL-TEXTURE_20" in="BEVEL_50" operator="in"></feComposite>
+  </filter>
+</defs>
+<text x="250" y="75" filter="url(#patrol)" fill="#444">Hello World!</text></svg>

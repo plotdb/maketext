@@ -1,0 +1,12 @@
+svg(xmlns="http://www.w3.org/2000/svg",viewBox="0 0 500 150")
+  defs
+    filter#beveled(filterUnits="objectBoundingBox",primitiveUnits="userSpaceOnUse")
+      feGaussianBlur(stdDeviation="5",in="SourceGraphic",result="BLUR")
+        feSpecularLighting(surfaceScale="6",specularConstant="1",specularExponent="30",
+        lighting-color="#white",in="BLUR",result="SPECULAR")
+          fePointLight(x="40",y="-30",z="200")
+        feComposite(operator="in",in="SPECULAR",in2="SourceGraphic",result="COMPOSITE")
+        feMerge
+          feMergeNode(in="SourceGraphic")
+          feMergeNode(in="COMPOSITE")
+  text(x="250",y="75",filter="url(#beveled)",fill="#eee") Hello World!

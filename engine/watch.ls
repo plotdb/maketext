@@ -141,10 +141,51 @@ base = do
     chokidar.watch 'static/assets', ignored: (~> @ignore-func it), persistent: true
       .on \add, ~> @packer.watcher it
       .on \change, ~> @packer.watcher it
+    chokidar.watch 'static/effects/effects.js', ignored: (~> @ignore-func it), persistent: true
+      .on \add, ~> @packer.watcher it
+      .on \change, ~> @packer.watcher it
     watcher = chokidar.watch 'src', ignored: (~> @ignore-func it), persistent: true
       .on \add, ~> @watch-handler it
       .on \change, ~> @watch-handler it
     console.log "[Watcher] monitoring source files...".cyan
+
+  effects: do
+    handle: (src, type) ->
+      logs = []
+      merge = false
+      if type == \jade =>
+        logs.push "[BUILD] recursive from #src:"
+        des = src.replace(/src\/effects/, 'static/effects').replace(/.jade$/, '.html')
+        base.jade src, des, null, logs, src
+        merge = true
+      if type == \ls =>
+        try
+          des = src.replace(/src\/effects/, 'static/effects').replace(/.ls/, '.js')
+          mkdir-recurse path.dirname(des)
+          fs.write-file-sync des, lsc.compile(fs.read-file-sync(src)toString!,{bare:true})
+          logs.push "[BUILD] #src --> #des"
+          merge = true
+        catch e
+          logs.push e.toString!
+      if merge =>
+        obj = {}
+        dirs = fs.readdir-sync \static/effects/
+          .map -> [it, "static/effects/#it"]
+          .filter -> fs.exists-sync(it.1) and fs.stat-sync(it.1).is-directory!
+          .map ->
+            obj[it.0] = {}
+            if fs.exists-sync "#{it.1}/main.js" =>
+              code = fs.read-file-sync("#{it.1}/main.js").toString!
+              eval(code)
+              if ret.debug => return delete obj[it.0]
+              obj[it.0].js = code
+            if fs.exists-sync "#{it.1}/index.html" =>
+              obj[it.0].html = fs.read-file-sync("#{it.1}/index.html").toString!
+        fs.write-file-sync \static/effects/effects.js, "var effects = #{JSON.stringify(obj)}"
+        logs.push "[BUILD] pack effects.js"
+      if logs.length => console.log logs.join(\\n)
+
+
 
   packer: do
     handle: null
@@ -204,6 +245,7 @@ base = do
     src = src.replace path.join(cwd,\/), ""
     [type,cmd,des] = [ftype(src), "",""]
     if trigger-only => type = \other
+    if /src\/effects\//.exec(src) => return @effects.handle src, type
 
     if type == \md =>
       try

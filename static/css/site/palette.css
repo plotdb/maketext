@@ -1,0 +1,73 @@
+.color {
+  position: relative;
+}
+.color .inner {
+  background: #f00;
+  width: 5px;
+  height: 21px;
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  border-radius: 5px;
+}
+#palette-picker .inner .clusterize-scroll {
+  padding: 20px 0;
+}
+.palette {
+  cursor: pointer;
+  width: 100%;
+  height: 32px;
+  display: -webkit-flex;
+  display: flex;
+  -webkit-flex-wrap: nowrap;
+  flex-wrap: nowrap;
+  border: 1px solid #ccc;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+  border-radius: 3px;
+  padding: 3px;
+  overflow: hidden;
+}
+.palette .color {
+  height: 100%;
+  -webkit-flex: 1 1 auto;
+  flex: 1 1 auto;
+  background: #f00;
+}
+.palette .color:first-child,
+.palette .name + .color {
+  border-radius: 3px 0 0 3px;
+}
+.palette .color:last-child {
+  border-radius: 0 3px 3px 0;
+}
+.line .palette {
+  -webkit-flex: 1 1 auto;
+  flex: 1 1 auto;
+  width: 45%;
+  height: 40px;
+  margin: 25px 15px;
+  padding: 0px;
+  border: 0;
+  position: relative;
+  overflow: visible;
+}
+.line .palette .name {
+  font-size: 14px;
+  position: absolute;
+  top: -24px;
+  z-index: 10;
+  color: #999;
+}
+.line .palette:after {
+  content: " ";
+  display: block;
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  z-index: 9;
+  box-shadow: inset 0 0 1px rgba(0,0,0,0.5);
+  border-radius: 3px;
+}
+.ldColorPicker {
+  height: 120px;
+}

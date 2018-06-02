@@ -1,0 +1,54 @@
+.irs {
+  top: -1px;
+}
+.irs-line,
+.irs-bar-edge,
+.irs-bar {
+  top: 20px;
+}
+.irs-slider {
+  top: 17px;
+}
+.irs {
+  margin-top: -20px;
+}
+.irs .irs-single,
+.irs .irs-min,
+.irs .irs-max,
+.irs .irs-from,
+.irs .irs-to {
+  bottom: -17px;
+  top: auto;
+}
+.irs .irs-single:after,
+.irs .irs-from:after,
+.irs .irs-to:after {
+  border-top-color: transparent;
+  border-bottom-color: #ed5565;
+  bottom: auto;
+  top: -6px;
+}
+.irs .irs-single,
+.irs .irs-min,
+.irs .irs-max,
+.irs .irs-from,
+.irs .irs-to {
+  bottom: -13px;
+}
+.irs-switch {
+  right: 13px;
+}
+.irs {
+  margin-top: -20px;
+}
+.irs {
+  top: -1px;
+}
+.irs-line,
+.irs-bar-edge,
+.irs-bar {
+  top: 20px;
+}
+.irs-slider {
+  top: 17px;
+}
