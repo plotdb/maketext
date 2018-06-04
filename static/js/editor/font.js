@@ -12,7 +12,14 @@ $(document).ready(function(){
         break;
       }
       idx = i + j + 1;
-      ref$ = [-55 + -400 * Math.floor(idx / 167), -30 * (idx % 167)], x = ref$[0], y = ref$[1];
+      ref$ = [-400 * Math.floor(idx / 167), -30 * (idx % 167)], x = ref$[0], y = ref$[1];
+      /*
+      [x, y] = [Math.floor(idx / 167) * 20, (100 * ((idx % 167)) / 167)]
+      code += """<div class='item'><div class='inner'>
+        <div class="img" style="background-position:#{x}% #{y}%;background-size:500% 16700%"><div style="padding-bottom:6.25%;width:100%;height:0"></div></div>
+        <span>#{d}</span>
+      </div></div>"""
+      */
       code += "<div class='item'><div class='inner'>\n  <div class=\"img\" style=\"background-position:" + x + "px " + y + "px\"></div>\n  <span>" + d + "</span>\n</div></div>";
     }
     html.push("<div class='line'><div class='inner'>" + code + "</div></div>");

@@ -15,11 +15,11 @@ $(document).ready(function(){
     }
     html.push("<div class='line'>" + code + "</div>");
   }
-  setPalette = function(colors){
+  window.setPalette = setPalette = function(colors){
     document.querySelector('#palette-btn').innerHTML = colors.map(function(it){
       return "<div class=\"color\" style=\"background:" + it + "\"></div>";
     }).join('');
-    return Array.from(document.querySelectorAll("[data-toggle='colorpicker']")).map(function(d, i){
+    return Array.from(document.querySelectorAll("#editor *[data-toggle='colorpicker']")).map(function(d, i){
       var ldcp;
       ldcp = d.getColorPicker();
       ldcp.setPalette({

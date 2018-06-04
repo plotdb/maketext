@@ -7,31 +7,31 @@ ret = {
   slug: '',
   init: function(){},
   edit: {
-    color1: {
-      name: 'color1',
+    fill: {
+      name: 'fill',
       type: 'color',
-      'default': '#f00'
+      'default': '#eb6c6c'
     },
-    color2: {
-      name: 'color2',
+    extrusion: {
+      name: 'extrusion',
       type: 'color',
-      'default': '#f00'
+      'default': '#333333'
     },
-    color3: {
-      name: 'color3',
+    shadow: {
+      name: 'shadow',
       type: 'color',
-      'default': '#f00'
+      'default': '#000000'
     }
   },
   watch: function(n, o, node){
-    if (n.color1 !== o.color1) {
-      node.querySelector('text').setAttribute('fill', n.color1);
+    if (n.fill !== o.fill) {
+      node.querySelector('text').setAttribute('fill', n.fill);
     }
-    if (n.color2) {
-      node.querySelectorAll('feFlood')[0].setAttribute('flood-color', n.color2);
+    if (n.extrusion) {
+      node.querySelectorAll('feFlood')[0].setAttribute('flood-color', n.extrusion);
     }
-    if (n.color3) {
-      return node.querySelectorAll('feFlood')[1].setAttribute('flood-color', n.color3);
+    if (n.shadow) {
+      return node.querySelectorAll('feFlood')[1].setAttribute('flood-color', n.shadow);
     }
   },
   dom: function(config){}

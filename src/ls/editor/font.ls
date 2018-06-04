@@ -7,7 +7,14 @@ for i from 0 til fonts.length by 4 =>
     d = fonts[i + j]
     if !d => break
     idx = i + j + 1
-    [x, y] = [-55 + -400 * Math.floor(idx / 167), -30 * (idx % 167)]
+    [x, y] = [-400 * Math.floor(idx / 167), -30 * (idx % 167)]
+    /*
+    [x, y] = [Math.floor(idx / 167) * 20, (100 * ((idx % 167)) / 167)]
+    code += """<div class='item'><div class='inner'>
+      <div class="img" style="background-position:#{x}% #{y}%;background-size:500% 16700%"><div style="padding-bottom:6.25%;width:100%;height:0"></div></div>
+      <span>#{d}</span>
+    </div></div>"""
+    */
     code += """<div class='item'><div class='inner'>
       <div class="img" style="background-position:#{x}px #{y}px"></div>
       <span>#{d}</span>

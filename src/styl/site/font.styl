@@ -6,12 +6,22 @@
     .item
       flex(1 1 auto)
       width: 276px
-      height: 110px
+      height: 120px
       padding: 8px
+      span
+        position: absolute
+        bottom: 10px
+        left: 0
+        right: 0
+        margin: auto
       .img
-        width: 100%
+        width: 400px
         height: 25px
-        margin: 10px 0 20px
+        position: absolute
+        top: 20px
+        left: -200px
+        right: -200px
+        margin: auto
         background: url(/assets/fonts/all.png) center center no-repeat
       .inner
         panel()
@@ -22,6 +32,7 @@
         background: #fff
         text-align: center
         position: relative
+        overflow: hidden
         &:after
           content: " "
           display: block

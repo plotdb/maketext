@@ -51,7 +51,9 @@ $(document).ready(function(){
         svg.style.background = value;
       }
       if (name === 'fontSize') {
-        svg.querySelector('text').style.fontSize = value + "px";
+        Array.from(svg.querySelectorAll('text')).map(function(it){
+          return it.style.fontSize = value + "px";
+        });
       }
       return;
     }
@@ -115,7 +117,7 @@ $(document).ready(function(){
     });
   };
   document.querySelector('.gallery').addEventListener('click', function(e){
-    var target, type, effect, options, k, ref$, v, node, results$ = [];
+    var target, type, bkcolor, effect, options, colors, k, v, ref$, node;
     target = e.target;
     if (!(target && target.classList && target.classList.contains('item'))) {
       return;
@@ -125,6 +127,7 @@ $(document).ready(function(){
       return;
     }
     document.querySelector('#cooltext').innerHTML = effects[type].html;
+    bkcolor = document.querySelector('#cooltext svg').style.background || '#fff';
     document.body.classList.add('editing');
     Array.from(document.querySelectorAll('#cooltext text')).map(function(it){
       return it.textContent = document.querySelector('#text-input').value || 'Hello World';
@@ -134,6 +137,18 @@ $(document).ready(function(){
     if (effect.js && effect.js.edit) {
       options = document.querySelector('#editor-custom-options');
       options.innerHTML = '';
+      colors = (function(){
+        var ref$, results$ = [];
+        for (k in ref$ = effect.js.edit) {
+          v = ref$[k];
+          results$.push(v);
+        }
+        return results$;
+      }()).filter(function(it){
+        return it.type === 'color';
+      }).map(function(it){
+        return it['default'];
+      });
       for (k in ref$ = effect.js.edit) {
         v = ref$[k];
         node = document.querySelector("#editor-option-sample-" + v.type);
@@ -150,9 +165,9 @@ $(document).ready(function(){
           node.querySelector('input').setAttribute('name', k, v);
           initSlider(node, k, v);
         }
-        results$.push(options.appendChild(node));
+        options.appendChild(node);
       }
-      return results$;
+      return setPalette([bkcolor].concat(colors));
     }
   });
   clusterize = new Clusterize({

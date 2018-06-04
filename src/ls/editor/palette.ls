@@ -11,11 +11,11 @@ for i from 0 til palettes.length by 4 =>
     "</div>"
   html.push "<div class='line'>#code</div>"
 
-set-palette = (colors) ->
+window.set-palette = set-palette = (colors) ->
   document.querySelector(\#palette-btn).innerHTML = colors
     .map -> """<div class="color" style="background:#{it}"></div>"""
     .join('')
-  Array.from(document.querySelectorAll("[data-toggle='colorpicker']")).map ((d,i)->
+  Array.from(document.querySelectorAll("\#editor *[data-toggle='colorpicker']")).map ((d,i)->
     ldcp = d.getColorPicker!
     ldcp.setPalette {colors: colors.map -> {hex: it}}
     ldcp.setIdx(i % colors.length)

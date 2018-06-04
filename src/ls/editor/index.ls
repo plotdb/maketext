@@ -30,7 +30,7 @@ editor.update = (name, value) ->
   if document.body.classList.contains \editing =>
     @effects[effects.type].js.watch @config.cur, @config.old, svg
     if name == \background => svg.style.background = value
-    if name == \fontSize => svg.querySelector(\text).style.fontSize = "#{value}px"
+    if name == \fontSize => Array.from(svg.querySelectorAll(\text)).map -> it.style.fontSize = "#{value}px"
     return
   if name == \fontSize => Array.from(document.querySelectorAll('.gallery text')).map (node,i) ->
     node.style.fontSize = "#{value}px"
@@ -70,6 +70,7 @@ document.querySelector \.gallery .addEventListener \click, (e) ->
   type = target.getAttribute \data-type
   if !type => return
   document.querySelector \#cooltext .innerHTML = effects[type].html
+  bkcolor = (document.querySelector '#cooltext svg' .style.background) or '#fff'
   document.body.classList.add \editing
   Array.from(document.querySelectorAll('#cooltext text')).map ->
     it.textContent = (document.querySelector('#text-input').value or 'Hello World')
@@ -78,6 +79,7 @@ document.querySelector \.gallery .addEventListener \click, (e) ->
   if effect.js and effect.js.edit =>
     options = document.querySelector(\#editor-custom-options)
     options.innerHTML = ''
+    colors = [v for k,v of effect.js.edit].filter(-> it.type == \color).map(-> it.default)
     for k,v of effect.js.edit =>
       node = document.querySelector("\#editor-option-sample-#{v.type}")
       if !node => continue
@@ -91,6 +93,7 @@ document.querySelector \.gallery .addEventListener \click, (e) ->
         node.querySelector('input').setAttribute \name, k, v
         init-slider node, k, v
       options.appendChild(node)
+    set-palette [bkcolor] ++ colors
 
 
 
