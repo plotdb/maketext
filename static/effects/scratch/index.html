@@ -26,14 +26,14 @@
     <!-- FILL END-->
 
     <!-- OUTLINE -->
-    <feMorphology operator="dilate" radius="3" in="SourceAlpha" result="OUTLINE_10"></feMorphology>
-    <feComposite operator="out" in="OUTLINE_10" in2="SourceAlpha" result="OUTLINE_20"></feComposite>
+    <feMorphology operator="dilate" radius="3" in="SourceGraphic" result="OUTLINE_10"></feMorphology>
+    <feComposite operator="out" in="OUTLINE_10" in2="SourceGraphic" result="OUTLINE_20"></feComposite>
     <feDisplacementMap scale="7" in="OUTLINE_20" in2="Texture_10" result="OUTLINE_30"></feDisplacementMap>
     <feComposite operator="arithmetic" k2="-1" k3="1" in="Texture_20" in2="OUTLINE_30" result="OUTLINE_40"></feComposite>
     <!-- OUTLINE END-->
 
     <!-- BEVEL OUTLINE -->
-    <feConvolveMatrix order="8,8" divisor="1" kernelMatrix="1 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 1 " in="SourceAlpha" result="BEVEL_10"></feConvolveMatrix>
+    <feConvolveMatrix order="8,8" divisor="1" kernelMatrix="1 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 1 " in="SourceGraphic" result="BEVEL_10"></feConvolveMatrix>
     <feMorphology operator="dilate" radius="2" in="BEVEL_10" result="BEVEL_20"></feMorphology>
     <feComposite operator="out" in="BEVEL_20" in2="BEVEL_10" result="BEVEL_30"></feComposite>
     <feDisplacementMap scale="7" in="BEVEL_30" in2="Texture_10" result="BEVEL_40"></feDisplacementMap>

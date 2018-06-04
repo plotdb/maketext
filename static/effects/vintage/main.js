@@ -6,8 +6,52 @@ ret = {
   tags: '',
   slug: '',
   init: function(){},
-  edit: {},
-  watch: function(n, o, node){},
+  edit: {
+    color1: {
+      name: 'fill',
+      type: 'color',
+      'default': '#f00'
+    },
+    color2: {
+      name: 'stroke',
+      type: 'color',
+      'default': '#0f0'
+    },
+    color3: {
+      name: 'extrusion',
+      type: 'color',
+      'default': '#00f'
+    },
+    color4: {
+      name: 'inner shadow',
+      type: 'color',
+      'default': '#00f'
+    },
+    color5: {
+      name: 'shadow',
+      type: 'color',
+      'default': '#00f'
+    }
+  },
+  watch: function(n, o, node){
+    var floods;
+    floods = node.querySelectorAll('feFlood');
+    if (n.color3 != null) {
+      floods[0].setAttribute('flood-color', n.color3);
+    }
+    if (n.color4 != null) {
+      floods[1].setAttribute('flood-color', n.color4);
+    }
+    if (n.color1 != null) {
+      floods[2].setAttribute('flood-color', n.color1);
+    }
+    if (n.color5 != null) {
+      floods[4].setAttribute('flood-color', n.color5);
+    }
+    if (n.color2 !== o.color2) {
+      return node.querySelectorAll('text')[1].setAttribute('stroke', n.color2);
+    }
+  },
   dom: function(config){}
 };
 if (typeof module != 'undefined' && module !== null) {

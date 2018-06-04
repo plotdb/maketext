@@ -10,7 +10,7 @@ include /module/download.jade
     .col-sm
       label Font
       .btn.btn-sm.btn-outline-dark.mr-1.block(data-toggle="modal",data-target="#font-picker") Choose ...
-    .col-sm
+    #font-size-slider.col-sm
       label Font Size
       +slider
     .col-sm
@@ -21,6 +21,9 @@ include /module/download.jade
       #editor-option-sample-color.col-sm
         label Color
         +color-input('color')
+      #editor-option-sample-number.col-sm
+        label Number
+        +slider
     .row.mt-3(style="max-width:1024px;margin:auto;display:flex")
       .col-sm-3
         label Palette

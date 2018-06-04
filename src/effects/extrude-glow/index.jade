@@ -1,0 +1,26 @@
+svg(xmlns="http://www.w3.org/2000/svg",viewBox="0 0 500 150")
+  defs
+    filter#extrude-glow
+      feFlood(flood-color="#333",result="flood-1")
+      feMorphology(operator="erode",radius="1",in="SourceAlpha",result="erode")
+      feComposite(operator="in",in="flood-1",in2="erode",result="comp1")
+      feConvolveMatrix(order="3,3",divisor="1",in="comp1",result="convolve",
+      kernelMatrix="0 0 0 " +
+                   "1 1 0 " +
+                   "0 0 0 ")
+      feOffset(dx="-4",dy="0",in="convolve",result="extrude")
+
+      feFlood(flood-color="#000",result="flood-2")
+      feComposite(operator="in",in="flood-2",in2="SourceAlpha",result="comp2")
+      feMorphology(operator="dilate",radius="1",in="comp2",result="dilate")
+      feOffset(dx="-6",dy="0",in="dilate",result="offset")
+      feGaussianBlur(in="offset",stdDeviation="2.8",result="blur")
+      feComponentTransfer(in="blur",result="shadow")
+        feFuncA(type="linear",slope="0.7",intercept="-0.2")
+
+      feMerge
+        feMergeNode(in="shadow")
+        feMergeNode(in="extrude")
+        feMergeNode(in="SourceGraphic")
+
+  text(x="250",y="75",filter="url(#extrude-glow)",fill="#999") Hello World!

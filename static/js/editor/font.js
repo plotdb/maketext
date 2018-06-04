@@ -34,7 +34,7 @@ $(document).ready(function(){
     document.querySelector('.gallery').style.fontFamily = name;
     return $('#font-picker').modal('hide');
   };
-  return document.querySelector('#font-picker').addEventListener('click', function(e){
+  document.querySelector('#font-picker').addEventListener('click', function(e){
     var target;
     target = e.target;
     if (!target || !target.classList || !target.classList.contains('inner')) {
@@ -42,4 +42,5 @@ $(document).ready(function(){
     }
     return useFont(target.querySelector('span').innerText);
   });
+  return useFont('sansitaOne');
 });

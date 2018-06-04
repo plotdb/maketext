@@ -1,0 +1,31 @@
+svg(xmlns="http://www.w3.org/2000/svg",viewBox="0 0 500 150")
+  defs
+    filter#raise
+      feFlood(flood-color="#ccc",result="flood-surface")
+      feFlood(flood-color="#777",result="flood-extrude")
+      feMorphology(operator="erode",in="SourceAlpha",radius="1",result="erode")
+      feConvolveMatrix(in="erode",result="shadow",order="11,8",divisor="1",
+      kernelMatrix=" 0 0 0 1 1 1 1 1 0 0 0 " +
+                   " 0 0 1 0 0 0 0 0 1 0 0 " +
+                   " 0 0 1 0 0 0 0 0 1 0 0 " +
+                   " 0 0 1 0 0 0 0 0 1 0 0 " +
+                   " 0 0 1 0 0 0 0 0 1 0 0 " +
+                   " 0 0 0 1 0 0 0 1 0 0 0 " +
+                   " 0 0 0 1 1 0 1 1 0 0 0 " +
+                   " 0 0 0 0 0 1 0 0 0 0 0 ")
+      feOffset(dx="0",dy="4",in="shadow",result="offset")
+      feGaussianBlur(in="offset",stdDeviation="0.2",result="blur")
+      feComposite(operator="in",in="flood-extrude",in2="blur",result="extrude")
+
+      feMorphology(operator="erode",in="SourceAlpha",radius="1",result="erode2")
+      feConvolveMatrix(in="erode2",result="out",order="4,4",divisor="1",
+      kernelMatrix="0 1 1 0 " +
+                   "1 0 0 1 " +
+                   "1 0 0 1 " +
+                   "0 1 1 0 ")
+      feComposite(operator="in",in="flood-surface",in2="out",result="text")
+      feMerge
+        feMergeNode(in="extrude")
+        feMergeNode(in="text")
+
+  text(x="250",y="75",filter="url(#raise)") Hello World!

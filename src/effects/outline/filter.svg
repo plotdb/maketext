@@ -1,6 +1,6 @@
 <defs xmlns="http://www.w3.org/2000/svg">
   <filter id="outline">
-    <feMorphology in="SourceAlpha" operator="dilate" radius="2" result="OUTLINE"/>
+    <feMorphology in="SourceGraphic" operator="dilate" radius="2" result="OUTLINE"/>
     <feComposite operator="out" in="OUTLINE" in2="SourceAlpha"/>
   </filter>
 </defs>

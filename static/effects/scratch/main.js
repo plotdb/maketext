@@ -6,8 +6,32 @@ ret = {
   tags: '',
   slug: '',
   init: function(){},
-  edit: {},
-  watch: function(n, o, node){},
+  edit: {
+    color1: {
+      name: 'color1',
+      type: 'color',
+      'default': '#c2c2c2'
+    },
+    color2: {
+      name: 'color2',
+      type: 'color',
+      'default': '#000'
+    },
+    color3: {
+      name: 'color3',
+      type: 'color',
+      'default': '#000'
+    }
+  },
+  watch: function(n, o, node){
+    node.querySelectorAll('feFlood')[0].setAttribute('flood-color', n.color1);
+    node.querySelectorAll('feFlood')[1].setAttribute('flood-color', n.color2);
+    node.querySelector('text').setAttribute('fill', n.color3);
+    node.querySelector('text').setAttribute('stroke', n.color2 === o.color2
+      ? n.color1
+      : n.color2);
+    return node.querySelector('text').setAttribute('stroke-width', 0);
+  },
   dom: function(config){}
 };
 if (typeof module != 'undefined' && module !== null) {

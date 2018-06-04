@@ -1,0 +1,18 @@
+{
+  "order": [
+    "crystal",
+    "halftone",
+    "goldstamp",
+    "offset",
+    "raise",
+    "sticker",
+    "outline",
+    "vintage",
+    "torn-out",
+    "hole",
+    "stripes",
+    "vr",
+    "extrusion",
+    "extrude-glow"
+  ]
+}

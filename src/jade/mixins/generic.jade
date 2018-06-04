@@ -11,7 +11,16 @@ mixin cover-modal(model,className)
     .cover-modal(ng-click=model+".ctrl.toggle(false)")
     .cover-modal-inner
       block
-mixin slider(model,config,size)
+
+mixin slider(size)
+  - if(!size) size = "sm"
+  //-.irs-switch
+    .icon-form-slider-left
+    .icon-form-inputbox
+  .up.irs-input: input.form-control(class="form-control-" + size,
+  config=config,default-switch="false")
+
+mixin ng-slider(model,config,size)
   - if(!size) size = "sm"
   - var value = "slidemode['" + model + "']";
   .irs-switch(ng-click=value + " = !!!" + value)

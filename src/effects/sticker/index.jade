@@ -1,0 +1,24 @@
+svg(xmlns="http://www.w3.org/2000/svg",viewBox="0 0 500 150")
+  defs
+    linearGradient#sticker-gradient(x1="0",y1="0.3",x2="0",y2="0.8")
+      stop(offset="0",stop-color="#fd9")
+      stop(offset="1",stop-color="#9df")
+    filter#sticker
+      feMorphology(operator="erode",radius="1",in="SourceAlpha",result="SourceAlpha-erode")
+      feConvolveMatrix(order="3,3",divisor="1",
+      kernelMatrix="0 1 0 1 1 1 0 1 0",in="SourceAlpha-erode",result="SourceAlpha-round")
+      feMorphology(operator="dilate",radius="3.5",in="SourceAlpha-round",result="dilate-shadow")
+      feGaussianBlur(in="dilate-shadow",stdDeviation="1.5",result="shadow")
+
+      feFlood(flood-color="#fff",result="flood-sticker")
+      feComposite(operator="in",in="flood-sticker",in2="SourceAlpha-round",result="comp-sticker")
+      feMorphology(operator="dilate",radius="3",in="comp-sticker",result="morph-sticker")
+      feConvolveMatrix(order="3,3",divisor="1",
+      kernelMatrix="0 1 0 1 1 1 0 1 0",in="morph-stocker",result="sticker")
+      feMerge
+        feMergeNode(in="shadow")
+        feMergeNode(in="sticker")
+        feMergeNode(in="SourceGraphic")
+
+  text(x="250",y="75",fill="url(#sticker-gradient)",stroke="#000",stroke-width="2.5",
+  filter="url(#sticker)") Hello World

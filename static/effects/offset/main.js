@@ -6,7 +6,23 @@ ret = {
   tags: '',
   slug: '',
   init: function(){},
-  edit: {},
+  edit: {
+    color1: {
+      name: 'color1',
+      type: 'color',
+      'default': '#f00'
+    },
+    color2: {
+      name: 'color2',
+      type: 'color',
+      'default': '#0f0'
+    },
+    color3: {
+      name: 'color3',
+      type: 'color',
+      'default': '#00f'
+    }
+  },
   watch: function(n, o, node){
     return Array.from(node.querySelectorAll('feFlood')).map(function(d, i){
       if (i >= 3) {

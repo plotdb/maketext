@@ -1,4 +1,18 @@
 svg(xmlns="http://www.w3.org/2000/svg",viewBox="0 0 500 150")
-  include filter.svg
-  text(x="250",y="75",filter="url(#offset)") Hello World!
+  defs
+    filter#offset
+      feFlood(flood-color="#F00" flood-opacity="0.5" result="c1")
+      feFlood(flood-color="#0f0" flood-opacity="0.5" result="c2")
+      feFlood(flood-color="#00F" flood-opacity="0.5" result="c3")
+      feComposite(operator="in" in="c1" in2="SourceAlpha" result="text-c1")
+      feComposite(operator="in" in="c2" in2="SourceAlpha" result="text-c2")
+      feComposite(operator="in" in="c3" in2="SourceAlpha" result="text-c3")
+      feOffset(in="text-c1" dx="-10" dy="0" result="text1")
+      feOffset(in="text-c2" dx="10" dy="0" result="text2")
+      feOffset(in="text-c3" dx="0" dy="0" result="text3")
+      feMerge
+        feMergeNode(in="text1")
+        feMergeNode(in="text2")
+        feMergeNode(in="text3")
 
+  text(x="250",y="75",filter="url(#offset)") Hello World!

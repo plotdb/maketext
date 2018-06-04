@@ -13,7 +13,7 @@ update-text = (node) ->
   text-input = document.querySelector('#text-input')
   value = node.value or 'Hello World!'
   Array.from(document.querySelectorAll('.gallery text')).map (d,i) -> d.textContent = value
-  if document.querySelector('#cooltext text') => that.textContent = value
+  Array.from(document.querySelectorAll('#cooltext text')).map -> it.textContent = value
   text-input.value = value
 
 window.scrollto = scrollto = (node) ->
@@ -51,10 +51,17 @@ for i from 0 til list.length by 2 =>
     if !d => break
     code += """<div class="item" data-type="#{d.0}"><div class="inner">#{d.1.html}</div></div>"""
   html.push """<div class="line" style="visibility:hidden">#code</div>"""
-init-colorpicker = (node, attr) ->
+
+init-slider = (node, key, value) ->
+  $(node.querySelector('.irs-input')).ionRangeSlider do
+    min: value.min or 0
+    max: value.max or 100
+    onChange: (data) -> editor.update key, data.from
+
+init-colorpicker = (node, key, value) ->
   ldcp = new ldColorPicker(node.querySelector('input'), {})
   ldcp.on \change, ->
-    editor.update attr.name, it
+    editor.update key, it
     node.querySelector('.inner').style.background = it
 
 document.querySelector \.gallery .addEventListener \click, (e) ->
@@ -64,7 +71,8 @@ document.querySelector \.gallery .addEventListener \click, (e) ->
   if !type => return
   document.querySelector \#cooltext .innerHTML = effects[type].html
   document.body.classList.add \editing
-  document.querySelector '#cooltext text' .textContent = (document.querySelector('#text-input').value or 'Hello World')
+  Array.from(document.querySelectorAll('#cooltext text')).map ->
+    it.textContent = (document.querySelector('#text-input').value or 'Hello World')
   editor.effects.type = type
   effect = editor.effects[type]
   if effect.js and effect.js.edit =>
@@ -76,9 +84,13 @@ document.querySelector \.gallery .addEventListener \click, (e) ->
       node = node.cloneNode(true)
       if v.type == \color =>
         node.querySelector('label').textContent = v.name
-        node.querySelector('input').setAttribute \name, v.name
+        node.querySelector('input').setAttribute \name, k
+        init-colorpicker node, k, v
+      else if v.type == \number =>
+        node.querySelector('label').textContent = v.name
+        node.querySelector('input').setAttribute \name, k, v
+        init-slider node, k, v
       options.appendChild(node)
-      init-colorpicker node, v
 
 
 
@@ -103,6 +115,6 @@ document.addEventListener \scroll, (e) ->
 
 ldColorPicker.init!
 
-Array.from(document.querySelectorAll('.up.irs-input')).map (d,i) ->
+Array.from(document.querySelectorAll('#font-size-slider .up.irs-input')).map (d,i) ->
   $(d).ionRangeSlider do
     onChange: (data) -> editor.update \fontSize, data.from

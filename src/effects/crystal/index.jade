@@ -1,0 +1,27 @@
+svg(xmlns="http://www.w3.org/2000/svg",viewBox="0 0 500 150")
+  defs
+    filter#crystal
+      feMorphology(operator="dilate",radius="2",in="SourceGraphic",result="border")
+      feFlood(flood-color="#000",result="black")
+      feMorphology(operator="dilate",radius="2",in="SourceGraphic",result="erode")
+      feGaussianBlur(in="erode",stdDeviation="4",result="blur")
+      feOffset(in="blur",dx="2",dy="2",result="offset")
+      feComposite(operator="atop",in="offset",in2="black",result="merge")
+      feComposite(operator="in",in="a",in2="SourceGraphic",result="inner-shadow")
+      feGaussianBlur(in="SourceGraphic",stdDeviation="2.5",result="shadow1")
+      feOffset(in="shadow1",dx="0",dy="5",result="shadow")
+      feSpecularLighting(in="SourceGraphic",result="specular",
+      surfaceScale="1.5",specularConstant="100",specularExponent="10",lighting-color="#fff")
+        fePointLight(x="250",y="-300",z="-400")
+      feGaussianBlur(in="specular",stdDeviation="1",result="specular2")
+      feMerge(result="merge")
+        feMergeNode(in="border")
+        feMergeNode(in="inner-shadow")
+        feMergeNode(in="specular2")
+      feComponentTransfer(in="merge",result="final")
+        feFuncA(type="discrete",tableValues="0 0.9")
+      feMerge
+        feMergeNode(in="shadow")
+        feMergeNode(in="final")
+
+  text(x="250",y="75",fill="#ccc",stroke="#666",stroke-width="1.5",filter="url(#crystal)") Hello World

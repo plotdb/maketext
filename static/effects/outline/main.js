@@ -6,8 +6,16 @@ ret = {
   tags: '',
   slug: '',
   init: function(){},
-  edit: {},
-  watch: function(n, o, node){},
+  edit: {
+    color: {
+      name: 'color',
+      type: 'color',
+      'default': '#444'
+    }
+  },
+  watch: function(n, o, node){
+    return node.querySelector('text').style.fill = n.color;
+  },
   dom: function(config){}
 };
 if (typeof module != 'undefined' && module !== null) {

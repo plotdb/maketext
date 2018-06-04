@@ -1,0 +1,11 @@
+svg(xmlns="http://www.w3.org/2000/svg",viewBox="0 0 500 150")
+  defs
+    filter#hole
+      feFlood(flood-color="#000",result="black")
+      feMorphology(operator="dilate",radius="2",in="SourceGraphic",result="erode")
+      feGaussianBlur(in="erode",stdDeviation="4",result="blur")
+      feOffset(in="blur",dx="2",dy="2",result="offset")
+      feComposite(operator="atop",in="offset",in2="black",result="merge")
+      feComposite(operator="in",in="a",in2="SourceGraphic",result="inner-shadow")
+
+  text(x="250",y="75",fill="#ccc",filter="url(#hole)") Hello World

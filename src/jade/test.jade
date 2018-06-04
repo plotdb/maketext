@@ -1,0 +1,82 @@
+doctype html
+html
+  head
+  body
+    svg(xmlns="http://www.w3.org/2000/svg",width="500",height="250",viewBox="0 0 500 250",style="background:#999")
+      defs
+        filter#fx
+          feConvolveMatrix(in="SourceGraphic",result="extrude",order="11,11",divisor="1",kernelMatrix=
+          "1 0 0 0 0 0 0 0 0 0 0 " + 
+          "0 1 0 0 0 0 0 0 0 0 0 " + 
+          "0 0 1 0 0 0 0 0 0 0 0 " + 
+          "0 0 0 1 0 0 0 0 0 0 0 " + 
+          "0 0 0 0 1 0 0 0 0 0 0 " + 
+          "0 0 0 0 0 1 0 0 0 0 0 " + 
+          "0 0 0 0 0 0 1 0 0 0 0 " + 
+          "0 0 0 0 0 0 0 1 0 0 0 " + 
+          "0 0 0 0 0 0 0 0 1 0 0 " + 
+          "0 0 0 0 0 0 0 0 0 1 0 " + 
+          "0 0 0 0 0 0 0 0 0 0 1 ")
+
+          feFlood(flood-color="#900",result="flood-extrude")
+          feComposite(operator="in",in="flood-extrude",in2="extrude",result="extrude-color")
+          feOffset(dx="4",dy="4",in="extrude-color",result="extrude-offset")
+          feColorMatrix(in="SourceGraphic",result="stroke",type="matrix",values=
+          "0 0 0 0 0 " + 
+          "0 0 0 0 0 " + 
+          "0 0 0 0 0 " + 
+          "0 1 0 0 0 ")
+          feColorMatrix(in="SourceGraphic",result="fill",type="matrix",values=
+          "0 0 0 0 0 " + 
+          "0 0 0 0 0 " + 
+          "0 0 0 0 0 " + 
+          "1 0 0 1 0 ")
+          feConvolveMatrix(in="stroke",result="inner-shadow",order="5,5",divisor="1",kernelMatrix=
+          "1 0 0 0 0 " +
+          "0 1 0 0 0 " +
+          "0 0 1 0 0 " +
+          "0 0 0 1 0 " +
+          "0 0 0 0 1 ")
+          feOffset(dx="1",dy="1",in="inner-shadow",result="offset")
+          feComposite(operator="in",in="offset",in2="SourceAlpha",result="comp")
+          feFlood(flood-color="#000",result="flood3")
+          feComposite(operator="in",in="flood3",in2="comp",result="comp2")
+          feColorMatrix(in="comp2",result="comp3",type="matrix",values=
+          "1 0 0 0 0 " + 
+          "0 1 0 0 0 " + 
+          "0 0 1 0 0 " + 
+          "0 0 0 0.5 0 ")
+
+          feFlood(flood-color="#f00",result="flood1")
+          feComposite(operator="in",in="flood1",in2="fill",result="fill2")
+          feFlood(flood-color="#fff",result="flood2")
+          feComposite(operator="in",in="flood2",in2="stroke",result="stroke2")
+          feMerge(result="obj")
+            feMergeNode(in="extrude-offset")
+            feMergeNode(in="fill2")
+            feMergeNode(in="comp3")
+          feConvolveMatrix(in="SourceAlpha",result="shadow",order="11,11",divisor="1",kernelMatrix=
+          "1 0 0 0 0 0 0 0 0 0 0 " + 
+          "0 1 0 0 0 0 0 0 0 0 0 " + 
+          "0 0 1 0 0 0 0 0 0 0 0 " + 
+          "0 0 0 1 0 0 0 0 0 0 0 " + 
+          "0 0 0 0 1 0 0 0 0 0 0 " + 
+          "0 0 0 0 0 1 0 0 0 0 0 " + 
+          "0 0 0 0 0 0 1 0 0 0 0 " + 
+          "0 0 0 0 0 0 0 1 0 0 0 " + 
+          "0 0 0 0 0 0 0 0 1 0 0 " + 
+          "0 0 0 0 0 0 0 0 0 1 0 " + 
+          "0 0 0 0 0 0 0 0 0 0 1 ")
+          feOffset(dx="10",dy="10",in="shadow",result="shadow-offset")
+          feFlood(flood-color="#444",result="flood-shadow")
+          feComposite(operator="in",in="flood-shadow",in2="shadow-offset",result="shadow-color")
+          feMerge
+            feMergeNode(in="shadow-color")
+            feMergeNode(in="obj")
+
+
+      text(x="200",y="100",text-anchor="middle",fill="#f00",stroke="#0f0",stroke-width="2",stroke-linejoin="round",
+      dominant-baseline="middle",font-size="50",font-family="Arial Black",filter="url(#fx)") Hello World
+      text(x="200",y="100",text-anchor="middle",fill="none",stroke="#fff",stroke-width="2",stroke-linejoin="round",
+      dominant-baseline="middle",font-size="50",font-family="Arial Black") Hello World
+

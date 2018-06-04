@@ -45,3 +45,4 @@ document.querySelector('#font-picker').addEventListener \click, (e) ->
   if !target or !target.classList or !target.classList.contains \inner => return
   use-font target.querySelector('span').innerText
 
+use-font \sansitaOne

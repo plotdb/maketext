@@ -6,8 +6,18 @@ ret = {
   tags: '',
   slug: '',
   init: function(){},
-  edit: {},
-  watch: function(n, o, node){},
+  edit: {
+    color: {
+      name: "color",
+      type: 'color',
+      'default': '#f00'
+    }
+  },
+  watch: function(n, o, node){
+    if (n.color) {
+      return node.querySelector('feFlood').setAttribute('flood-color', n.color);
+    }
+  },
   dom: function(config){}
 };
 if (typeof module != 'undefined' && module !== null) {

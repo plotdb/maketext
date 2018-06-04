@@ -172,6 +172,9 @@ base = do
         dirs = fs.readdir-sync \static/effects/
           .map -> [it, "static/effects/#it"]
           .filter -> fs.exists-sync(it.1) and fs.stat-sync(it.1).is-directory!
+        config = JSON.parse(fs.read-file-sync \src/effects/config.json .toString!)
+        dirs.sort (a,b) -> config.order.indexOf(b.0) - config.order.indexOf(a.0)
+        dirs
           .map ->
             obj[it.0] = {}
             if fs.exists-sync "#{it.1}/main.js" =>
