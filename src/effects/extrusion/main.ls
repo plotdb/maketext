@@ -1,17 +1,26 @@
 ret = do
-  name: ''
+  name: 'Extrusion'
   desc: ''
   tags: ''
   slug: ''
   init: ->
   edit: do
-    color1: name: \color1, type: \color, default: \#f00
-    color2: name: \color2, type: \color, default: \#f00
+    fill: name: \fill, type: \color, default: \#ccc
+    extrusion: name: \extrusion, type: \color, default: \#444
+    offset: name: \offset, type: \number, default: 8, min: 0, max: 16
   watch: (n,o, node) ->
-    if n["color1"] => node.querySelector('text').setAttribute \fill, n["color1"]
-    if n["color2"] => node.querySelector('feFlood').setAttribute \flood-color, n["color2"]
-    node.querySelector('text').setAttribute('stroke', n["color2"])
-    node.querySelector('text').setAttribute('stroke-width', 0)
+    if n.fill != o.fill => node.querySelector('text').setAttribute \fill, n.fill
+    if n.extrusion? => node.querySelector('feFlood').setAttribute \flood-color, n.extrusion
+    if n.offset =>
+      node.querySelector('feOffset')
+        ..setAttribute(\dx, n.offset * 0.5)
+        ..setAttribute(\dy, n.offset * 0.5)
+      conv = node.querySelector 'feConvolveMatrix'
+      conv.setAttribute \order, "#{n.offset},#{n.offset}"
+      conv.setAttribute(\kernelMatrix, [i for i from 0 til n.offset].map((i)-> 
+        [j for j from 0 til n.offset].map((j)-> if i == j => 1 else 0).join(' ')
+      ).join(' '))
+      
   dom: (config) ->
 
 if module? => module.exports = ret

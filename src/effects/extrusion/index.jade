@@ -1,3 +1,12 @@
 svg(xmlns="http://www.w3.org/2000/svg",viewBox="0 0 500 150")
-  include filter.svg
+  defs
+    filter#extrusion(x="-100%",y="-100%",width="300%",height="300%")
+      feFlood(result="color1",flood-color="#444")
+      feConvolveMatrix(order="8,8",divisor="1",kernelMatrix="1 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 1 ",in="SourceAlpha",result="extrude")
+      feComposite(in="color1",in2="extrude",result="comp-extrude",operator="in")
+      feOffset(dx="4",dy="4",in="comp-extrude",result="offset-extrude")
+      feMerge
+        feMergeNode(in="offset-extrude")
+        feMergeNode(in="SourceGraphic")
+
   text(x="250",y="75",filter="url(#extrusion)",fill="#ccc") Hello World!

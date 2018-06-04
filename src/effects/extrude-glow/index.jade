@@ -9,6 +9,7 @@ svg(xmlns="http://www.w3.org/2000/svg",viewBox="0 0 500 150")
                    "1 1 0 " +
                    "0 0 0 ")
       feOffset(dx="-4",dy="0",in="convolve",result="extrude")
+      feComposite(operator="in",in="flood-1",in2="extrude",result="comp-extrude")
 
       feFlood(flood-color="#000",result="flood-2")
       feComposite(operator="in",in="flood-2",in2="SourceAlpha",result="comp2")
@@ -20,7 +21,7 @@ svg(xmlns="http://www.w3.org/2000/svg",viewBox="0 0 500 150")
 
       feMerge
         feMergeNode(in="shadow")
-        feMergeNode(in="extrude")
+        feMergeNode(in="comp-extrude")
         feMergeNode(in="SourceGraphic")
 
   text(x="250",y="75",filter="url(#extrude-glow)",fill="#eb6c6c") Hello World!
