@@ -25,7 +25,9 @@ ret = {
   },
   watch: function(n, o, node){
     return Array.from(node.querySelectorAll('stop')).map(function(d, i){
-      return d.setAttribute('stop-color', n["color" + (i + 1)]);
+      if (n["color" + (3 - i)] != null) {
+        return d.setAttribute('stop-color', n["color" + (3 - i)]);
+      }
     });
   },
   dom: function(config){}
