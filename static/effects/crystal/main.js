@@ -7,40 +7,40 @@ ret = {
   slug: '',
   init: function(){},
   edit: {
-    color1: {
+    fill: {
       name: 'fill',
       type: 'color',
-      'default': '#f00'
+      'default': '#000000'
     },
-    color2: {
+    stroke: {
       name: 'stroke',
       type: 'color',
-      'default': '#f00'
+      'default': '#88e0eb'
     },
-    color3: {
+    innerShadow: {
       name: 'inner shadow',
       type: 'color',
-      'default': '#f00'
+      'default': '#fff'
     },
-    color4: {
+    reflect: {
       name: 'reflect',
       type: 'color',
-      'default': '#f00'
+      'default': '#fff'
     }
   },
   watch: function(n, o, node){
     var text;
-    if (n.color1 != null) {
-      node.querySelector('text').setAttribute('fill', n.color1);
+    if (n.fill != null) {
+      node.querySelector('text').setAttribute('fill', n.fill);
     }
-    if (n.color2 != null) {
-      node.querySelector('text').setAttribute('stroke', n.color2);
+    if (n.stroke != null) {
+      node.querySelector('text').setAttribute('stroke', n.stroke);
     }
-    if (n.color3 != null) {
-      node.querySelector('feFlood').setAttribute('flood-color', n.color3);
+    if (n.innerShadow != null) {
+      node.querySelector('feFlood').setAttribute('flood-color', n.innerShadow);
     }
-    if (n.color4 != null) {
-      node.querySelector('feSpecularLighting').setAttribute('lighting-color', n.color4);
+    if (n.reflect != null) {
+      node.querySelector('feSpecularLighting').setAttribute('lighting-color', n.reflect);
     }
     text = node.querySelector('text');
     text.style.display = 'inline-block';

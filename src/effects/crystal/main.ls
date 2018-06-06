@@ -5,15 +5,15 @@ ret = do
   slug: ''
   init: ->
   edit: do
-    color1: name: \fill, type: \color, default: \#f00
-    color2: name: \stroke, type: \color, default: \#f00
-    color3: name: 'inner shadow', type: \color, default: \#f00
-    color4: name: \reflect, type: \color, default: \#f00
+    fill: name: \fill, type: \color, default: \#000000
+    stroke: name: \stroke, type: \color, default: \#88e0eb
+    inner-shadow: name: 'inner shadow', type: \color, default: \#fff
+    reflect: name: \reflect, type: \color, default: \#fff
   watch: (n,o, node) ->
-    if n.color1? => node.querySelector(\text).setAttribute(\fill, n.color1)
-    if n.color2? => node.querySelector(\text).setAttribute(\stroke, n.color2)
-    if n.color3? => node.querySelector(\feFlood).setAttribute(\flood-color, n.color3)
-    if n.color4? => node.querySelector(\feSpecularLighting).setAttribute(\lighting-color, n.color4)
+    if n.fill? => node.querySelector(\text).setAttribute(\fill, n.fill)
+    if n.stroke? => node.querySelector(\text).setAttribute(\stroke, n.stroke)
+    if n.inner-shadow? => node.querySelector(\feFlood).setAttribute(\flood-color, n.inner-shadow)
+    if n.reflect? => node.querySelector(\feSpecularLighting).setAttribute(\lighting-color, n.reflect)
     text = node.querySelector(\text)
     text.style.display = \inline-block
     setTimeout (-> text.style.display = \block), 0

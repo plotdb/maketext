@@ -21,14 +21,50 @@ ret = {
       name: 'color3',
       type: 'color',
       'default': '#ff0'
+    },
+    density: {
+      name: "Dot Density",
+      type: 'number',
+      'default': 1,
+      min: 0,
+      max: 2,
+      step: 0.1
+    },
+    direction: {
+      name: 'direction',
+      type: 'number',
+      'default': 90,
+      min: 0,
+      max: 360,
+      step: 1
     }
   },
   watch: function(n, o, node){
-    return Array.from(node.querySelectorAll('stop')).map(function(d, i){
+    var r, p, d, c, x$, angle, dx, dy, ref$, x1, y1, x2, y2, y$;
+    Array.from(node.querySelectorAll('stop')).map(function(d, i){
       if (n["color" + (3 - i)] != null) {
         return d.setAttribute('stop-color', n["color" + (3 - i)]);
       }
     });
+    r = 3;
+    p = n.density != null ? n.density : 1;
+    d = r * 2 + p;
+    c = r + p * 0.5;
+    x$ = node.querySelector('feImage');
+    x$.setAttribute('href', "data:image/svg+xml,<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"" + d + "px\" height=\"" + d + "px\"><circle cx=\"" + c + "\" cy=\"" + c + "\" r=\"" + r + "\" fill=\"red\"/></svg>");
+    x$.setAttribute('width', "5px");
+    x$.setAttribute('height', "5px");
+    angle = n.direction || 0;
+    dx = Math.cos(angle * Math.PI / 180);
+    dy = Math.sin(angle * Math.PI / 180);
+    ref$ = [0.5 - dx, 0.5 - dy], x1 = ref$[0], y1 = ref$[1];
+    ref$ = [0.5 + dx, 0.5 + dy], x2 = ref$[0], y2 = ref$[1];
+    y$ = node.querySelector('linearGradient');
+    y$.setAttribute('x1', x1);
+    y$.setAttribute('y1', y1);
+    y$.setAttribute('x2', x2);
+    y$.setAttribute('y2', y2);
+    return y$;
   },
   dom: function(config){}
 };

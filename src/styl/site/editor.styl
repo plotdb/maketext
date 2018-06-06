@@ -7,7 +7,11 @@ body.editing
 #editor
   label
     text-transform: capitalize
-
+    width: 100%
+    display: inline-block
+    text-overflow: ellipsis
+    white-space: nowrap
+    overflow: hidden
   position: fixed
   top: -75px
   left: 0
@@ -37,6 +41,16 @@ body.editing
     margin-bottom: 0
   &.on
     top: 0
+  .empty
+    width: 100%
+    height: 100%
+    text-align: center
+    color: #999
+    display: table
+    &:after
+      content: "no custom options"
+      display: table-cell
+      vertical-align: middle
 
 #cooltext
   width: 600px
@@ -103,3 +117,4 @@ body.editing
     background: center center no-repeat
     background-size: contain
     margin: auto
+

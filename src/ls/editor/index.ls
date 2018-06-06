@@ -1,8 +1,9 @@
 <- $ document .ready
 
 for k,v of effects =>
+  ret = null
   eval(v.js)
-  v.js = ret
+  if ret => v.js = ret
 
 window.editor = editor = do
   effects: effects
@@ -82,9 +83,9 @@ document.querySelector \.gallery .addEventListener \click, (e) ->
     it.textContent = (document.querySelector('#text-input').value or 'Hello World')
   editor.effects.type = type
   effect = editor.effects[type]
+  options = document.querySelector(\#editor-custom-options)
+  options.innerHTML = ''
   if effect.js and effect.js.edit =>
-    options = document.querySelector(\#editor-custom-options)
-    options.innerHTML = ''
     colors = [v for k,v of effect.js.edit].filter(-> it.type == \color).map(-> it.default)
     for k,v of effect.js.edit =>
       node = document.querySelector("\#editor-option-sample-#{v.type}")
@@ -100,6 +101,9 @@ document.querySelector \.gallery .addEventListener \click, (e) ->
         init-slider node, k, v
       options.appendChild(node)
     set-palette [bkcolor] ++ colors
+  else
+    options.innerHTML = "<div class='col-sm'><div class='empty'></div></div>"
+    set-palette [bkcolor]
 
 
 

@@ -2672,6 +2672,11 @@ body.editing {
 }
 #editor label {
   text-transform: capitalize;
+  width: 100%;
+  display: inline-block;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
 }
 #editor .footer {
   padding: 30px 0;
@@ -2698,6 +2703,18 @@ body.editing {
 }
 #editor.on {
   top: 0;
+}
+#editor .empty {
+  width: 100%;
+  height: 100%;
+  text-align: center;
+  color: #999;
+  display: table;
+}
+#editor .empty:after {
+  content: "no custom options";
+  display: table-cell;
+  vertical-align: middle;
 }
 #cooltext {
   width: 600px;

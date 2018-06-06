@@ -9,7 +9,7 @@ svg(viewBox="0 0 500 150")
 
     filter#f
       feFlood(result="color",flood-color="red",in="GraphicAlpha")
-      feImage(href="data:image/svg+xml,<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"5px\" height=\"5px\"><circle cx=\"2\" cy=\"2\" r=\"2.1\" fill=\"red\"/></svg>",x="0",y="0",width="5",height="5",result="image")
+      feImage(href="data:image/svg+xml,<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"6.5px\" height=\"6.5px\"><circle cx=\"3.25\" cy=\"3.25\" r=\"3\" fill=\"red\"/></svg>",x="0",y="0",width="5",height="5",result="image")
       feTile(in="image",result="tile")
       feComposite(operator="in",in="SourceGraphic",in2="tile",result="dot")
       feComposite(operator="in",in="dot",in2="SourceGraphic",ret="dotted")

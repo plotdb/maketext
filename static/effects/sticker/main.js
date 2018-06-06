@@ -28,9 +28,18 @@ ret = {
       'default': '2.5',
       min: 0,
       max: 10
+    },
+    direction: {
+      name: 'direction',
+      type: 'number',
+      'default': 90,
+      min: 0,
+      max: 360,
+      step: 1
     }
   },
   watch: function(n, o, node){
+    var angle, dx, dy, ref$, x1, y1, x2, y2, x$;
     if (n.color1) {
       node.querySelectorAll('stop')[0].setAttribute('stop-color', n.color1);
     }
@@ -41,8 +50,19 @@ ret = {
       node.querySelector('text').setAttribute('stroke', n.color3);
     }
     if (n.stroke != null) {
-      return node.querySelector('text').setAttribute('stroke-width', n.stroke);
+      node.querySelector('text').setAttribute('stroke-width', n.stroke);
     }
+    angle = n.direction || 0;
+    dx = Math.cos(angle * Math.PI / 180) * 0.3;
+    dy = Math.sin(angle * Math.PI / 180) * 0.3;
+    ref$ = [0.5 - dx, 0.5 - dy], x1 = ref$[0], y1 = ref$[1];
+    ref$ = [0.5 + dx, 0.5 + dy], x2 = ref$[0], y2 = ref$[1];
+    x$ = node.querySelector('linearGradient');
+    x$.setAttribute('x1', x1);
+    x$.setAttribute('y1', y1);
+    x$.setAttribute('x2', x2);
+    x$.setAttribute('y2', y2);
+    return x$;
   },
   dom: function(config){}
 };
