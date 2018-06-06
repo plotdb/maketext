@@ -101,6 +101,8 @@ document.querySelector \.gallery .addEventListener \click, (e) ->
         init-slider node, k, v
       options.appendChild(node)
     set-palette [bkcolor] ++ colors
+    for k,v of effect.js.edit =>
+      editor.update k, v.default
   else
     options.innerHTML = "<div class='col-sm'><div class='empty'></div></div>"
     set-palette [bkcolor]

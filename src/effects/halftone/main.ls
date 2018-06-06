@@ -8,13 +8,13 @@ ret = do
     color1: name: \color1, type: \color, default: \#0ff
     color2: name: \color2, type: \color, default: \#f0f
     color3: name: \color3, type: \color, default: \#ff0
-    density: name: "Dot Density", type: \number, default: 1, min: 0, max: 2, step: 0.1
+    spacing: name: "Dot Spacing", type: \number, default: 0.3, min: 0, max: 2, step: 0.1
     direction: name: \direction, type: \number, default: 90, min: 0, max: 360, step: 1
   watch: (n,o, node) ->
     Array.from(node.querySelectorAll('stop')).map (d,i) ->
       if n["color" + (3 - i)]? => d.setAttribute('stop-color', n["color" + (3 - i)])
     r = 3
-    p = (if n.density? => n.density else 1)
+    p = (if n.spacing? => n.spacing else 1)
     d = r * 2 + p
     c = r + p * 0.5
 

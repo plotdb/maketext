@@ -1,6 +1,6 @@
 svg(xmlns="http://www.w3.org/2000/svg",viewBox="0 0 500 150")
   defs
-    filter#raise
+    filter#raise(x="-100%",y="-100%",width="300%",height="300%")
       feFlood(flood-color="#ccc",result="flood-surface")
       feFlood(flood-color="#777",result="flood-extrude")
       feMorphology(operator="erode",in="SourceAlpha",radius="1",result="erode")

@@ -22,10 +22,10 @@ ret = {
       type: 'color',
       'default': '#ff0'
     },
-    density: {
-      name: "Dot Density",
+    spacing: {
+      name: "Dot Spacing",
       type: 'number',
-      'default': 1,
+      'default': 0.3,
       min: 0,
       max: 2,
       step: 0.1
@@ -47,7 +47,7 @@ ret = {
       }
     });
     r = 3;
-    p = n.density != null ? n.density : 1;
+    p = n.spacing != null ? n.spacing : 1;
     d = r * 2 + p;
     c = r + p * 0.5;
     x$ = node.querySelector('feImage');

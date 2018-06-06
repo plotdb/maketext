@@ -1,5 +1,9 @@
 {
   "order": [
+    "woodtype",
+    "metal-beveled",
+    "scratch",
+    "liquid",
     "metal",
     "crystal",
     "halftone",
@@ -7,6 +11,7 @@
     "offset",
     "raise",
     "sticker",
+    "stripe-bk",
     "outline",
     "vintage",
     "jagged",

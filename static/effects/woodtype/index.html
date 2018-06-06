@@ -1,7 +1,7 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 150"><defs>
   <filter id="woodtype" filterUnits="userSpaceOnUse">
     <!-- COLORS -->
-      <feFlood flood-color="#663300" result="COLOR-red"></feFlood>‚
+      <feFlood flood-color="#663300" result="COLOR-red"></feFlood>
       <feFlood flood-color="#D7A500" result="COLOR-y"></feFlood>
     <!-- COLORS END -->
 
@@ -30,12 +30,12 @@
     <!--  INNER BEVEL END -->
 
     <!-- FAT OUTLINE -->
-      <feMorphology operator="dilate" radius="6" in="OUTER-BEVEL_30" result="FAT-OUTLINE_10"></feMorphology>
+      <feMorphology operator="dilate" radius="0" in="OUTER-BEVEL_30" result="FAT-OUTLINE_10"></feMorphology>
       <feComposite operator="in" in="COLOR-y" in2="FAT-OUTLINE_10" result="FAT-OUTLINE_20"></feComposite>
     <!-- FAT OUTLINE END -->
 
       <feMerge result="merge2">
-        <feMergeNode in="FAT-OUTLINE_20"></feMergeNode>
+        <!--<feMergeNode in="FAT-OUTLINE_20"></feMergeNode>-->
         <feMergeNode in="OUTER-BEVEL_30"></feMergeNode>
         <feMergeNode in="STRIPE FILL_30"></feMergeNode>
         <feMergeNode in="INNER-BEVEL_30"></feMergeNode>

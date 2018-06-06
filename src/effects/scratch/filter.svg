@@ -1,8 +1,8 @@
 <defs>
-  <filter id="scratch">
+  <filter id="scratch" x="-100%" y="-100%" width="300%" height="300%">
     <!-- COLOR -->
-    <feFlood flood-color="#73DCFF" flood-opacity="0.75" result="COLOR-blu"></feFlood>
-    <feFlood flood-color="#9673FF" flood-opacity="0.4" result="COLOR-red"></feFlood>
+    <feFlood flood-color="#ddd" flood-opacity="0.75" result="COLOR-blu"></feFlood>
+    <feFlood flood-color="#333" flood-opacity="0.4" result="COLOR-red"></feFlood>
     <!-- COLOR END -->
 
     <!-- Texture -->

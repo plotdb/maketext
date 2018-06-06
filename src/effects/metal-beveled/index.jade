@@ -1,0 +1,12 @@
+svg(xmlns="http://www.w3.org/2000/svg",viewBox="0 0 500 150")
+
+  defs
+    filter#metal-beveled
+      feGaussianBlur(stdDeviation="4",in="SourceAlpha",result="blur")
+      feSpecularLighting(surfaceScale="5",specularConstant="0.8",specularExponent="7.5",
+      lighting-color="#fff",in="blur",result="specular")
+        fePointLight(x="-250",y="-50",z="300")
+      feComposite(operator="in",in="specular",in2="SourceAlpha",result="comp")
+      feComposite(in="SourceGraphic",in2="comp",operator="arithmetic",k1="0",k2="1",k3="1",k4="0")
+
+  text(x="250",y="75",filter="url(#metal-beveled)",fill="#444") Hello World!

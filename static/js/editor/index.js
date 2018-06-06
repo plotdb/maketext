@@ -127,7 +127,7 @@ $(document).ready(function(){
     });
   };
   document.querySelector('.gallery').addEventListener('click', function(e){
-    var target, type, bkcolor, effect, options, colors, k, v, ref$, node;
+    var target, type, bkcolor, effect, options, colors, k, v, ref$, node, results$ = [];
     target = e.target;
     if (!(target && target.classList && target.classList.contains('item'))) {
       return;
@@ -177,7 +177,12 @@ $(document).ready(function(){
         }
         options.appendChild(node);
       }
-      return setPalette([bkcolor].concat(colors));
+      setPalette([bkcolor].concat(colors));
+      for (k in ref$ = effect.js.edit) {
+        v = ref$[k];
+        results$.push(editor.update(k, v['default']));
+      }
+      return results$;
     } else {
       options.innerHTML = "<div class='col-sm'><div class='empty'></div></div>";
       return setPalette([bkcolor]);

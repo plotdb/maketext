@@ -6,8 +6,36 @@ ret = {
   tags: '',
   slug: '',
   init: function(){},
-  edit: {},
-  watch: function(n, o, node){},
+  edit: {
+    fill: {
+      name: 'fill',
+      type: 'color',
+      'default': '#663300'
+    },
+    stroke: {
+      name: 'stroke',
+      type: 'color',
+      'default': '#D7A500'
+    },
+    innerFill: {
+      name: "Inner Fill",
+      type: 'color',
+      'default': '#9f6b00'
+    }
+  },
+  watch: function(n, o, node){
+    var flood;
+    flood = Array.from(node.querySelectorAll('feFlood'));
+    if (n.fill != null) {
+      flood[0].setAttribute('flood-color', n.fill);
+    }
+    if (n.stroke != null) {
+      flood[1].setAttribute('flood-color', n.stroke);
+    }
+    if (n.innerFill != null) {
+      return node.querySelector('feImage').setAttribute('href', "data:image/svg+xml,<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"10px\" height=\"4px\">\n<rect fill=\"" + n.innerFill + "\" width=\"10\" height=\"2\"/>\n</svg> ");
+    }
+  },
   dom: function(config){}
 };
 if (typeof module != 'undefined' && module !== null) {

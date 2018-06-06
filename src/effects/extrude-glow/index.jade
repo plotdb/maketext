@@ -15,9 +15,9 @@ svg(xmlns="http://www.w3.org/2000/svg",viewBox="0 0 500 150")
       feComposite(operator="in",in="flood-2",in2="SourceAlpha",result="comp2")
       feMorphology(operator="dilate",radius="1",in="comp2",result="dilate")
       feOffset(dx="-6",dy="0",in="dilate",result="offset")
-      feGaussianBlur(in="offset",stdDeviation="2.8",result="blur")
+      feGaussianBlur(in="offset",stdDeviation="5.8",result="blur")
       feComponentTransfer(in="blur",result="shadow")
-        feFuncA(type="linear",slope="0.7",intercept="-0.2")
+        feFuncA(type="linear",slope="0.8",intercept="-0.2")
 
       feMerge
         feMergeNode(in="shadow")

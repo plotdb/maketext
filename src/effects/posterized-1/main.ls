@@ -1,4 +1,5 @@
 ret = do
+  debug: true
   name: ''
   desc: ''
   tags: ''
