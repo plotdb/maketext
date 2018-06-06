@@ -1,0 +1,44 @@
+svg(xmlns="http://www.w3.org/2000/svg",viewBox="0 0 500 150")
+  defs
+    linearGradient#shiny-gradient(x1="0",x2="500",y1="0",y2="150",gradientUnits="userSpaceOnUse")
+      stop(offset="0.0",stop-color="#ffb200")
+      stop(offset="0.5",stop-color="#e10057")
+      stop(offset="1.0",stop-color="#5A1A80")
+    linearGradient#shiny-gradient2(x1="0",x2="0",y1="0",y2="1")
+      stop(offset="0.2",stop-color="#fff",stop-opacity="0.8")
+      stop(offset="0.8",stop-color="#fff",stop-opacity="0")
+    filter#shiny2(x="-100%",y="-100%",width="300%",height="300%")
+      feMorphology(operator="erode",radius="2")
+    filter#shiny(x="-100%",y="-100%",width="300%",height="300%")
+      feFlood(flood-color="#fff",result="flood")
+      feConvolveMatrix(in="SourceGraphic",result="conv",order="8,8",divisor="1",kernelMatrix=
+      "0 0 0 0 0 0 0 0 " +
+      "0 0 0 1 1 0 0 0 " +
+      "0 0 0 1 1 0 0 0 " +
+      "0 0 1 0 0 1 0 0 " +
+      "0 0 1 0 0 1 0 0 " +
+      "0 1 0 0 0 0 1 0 " +
+      "0 1 1 0 0 1 1 0 " +
+      "0 0 0 1 1 0 0 0 ")
+      feOffset(dx="0",dy="4",in="conv",result="offset")
+      feComposite(operator="in",in="flood",in2="offset",result="comp")
+      feGaussianBlur(in="offset",stdDeviation="3",result="shadow")
+      feColorMatrix(in="shadow",type="matrix",
+      values="0.7 0 0 0 0  0 0.7 0 0 0  0 0 0.7 0 0  0 0 0 0.3 0",result="dark-shadow")
+      feOffset(dx="0",dy="4",in="dark-shadow",result="offset-shadow")
+      feOffset(dx="0",dy="2",in="conv",result="offset-2")
+      feComposite(operator="out",in="offset",in2="offset-2",result="edge-diff")
+      feGaussianBlur(in="edge-diff",stdDeviation="1",result="edge-blur")
+      feColorMatrix(in="edge-blur",result="edge-shadow",type="matrix",
+      values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 0.5 0")
+      feComposite(operator="in",in="edge-shadow",in2="offset",result="edge-shadow-in")
+      feOffset(dx="0",dy="1",in="edge-shadow-in",result="edge-shadow-final")
+      feMerge(result="out")
+        feMergeNode(in="offset-shadow")
+        feMergeNode(in="comp")
+        feMergeNode(in="edge-shadow-final")
+        feMergeNode(in="SourceGraphic")
+        feMergeNode(in="image")
+
+  text(x="250",y="75",filter="url(#shiny)",fill="url(#shiny-gradient)") Hello World
+  text(x="250",y="75",filter="url(#shiny2)",fill="url(#shiny-gradient2)") Hello World

@@ -5,9 +5,9 @@ ret = do
   slug: ''
   init: ->
   edit: do
-    color1: name: \color1, type: \color, default: \#444
-    color2: name: \color2, type: \color, default: \#000
-    direction: name: \direction, type: \number, default: 0, min: 0, max: 360, step: 1
+    color1: name: \color1, type: \color, default: \#ee4208
+    color2: name: \color2, type: \color, default: \#4139ff
+    direction: name: \direction, type: \number, default: 24, min: 0, max: 360, step: 1
     thick: name: \thickness, type: \number, default: 1, min: 1, max: 8, step: 1
   watch: (n,o, node) ->
     Array.from(node.querySelectorAll('stop')).map (d,i) -> d.setAttribute \stop-color, n["color#{i + 1}"]

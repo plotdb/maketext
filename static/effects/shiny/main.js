@@ -10,12 +10,17 @@ ret = {
     color1: {
       name: 'color1',
       type: 'color',
-      'default': '#ee4208'
+      'default': '#ffb200'
     },
     color2: {
       name: 'color2',
       type: 'color',
-      'default': '#4139ff'
+      'default': '#e10057'
+    },
+    color3: {
+      name: 'color3',
+      type: 'color',
+      'default': '#5A1A80'
     },
     direction: {
       name: 'direction',
@@ -24,36 +29,29 @@ ret = {
       min: 0,
       max: 360,
       step: 1
-    },
-    thick: {
-      name: 'thickness',
-      type: 'number',
-      'default': 1,
-      min: 1,
-      max: 8,
-      step: 1
     }
   },
   watch: function(n, o, node){
     var angle, dx, dy, ref$, x1, y1, x2, y2, x$;
-    Array.from(node.querySelectorAll('stop')).map(function(d, i){
-      return d.setAttribute('stop-color', n["color" + (i + 1)]);
+    Array.from(node.querySelectorAll('linearGradient stop')).map(function(d, i){
+      if (i > 2) {
+        return;
+      }
+      if (n["color" + (i + 1)] != null) {
+        return d.setAttribute('stop-color', n["color" + (i + 1)]);
+      }
     });
     angle = n.direction || 0;
-    dx = Math.cos(angle * Math.PI / 180);
-    dy = Math.sin(angle * Math.PI / 180);
-    ref$ = [0.5 - dx, 0.5 - dy], x1 = ref$[0], y1 = ref$[1];
-    ref$ = [0.5 + dx, 0.5 + dy], x2 = ref$[0], y2 = ref$[1];
+    dx = Math.cos(angle * Math.PI / 180) * 125;
+    dy = Math.sin(angle * Math.PI / 180) * 37.5;
+    ref$ = [250 - dx, 75 - dy], x1 = ref$[0], y1 = ref$[1];
+    ref$ = [250 + dx, 75 + dy], x2 = ref$[0], y2 = ref$[1];
     x$ = node.querySelector('linearGradient');
     x$.setAttribute('x1', x1);
     x$.setAttribute('y1', y1);
     x$.setAttribute('x2', x2);
     x$.setAttribute('y2', y2);
-    if (n.thick != null) {
-      return Array.from(node.querySelectorAll('feMorphology')).map(function(it){
-        return it.setAttribute('radius', n.thick);
-      });
-    }
+    return x$;
   },
   dom: function(config){}
 };
