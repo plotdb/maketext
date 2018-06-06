@@ -10,22 +10,22 @@ ret = {
     color1: {
       name: 'color1',
       type: 'color',
-      'default': '#f00'
+      'default': '#fd9'
     },
     color2: {
       name: 'color2',
       type: 'color',
-      'default': '#0f0'
+      'default': '#9df'
     },
     color3: {
       name: 'stroke color',
       type: 'color',
-      'default': '#00f'
+      'default': '#000'
     },
     stroke: {
       name: 'stroke width',
       type: 'number',
-      'default': '1',
+      'default': '2.5',
       min: 0,
       max: 10
     }

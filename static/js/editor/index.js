@@ -95,18 +95,25 @@ $(document).ready(function(){
       if (!d) {
         break;
       }
+      d[1].html = d[1].html.replace("<svg", "<svg width='100%' height='100%'");
+      d[1].html = d[1].html.replace("0 0 500 150", "-10 -10 520 170");
       code += "<div class=\"item\" data-type=\"" + d[0] + "\"><div class=\"inner\">" + d[1].html + "</div></div>";
     }
     html.push("<div class=\"line\" style=\"visibility:hidden\">" + code + "</div>");
   }
   initSlider = function(node, key, value){
-    return $(node.querySelector('.irs-input')).ionRangeSlider({
+    var x$;
+    x$ = $(node.querySelector('.irs-input'));
+    x$.val(value['default']) || 0;
+    x$.ionRangeSlider({
       min: value.min || 0,
       max: value.max || 100,
+      step: value.step || 1,
       onChange: function(data){
         return editor.update(key, data.from);
       }
     });
+    return x$;
   };
   initColorpicker = function(node, key, value){
     var ldcp;
@@ -195,9 +202,11 @@ $(document).ready(function(){
         d.style.visibility = 'visible';
       }
       if (box.y + box.height < 0 || box.y + box.height > height) {
-        return d.style.opacity = 0;
+        d.style.opacity = 0;
+        return d.style.transform = "scale(0.9)";
       } else {
-        return d.style.opacity = 1;
+        d.style.opacity = 1;
+        return d.style.transform = "scale(1)";
       }
     });
   });

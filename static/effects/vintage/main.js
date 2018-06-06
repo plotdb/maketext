@@ -7,49 +7,86 @@ ret = {
   slug: '',
   init: function(){},
   edit: {
-    color1: {
+    fill: {
       name: 'fill',
       type: 'color',
       'default': '#f00'
     },
-    color2: {
+    stroke: {
       name: 'stroke',
       type: 'color',
-      'default': '#0f0'
+      'default': '#fff'
     },
-    color3: {
+    extrusion: {
       name: 'extrusion',
       type: 'color',
-      'default': '#00f'
+      'default': '#900'
     },
-    color4: {
+    innerShadow: {
       name: 'inner shadow',
       type: 'color',
-      'default': '#00f'
+      'default': '#000'
     },
-    color5: {
+    shadow: {
       name: 'shadow',
       type: 'color',
-      'default': '#00f'
+      'default': '#444'
+    },
+    depth: {
+      name: 'depth',
+      type: 'number',
+      'default': 9,
+      min: 1,
+      max: 13
     }
   },
   watch: function(n, o, node){
-    var floods;
+    var floods, convs, offset, matrix, res$, i$, to$, i, j$, to1$, j, order, d;
     floods = node.querySelectorAll('feFlood');
-    if (n.color3 != null) {
-      floods[0].setAttribute('flood-color', n.color3);
+    if (n.extrusion != null) {
+      floods[0].setAttribute('flood-color', n.extrusion);
     }
-    if (n.color4 != null) {
-      floods[1].setAttribute('flood-color', n.color4);
+    if (n.innerShadow != null) {
+      floods[1].setAttribute('flood-color', n.innerShadow);
     }
-    if (n.color1 != null) {
-      floods[2].setAttribute('flood-color', n.color1);
+    if (n.fill !== o.fill) {
+      floods[2].setAttribute('flood-color', n.fill);
     }
-    if (n.color5 != null) {
-      floods[4].setAttribute('flood-color', n.color5);
+    if (n.shadow != null) {
+      floods[4].setAttribute('flood-color', n.shadow);
     }
-    if (n.color2 !== o.color2) {
-      return node.querySelectorAll('text')[1].setAttribute('stroke', n.color2);
+    if (n.stroke !== o.stroke) {
+      node.querySelectorAll('text')[1].setAttribute('stroke', n.stroke);
+    }
+    if (n.depth != null) {
+      convs = node.querySelectorAll('feConvolveMatrix');
+      offset = node.querySelectorAll('feOffset');
+      res$ = [];
+      for (i$ = 0, to$ = n.depth; i$ < to$; ++i$) {
+        i = i$;
+        for (j$ = 0, to1$ = n.depth; j$ < to1$; ++j$) {
+          j = j$;
+          if (i === j) {
+            res$.push(1);
+          } else {
+            res$.push(0);
+          }
+        }
+      }
+      matrix = res$;
+      order = n.depth + "," + n.depth;
+      [0, 2].map(function(it){
+        var x$, y$;
+        x$ = convs[it];
+        x$.setAttribute('kernelMatrix', matrix);
+        x$.setAttribute('order', order);
+        y$ = offset[it];
+        y$.setAttribute('dx', Math.ceil(n.depth * 0.5) * (it + 1));
+        y$.setAttribute('dy', Math.ceil(n.depth * 0.5) * (it + 1));
+        return y$;
+      });
+      d = n.depth * -1;
+      return node.querySelector('g').setAttribute('transform', "translate(" + d + "," + d + ")");
     }
   },
   dom: function(config){}

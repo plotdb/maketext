@@ -1,22 +1,20 @@
 svg(xmlns="http://www.w3.org/2000/svg",viewBox="0 0 500 150",style="background:#f2eddb")
   defs
     filter#vintage(x="-100%",y="-100%",width="300%",height="300%")
-      feConvolveMatrix(in="SourceGraphic",result="extrude",order="11,11",divisor="1",kernelMatrix=
-      "1 0 0 0 0 0 0 0 0 0 0 " + 
-      "0 1 0 0 0 0 0 0 0 0 0 " + 
-      "0 0 1 0 0 0 0 0 0 0 0 " + 
-      "0 0 0 1 0 0 0 0 0 0 0 " + 
-      "0 0 0 0 1 0 0 0 0 0 0 " + 
-      "0 0 0 0 0 1 0 0 0 0 0 " + 
-      "0 0 0 0 0 0 1 0 0 0 0 " + 
-      "0 0 0 0 0 0 0 1 0 0 0 " + 
-      "0 0 0 0 0 0 0 0 1 0 0 " + 
-      "0 0 0 0 0 0 0 0 0 1 0 " + 
-      "0 0 0 0 0 0 0 0 0 0 1 ")
+      feConvolveMatrix(in="SourceGraphic",result="extrude",order="9,9",divisor="1",kernelMatrix=
+      "1 0 0 0 0 0 0 0 0 " + 
+      "0 1 0 0 0 0 0 0 0 " + 
+      "0 0 1 0 0 0 0 0 0 " + 
+      "0 0 0 1 0 0 0 0 0 " + 
+      "0 0 0 0 1 0 0 0 0 " + 
+      "0 0 0 0 0 1 0 0 0 " + 
+      "0 0 0 0 0 0 1 0 0 " + 
+      "0 0 0 0 0 0 0 1 0 " + 
+      "0 0 0 0 0 0 0 0 1 ") 
 
       feFlood(flood-color="#900",result="flood-extrude")
       feComposite(operator="in",in="flood-extrude",in2="extrude",result="extrude-color")
-      feOffset(dx="4",dy="4",in="extrude-color",result="extrude-offset")
+      feOffset(dx="6",dy="6",in="extrude-color",result="extrude-offset")
       feColorMatrix(in="SourceGraphic",result="stroke",type="matrix",values=
       "0 0 0 0 0 " + 
       "0 0 0 0 0 " + 
@@ -51,26 +49,25 @@ svg(xmlns="http://www.w3.org/2000/svg",viewBox="0 0 500 150",style="background:#
         feMergeNode(in="extrude-offset")
         feMergeNode(in="fill2")
         feMergeNode(in="comp3")
-      feConvolveMatrix(in="SourceAlpha",result="shadow",order="11,11",divisor="1",kernelMatrix=
-      "1 0 0 0 0 0 0 0 0 0 0 " + 
-      "0 1 0 0 0 0 0 0 0 0 0 " + 
-      "0 0 1 0 0 0 0 0 0 0 0 " + 
-      "0 0 0 1 0 0 0 0 0 0 0 " + 
-      "0 0 0 0 1 0 0 0 0 0 0 " + 
-      "0 0 0 0 0 1 0 0 0 0 0 " + 
-      "0 0 0 0 0 0 1 0 0 0 0 " + 
-      "0 0 0 0 0 0 0 1 0 0 0 " + 
-      "0 0 0 0 0 0 0 0 1 0 0 " + 
-      "0 0 0 0 0 0 0 0 0 1 0 " + 
-      "0 0 0 0 0 0 0 0 0 0 1 ")
-      feOffset(dx="10",dy="10",in="shadow",result="shadow-offset")
+      feConvolveMatrix(in="SourceAlpha",result="shadow",order="9,9",divisor="1",kernelMatrix=
+      "1 0 0 0 0 0 0 0 0 " + 
+      "0 1 0 0 0 0 0 0 0 " + 
+      "0 0 1 0 0 0 0 0 0 " + 
+      "0 0 0 1 0 0 0 0 0 " + 
+      "0 0 0 0 1 0 0 0 0 " + 
+      "0 0 0 0 0 1 0 0 0 " + 
+      "0 0 0 0 0 0 1 0 0 " + 
+      "0 0 0 0 0 0 0 1 0 " + 
+      "0 0 0 0 0 0 0 0 1 ")
+      feOffset(dx="12",dy="12",in="shadow",result="shadow-offset")
       feFlood(flood-color="#444",result="flood-shadow")
       feComposite(operator="in",in="flood-shadow",in2="shadow-offset",result="shadow-color")
       feMerge
         feMergeNode(in="shadow-color")
         feMergeNode(in="obj")
 
-  text(x="250",y="75",fill="#f00",stroke="#0f0",stroke-width="1.8",stroke-linejoin="round",
-  filter="url(#vintage)") Hello World!
-  text(x="250",y="75",fill="none",stroke="#fff",stroke-width="2.1",stroke-linejoin="round",
-  ) Hello World!
+  g(transform="translate(-9,-9)")
+    text(x="250",y="75",fill="#f00",stroke="#0f0",stroke-width="1.8",stroke-linejoin="round",
+    filter="url(#vintage)") Hello World!
+    text(x="250",y="75",fill="none",stroke="#fff",stroke-width="2.1",stroke-linejoin="round",
+    ) Hello World!

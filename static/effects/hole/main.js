@@ -7,26 +7,24 @@ ret = {
   slug: '',
   init: function(){},
   edit: {
-    color1: {
-      name: 'color1',
+    fill: {
+      name: 'fill',
       type: 'color',
-      'default': '#f00'
+      'default': '#ccc'
     },
-    color2: {
-      name: 'color2',
+    shadow: {
+      name: 'shadow',
       type: 'color',
-      'default': '#f00'
+      'default': '#000'
     }
   },
   watch: function(n, o, node){
-    var text;
-    node.querySelector('text').setAttribute('fill', n.color1);
-    node.querySelector('feFlood').setAttribute('flood-color', n.color2);
-    text = node.querySelector('text');
-    text.style.display = 'inline-block';
-    return setTimeout(function(){
-      return text.style.display = 'block';
-    }, 0);
+    if (n.fill !== o.fill) {
+      node.querySelector('text').setAttribute('fill', n.fill);
+    }
+    if (n.shadow != null) {
+      return node.querySelector('feFlood').setAttribute('flood-color', n.shadow);
+    }
   },
   dom: function(config){}
 };

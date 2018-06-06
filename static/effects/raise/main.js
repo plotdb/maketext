@@ -10,12 +10,12 @@ ret = {
     color1: {
       name: 'color1',
       type: 'color',
-      'default': '#444'
+      'default': '#ccc'
     },
     color2: {
       name: 'color2',
       type: 'color',
-      'default': '#444'
+      'default': '#777'
     }
   },
   watch: function(n, o, node){

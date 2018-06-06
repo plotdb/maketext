@@ -11,20 +11,22 @@ for i from 0 til palettes.length by 4 =>
     "</div>"
   html.push "<div class='line'>#code</div>"
 
-window.set-palette = set-palette = (colors) ->
-  document.querySelector(\#palette-btn).innerHTML = colors
+window.set-palette = set-palette = (colors, name = 'Palette') ->
+  document.querySelector('#palette-btn label').textContent = name
+  document.querySelector('#palette-btn .palette').innerHTML = colors
     .map -> """<div class="color" style="background:#{it}"></div>"""
     .join('')
+
   Array.from(document.querySelectorAll("\#editor *[data-toggle='colorpicker']")).map ((d,i)->
     ldcp = d.getColorPicker!
     ldcp.setPalette {colors: colors.map -> {hex: it}}
     ldcp.setIdx(i % colors.length)
   )
 
-palette-btn = document.querySelector('#palette-btn')
+palette-btn = document.querySelector('#palette-btn .palette')
 #palette-btn.innerHTML = ''
 palette = palettes[Math.floor(Math.random! * palettes.length)]
-set-palette palette.1
+set-palette palette.1, palette.0
 /*
 palette-btn.innerHTML = (
   for i from 0 til palette.1.length =>
@@ -42,8 +44,9 @@ document.querySelector('#palette-picker').addEventListener \click, (e) ->
   target = e.target
   if !target or !target.classList or !target.classList.contains \palette => return
   colors = Array.from(target.querySelectorAll('.color')).map(-> it.style.background)
+  name = target.querySelector('.name').textContent
   $(\#palette-picker).modal \hide
-  set-palette colors
+  set-palette colors, name
 
 Array.from(document.querySelectorAll '.color input[data-toggle="colorpicker"]').map (d,i) ->
   ldcp = d.getColorPicker!

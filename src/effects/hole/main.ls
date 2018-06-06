@@ -5,15 +5,11 @@ ret = do
   slug: ''
   init: ->
   edit: do
-    color1: name: \color1, type: \color, default: \#f00
-    color2: name: \color2, type: \color, default: \#f00
+    fill: name: \fill, type: \color, default: \#ccc
+    shadow: name: \shadow, type: \color, default: \#000
   watch: (n,o, node) ->
-    node.querySelector(\text).setAttribute(\fill, n.color1)
-    node.querySelector(\feFlood).setAttribute(\flood-color, n.color2)
-    text = node.querySelector(\text)
-    text.style.display = \inline-block
-    setTimeout (-> text.style.display = \block), 0
-
+    if n.fill != o.fill => node.querySelector(\text).setAttribute(\fill, n.fill)
+    if n.shadow? => node.querySelector(\feFlood).setAttribute(\flood-color, n.shadow)
   dom: (config) ->
 
 if module? => module.exports = ret

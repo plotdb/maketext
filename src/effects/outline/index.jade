@@ -1,3 +1,10 @@
 svg(xmlns="http://www.w3.org/2000/svg",viewBox="0 0 500 150")
-  include filter.svg
-  text(x="250",y="75",filter="url(#outline)",fill="#444") Hello World!
+  defs
+    linearGradient#outline-gradient(x1="0",x2="0",y1="0",y2="1")
+      stop(offset="0",stop-color="#888")
+      stop(offset="1",stop-color="#000")
+    filter#outline(x="-100%",y="-100%",width="300%",height="300%")
+      feMorphology(in="SourceGraphic",operator="dilate",radius="2",result="outline")
+      feComposite(operator="out",in="outline",in2="SourceAlpha")
+
+  text(x="250",y="75",filter="url(#outline)",fill="url(#outline-gradient)") Hello World!

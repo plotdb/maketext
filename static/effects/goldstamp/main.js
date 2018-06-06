@@ -7,25 +7,34 @@ ret = {
   slug: '',
   init: function(){},
   edit: {
-    color1: {
-      name: 'color',
+    fill: {
+      name: 'fill',
       type: 'color',
-      'default': '#f00'
+      'default': '#999569'
     },
-    color2: {
+    outline: {
       name: 'outline',
       type: 'color',
-      'default': '#f00'
+      'default': '#797549'
+    },
+    width: {
+      name: "outline width",
+      type: 'number',
+      'default': 2,
+      min: 1,
+      max: 5
     }
   },
   watch: function(n, o, node){
-    var x$;
-    node.querySelector('text').setAttribute('fill', n.color);
-    node.querySelector('feFlood').setAttribute('flood-color', n.outline);
-    x$ = node.querySelector('text');
-    x$.setAttribute('stroke', n.outline);
-    x$.setAttribute('stroke-width', 0);
-    return x$;
+    if (n.fill !== o.fill) {
+      node.querySelector('text').setAttribute('fill', n.fill);
+    }
+    if (n.outline != null) {
+      node.querySelector('feFlood').setAttribute('flood-color', n.outline);
+    }
+    if (n.width != null) {
+      return node.querySelector('feMorphology').setAttribute('radius', n.width);
+    }
   },
   dom: function(config){}
 };

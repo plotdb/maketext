@@ -49,14 +49,20 @@ for i from 0 til list.length by 2 =>
   for j from 0 to 1 =>
     d = list[i + j]
     if !d => break
+    d.1.html = d.1.html.replace "<svg", "<svg width='100%' height='100%'"
+    d.1.html = d.1.html.replace "0 0 500 150", "-10 -10 520 170"
     code += """<div class="item" data-type="#{d.0}"><div class="inner">#{d.1.html}</div></div>"""
   html.push """<div class="line" style="visibility:hidden">#code</div>"""
 
+
 init-slider = (node, key, value) ->
-  $(node.querySelector('.irs-input')).ionRangeSlider do
-    min: value.min or 0
-    max: value.max or 100
-    onChange: (data) -> editor.update key, data.from
+  $(node.querySelector('.irs-input'))
+    ..val value.default or 0
+    ..ionRangeSlider do
+      min: value.min or 0
+      max: value.max or 100
+      step: value.step or 1
+      onChange: (data) -> editor.update key, data.from
 
 init-colorpicker = (node, key, value) ->
   ldcp = new ldColorPicker(node.querySelector('input'), {})
@@ -113,8 +119,16 @@ document.addEventListener \scroll, (e) ->
     box = d.getBoundingClientRect!
     if box.y + box.height < 0 or box.y > height => d.style.visibility = \hidden
     else d.style.visibility = \visible
-    if box.y + box.height < 0 or box.y + box.height > height => d.style.opacity = 0
-    else d.style.opacity = 1
+    if box.y + box.height < 0 or box.y + box.height > height =>
+      d.style.opacity = 0
+      d.style.transform = "scale(0.9)"
+    else
+      d.style.opacity = 1
+      d.style.transform = "scale(1)"
+      #delta = Math.abs((box.y + box.height * 0.5) / height - 0.5)
+      #delta = delta * 50
+      #Array.from(d.querySelectorAll 'svg').map ->
+      #  it.setAttribute \viewBox, [-delta - 10, -delta - 10, 520 + delta * 2, 170 + delta * 2].join(' ')
 
 ldColorPicker.init!
 

@@ -1,17 +1,1 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 150"><filter id="goldstamp">
-  <feFlood flood-color="#797549" result="flood"/>
-  <feMorphology operator="dilate" radius="3" in="SourceGraphic" result="outline"></feMorphology>
-  <feComposite operator="in" in="flood" in2="outline" result="outline2"/>
-  <feGaussianBlur stdDeviation="4" in="SourceAlpha" result="blur"></feGaussianBlur>
-  <feSpecularLighting surfaceScale="2" specularConstant="0.7"
-  specularExponent="10" lighting-color="#white" in="blur" result="specular">
-    <fePointLight x="200" y="-1000" z="300"></fePointLight>
-  </feSpecularLighting>
-  <feComposite operator="in" in="specular" in2="SourceGraphic" result="specular2"></feComposite>
-  <feComposite in="SourceGraphic" in2="specular2" 
-    operator="arithmetic" k1="3" k2="2" k3="1" k4="0" result="specular3"></feComposite>
-  <feMerge>
-    <feMergeNode in="outline2"></feMergeNode>
-    <feMergeNode in="specular3"></feMergeNode></feMerge>
-</filter>
-<text x="250" y="75" filter="url(#goldstamp)" fill="#999569">Hello World!</text></svg>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 150"><filter id="goldstamp"><feFlood flood-color="#797549" result="flood"></feFlood><feMorphology operator="dilate" radius="2" in="SourceGraphic" result="outline"></feMorphology><feComposite operator="in" in="flood" in2="outline" result="outline2"></feComposite><feGaussianBlur stdDeviation="4" in="SourceAlpha" result="blur"></feGaussianBlur><feSpecularLighting surfaceScale="2" specularConstant="0.7" specularExponent="10" lighting-color="#white" in="blur" result="specular"><fePointLight x="200" y="-1000" z="300"></fePointLight></feSpecularLighting><feComposite operator="in" in="specular" in2="SourceGraphic" result="specular2"></feComposite><feComposite in="SourceGraphic" in2="specular2" operator="arithmetic" k1="3" k2="2" k3="1" k4="0" result="specular3"></feComposite><feMerge><feMergeNode in="outline2"></feMergeNode><feMergeNode in="specular3"></feMergeNode></feMerge></filter><text x="250" y="75" filter="url(#goldstamp)" fill="#999569">Hello World!</text></svg>

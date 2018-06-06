@@ -15,8 +15,10 @@ $(document).ready(function(){
     }
     html.push("<div class='line'>" + code + "</div>");
   }
-  window.setPalette = setPalette = function(colors){
-    document.querySelector('#palette-btn').innerHTML = colors.map(function(it){
+  window.setPalette = setPalette = function(colors, name){
+    name == null && (name = 'Palette');
+    document.querySelector('#palette-btn label').textContent = name;
+    document.querySelector('#palette-btn .palette').innerHTML = colors.map(function(it){
       return "<div class=\"color\" style=\"background:" + it + "\"></div>";
     }).join('');
     return Array.from(document.querySelectorAll("#editor *[data-toggle='colorpicker']")).map(function(d, i){
@@ -32,9 +34,9 @@ $(document).ready(function(){
       return ldcp.setIdx(i % colors.length);
     });
   };
-  paletteBtn = document.querySelector('#palette-btn');
+  paletteBtn = document.querySelector('#palette-btn .palette');
   palette = palettes[Math.floor(Math.random() * palettes.length)];
-  setPalette(palette[1]);
+  setPalette(palette[1], palette[0]);
   /*
   palette-btn.innerHTML = (
     for i from 0 til palette.1.length =>
@@ -48,7 +50,7 @@ $(document).ready(function(){
     rows_in_block: 50
   });
   document.querySelector('#palette-picker').addEventListener('click', function(e){
-    var target, colors;
+    var target, colors, name;
     target = e.target;
     if (!target || !target.classList || !target.classList.contains('palette')) {
       return;
@@ -56,8 +58,9 @@ $(document).ready(function(){
     colors = Array.from(target.querySelectorAll('.color')).map(function(it){
       return it.style.background;
     });
+    name = target.querySelector('.name').textContent;
     $('#palette-picker').modal('hide');
-    return setPalette(colors);
+    return setPalette(colors, name);
   });
   return Array.from(document.querySelectorAll('.color input[data-toggle="colorpicker"]')).map(function(d, i){
     var ldcp, name;
