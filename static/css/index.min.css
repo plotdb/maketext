@@ -2828,6 +2828,9 @@ body.editing #cooltext {
   width: 100%;
   height: 100%;
 }
+.gallery .item svg {
+  will-change: transform, opacity;
+}
 .gallery .line {
   height: 130px;
 }

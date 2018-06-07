@@ -1,0 +1,34 @@
+svg(xmlns="http://www.w3.org/2000/svg",viewBox="0 0 500 150")
+  defs
+    linearGradient#stain-gradient(x1="0",x2="0",y1="0",y2="1")
+      stop(offset="0",stop-color="#f00")
+      stop(offset="1",stop-color="#00f")
+    filter#stain(x="-100%",y="-100%",width="300%",height="300%")
+      feFlood(flood-color="#000",result="flood-dilate")
+      feFlood(flood-color="#000",result="flood-shadow")
+      feImage(href="/assets/img/texture/stain.jpg",x="0",y="0",width="798px",height="798px",result="image")
+      feColorMatrix(type="matrix",in="image",result="color",
+      values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  1 0 0 0 0")
+      feComposite(operator="in",in="color",in2="SourceAlpha",result="comp")
+      feMorphology(operator="dilate",radius="3",result="dilate",in="SourceAlpha")
+      feComposite(operator="in",in="flood-shadow",in2="dilate",result="shadow-dilate")
+      feGaussianBlur(in="shadow-dilate",stdDeviation="3",result="blur")
+      feOffset(dx="0",dy="3",in="blur",result="offset")
+      feComponentTransfer(in="offset",result="shadow")
+        feFuncA(type="linear",slope="0.5",intercept="-0.1")
+      feConvolveMatrix(in="SourceAlpha",result="conv",order="7,7",divisor="1",kernelMatrix=
+      "0 0 1 1 1 0 0 " +
+      "0 1 0 0 0 1 0 " +
+      "1 0 0 0 0 0 1 " +
+      "1 0 0 0 0 0 1 " +
+      "1 0 0 0 0 0 1 " +
+      "0 1 0 0 0 1 0 " +
+      "0 0 1 1 1 0 0 ")
+      feComposite(operator="in",in="flood-dilate",in2="conv",result="stroke")
+      feMerge
+        feMergeNode(in="shadow")
+        feMergeNode(in="stroke")
+        feMergeNode(in="SourceGraphic")
+        feMergeNode(in="comp")
+
+  text(x="250",y="75",filter="url(#stain)",fill="url(#stain-gradient)") Hello World!
