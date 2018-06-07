@@ -2,31 +2,32 @@ doctype html
 html
   head
   body
-    svg(xmlns="http://www.w3.org/2000/svg",width="500",height="150",viewBox="0 0 500 150")
+    svg(xmlns="http://www.w3.org/2000/svg",width="500",height="150",viewBox="0 0 500 150",style="background:#ddd")
       defs
-        filter#crack(x="-100%",y="-100%",width="300%",height="300%")
-          feImage(width="1024",height="768",href="/assets/img/texture/soil.jpg",result="image")
-          feComposite(operator="in",in="image",in2="SourceAlpha",result="comp")
-          feColorMatrix(type="matrix",in="comp",result="color1",
-          values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  1 0 0 0 0")
-          feColorMatrix(type="matrix",in="comp",result="color2",
-          values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  -1 -1 -1 1 0")
-          feMerge(result="merge")
-            feMergeNode(in="SourceGraphic")
-            feMergeNode(in="color2")
-
-          feGaussianBlur(stdDeviation="4",in="SourceAlpha",result="blur")
-          feSpecularLighting(surfaceScale="40",specularConstant="3",specularExponent="3",
+        filter#candy(x="-100%",y="-100%",width="300%",height="300%")
+          feGaussianBlur(in="SourceAlpha",stdDeviation="3",result="blur")
+          feSpecularLighting(surfaceScale="4",specularConstant="2",specularExponent="5",
           lighting-color="#fff",in="blur",result="specular")
-            fePointLight(x="-250",y="-50",z="300")
-          feComposite(operator="in",in="specular",in2="SourceAlpha",result="comp2")
-          feComposite(in="merge",in2="comp2",operator="arithmetic",k1="0",k2="1",k3="1",k4="0",result="out")
-          feComposite(operator="in",in="out",in2="color1",result="light")
-          feMerge
-            feMergeNode(in="merge")
-            feMergeNode(in="light")
+            fePointLight(x="0",y="-25000",z="1")
+          feGaussianBlur(in="specular",stdDeviation="3",result="specular2")
+          feComponentTransfer(in="specular2",result="specular3")
+            feFuncA(type="linear",slope="2.5",intercept="-1")
+          feComponentTransfer(in="specular3",result="specular4")
+            feFuncA(type="linear",slope="2",intercept="-1")
+          feImage(x="0",y="0",width="10",height="10",href='data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 10 10"><rect x="-1" y="-1" width="12" height="12" fill="#fff"/><path d="M0 0L10 10M-10 0 L0 10M0 -10L10 0" stroke-linecap="round" stroke="#f00" stroke-width="3"/></svg>',result="image")
+          feTile(in="image",result="tile")
+          feComposite(operator="in",in="tile",in2="SourceAlpha",result="tiling")
+          feGaussianBlur(in="SourceAlpha",stdDeviation="3")
+          feComponentTransfer
+            feFuncA(type="linear",slope="0.7",intercept="-0.1")
+          feOffset(dy="2",result="shadow")
 
-      text(x="250",y="75",filter="url(#crack)") Hello World
+          feMerge
+            feMergeNode(in="shadow")
+            feMergeNode(in="tiling")
+            feMergeNode(in="specular4")
+
+      text(x="250",y="75",filter="url(#candy)",fill="#f00") Hello World
 
   style(type="text/css").
     text { text-anchor: middle; dominant-baseline: middle; font-family: Arial Black; font-size: 50px }

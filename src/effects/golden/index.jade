@@ -1,0 +1,23 @@
+svg(xmlns="http://www.w3.org/2000/svg",viewBox="0 0 500 150")
+  defs
+    filter#golden(x="-100%",y="-100%",width="300%",height="300%")
+      feFlood(flood-color="#806527",result="flood")
+      feFlood(flood-color="#fff694",result="flood-light")
+      feComposite(operator="in",in="flood",in2="SourceAlpha",result="flood-comp")
+      feGaussianBlur(in="flood-comp",stdDeviation="3",result="blur")
+      feOffset(in="blur",dy="3",result="offset-blur")
+      feComponentTransfer(in="offset-blur",result="comp-blur")
+        feFuncA(type="linear",slope="0.7",intercept="-0.1")
+      feSpecularLighting(surfaceScale="200",specularConstant="20",specularExponent="1",
+      lighting-color="#fff",in="blur",result="specular")
+        fePointLight(x="-250",y="-250",z="3500")
+      feComponentTransfer(in="specular",result="inspecular")
+        feFuncA(type="linear",slope="-1",intercept="1")
+      feComposite(operator="in",in="flood-light",in2="inspecular",result="inspecular2")
+      feComposite(operator="in",in="inspecular2",in2="SourceAlpha",result="light")
+      feMerge
+        feMergeNode(in="comp-blur")
+        feMergeNode(in="SourceGraphic")
+        feMergeNode(in="light")
+
+  text(x="250",y="75",filter="url(#golden)",fill="#f7c61d") Hello World!
