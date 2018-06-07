@@ -1,0 +1,25 @@
+svg(xmlns="http://www.w3.org/2000/svg",viewBox="0 0 500 150")
+  defs
+    linearGradient#rainbow-gradient(x1="57",x2="442",y1="71",y2="71",gradientUnits="userSpaceOnUse")
+      stop(offset="0.00",stop-color="#f00")
+      stop(offset="0.17",stop-color="#f90")
+      stop(offset="0.34",stop-color="#ff4")
+      stop(offset="0.51",stop-color="#9f0")
+      stop(offset="0.68",stop-color="#09f")
+      stop(offset="0.85",stop-color="#00f")
+      stop(offset="1.00",stop-color="#90f")
+    filter#rainbow(x="-100%",y="-100%",width="300%",height="300%")
+      feMorphology(operator="dilate",radius="2",in="SourceGraphic",result="dilate")
+      feColorMatrix(in="dilate",result="color",type="matrix",values=
+      "0.7 0 0 0 0  0 0.7 0 0 0  0 0 0.7 0 0  0 0 0 1 0")
+      feOffset(dy="2",result="offset")
+      feGaussianBlur(stdDeviation="3")
+      feOffset(dy="3")
+      feColorMatrix(result="blur",type="matrix",values=
+      "0.7 0 0 0 0  0 0.7 0 0 0  0 0 0.7 0 0  0 0 0 1 0")
+      feMerge
+        feMergeNode(in="blur")
+        feMergeNode(in="offset")
+        feMergeNode(in="SourceGraphic")
+
+  text(x="250",y="75",filter="url(#rainbow)",fill="url(#rainbow-gradient)") Hello World!
