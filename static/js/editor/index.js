@@ -110,7 +110,7 @@ $(document).ready(function(){
         break;
       }
       d[1].html = d[1].html.replace("<svg", "<svg width='100%' height='100%'");
-      d[1].html = d[1].html.replace("0 0 500 150", "-10 -10 520 170");
+      d[1].html = d[1].html.replace("0 0 500 150", "0 0 500 150");
       code += "<div class=\"item\" data-type=\"" + d[0] + "\"><div class=\"inner\">" + d[1].html + "</div></div>";
     }
     html.push("<div class=\"line\" style=\"visibility:hidden\">" + code + "</div>");

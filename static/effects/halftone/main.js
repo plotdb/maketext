@@ -22,10 +22,18 @@ ret = {
       type: 'color',
       'default': '#ff0'
     },
+    size: {
+      name: "Dot Size",
+      type: 'number',
+      'default': 1.8,
+      min: 0,
+      max: 6,
+      step: 0.1
+    },
     spacing: {
       name: "Dot Spacing",
       type: 'number',
-      'default': 0.3,
+      'default': 2,
       min: 0,
       max: 2,
       step: 0.1
@@ -46,17 +54,17 @@ ret = {
         return d.setAttribute('stop-color', n["color" + (3 - i)]);
       }
     });
-    r = 3;
+    r = n.size || 3;
     p = n.spacing != null ? n.spacing : 1;
     d = r * 2 + p;
     c = r + p * 0.5;
     x$ = node.querySelector('feImage');
-    x$.setAttribute('href', "data:image/svg+xml,<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"" + d + "px\" height=\"" + d + "px\"><circle cx=\"" + c + "\" cy=\"" + c + "\" r=\"" + r + "\" fill=\"red\"/></svg>");
-    x$.setAttribute('width', "5px");
-    x$.setAttribute('height', "5px");
+    x$.setAttribute('href', "data:image/svg+xml,<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"1000px\" height=\"1000px\">\n  <defs>\n    <pattern id=\"pattern\" patternUnits=\"userSpaceOnUse\" width=\"" + d + "\" height=\"" + d + "\">\n      <circle cx=\"" + c + "\" cy=\"" + c + "\" r=\"" + r + "\" fill=\"red\"/>\n    </pattern>\n  </defs>\n  <rect x=\"0\" y=\"0\" width=\"100%\" height=\"100%\" fill=\"url(#pattern)\"/>\n</svg>");
+    x$.setAttribute('width', "1000px");
+    x$.setAttribute('height', "1000px");
     angle = n.direction || 0;
-    dx = Math.cos(angle * Math.PI / 180);
-    dy = Math.sin(angle * Math.PI / 180);
+    dx = Math.cos(angle * Math.PI / 180) * 0.3;
+    dy = Math.sin(angle * Math.PI / 180) * 0.3;
     ref$ = [0.5 - dx, 0.5 - dy], x1 = ref$[0], y1 = ref$[1];
     ref$ = [0.5 + dx, 0.5 + dy], x2 = ref$[0], y2 = ref$[1];
     y$ = node.querySelector('linearGradient');

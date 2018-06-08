@@ -1,15 +1,16 @@
 svg(viewBox="0 0 500 150")
   defs
-    linearGradient#g(x1="0",y1="0",x2="0",y2="1",gradientUnits="objectBoundingBox")
-      stop(offset="0",stop-color="#0ff",stop-opacity="0.5")
-      stop(offset="0.5",stop-color="#f0f",stop-opacity="0.7")
+    linearGradient#g(x1="0.45",y1="0.20",x2="0.54",y2="0.79",gradientUnits="objectBoundingBox")
+      stop(offset="0",stop-color="#0ff",stop-opacity="0.8")
+      stop(offset="0.5",stop-color="#f0f",stop-opacity="0.9")
       stop(offset="1",stop-color="#ff0",stop-opacity="1")
     pattern#pat(x="0",y="0",width="10",height="10",patternUnits="userSpaceOnUse")
       circle(cx="5",cy="5",r="3",fill="url(#g)")
 
     filter#f
       feFlood(result="color",flood-color="red",in="GraphicAlpha")
-      feImage(href="data:image/svg+xml,<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"6.3px\" height=\"6.3px\"><circle cx=\"3.15\" cy=\"3.15\" r=\"3\" fill=\"red\"/></svg>",x="0",y="0",width="5",height="5",result="image")
+      feImage(href=' data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="1000px" height="1000px"> <defs> <pattern id="pattern" patternUnits="userSpaceOnUse" width="5.2" height="5.2"> <circle cx="2.6" cy="2.6" r="2" fill="red"/> </pattern> </defs> <rect x="0" y="0" width="100%" height="100%" fill="url(#pattern)"/> </svg>',
+      x="0",y="0",width="1000",height="1000",result="image")
       feTile(in="image",result="tile")
       feComposite(operator="in",in="SourceGraphic",in2="tile",result="dot")
       feComposite(operator="in",in="dot",in2="SourceGraphic",ret="dotted")
