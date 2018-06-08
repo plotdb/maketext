@@ -1,0 +1,19 @@
+svg(xmlns="http://www.w3.org/2000/svg",viewBox="0 0 500 150",style="background:#e00")
+  defs
+    filter#lego(x="-100%",y="-100%",width="300%",height="300%")
+      feFlood(flood-color="#000",result="f1")
+      feFlood(flood-color="#ff0",result="f2")
+      feMorphology(operator="dilate",radius="3",in="SourceAlpha")
+      feConvolveMatrix(order="5,5",divisor="1",result="cm1",
+      kernelMatrix="0 1 1 1 0  1 0 0 0 1  1 0 0 0 1  1 0 0 0 1  0 1 1 1 0")
+      feComposite(operator="in",in="f1",in2="cm1",result="c1")
+      feMorphology(operator="dilate",radius="3")
+      feConvolveMatrix(order="5,5",divisor="1",result="cm2",
+      kernelMatrix="0 1 1 1 0  1 0 0 0 1  1 0 0 0 1  1 0 0 0 1  0 1 1 1 0")
+      feComposite(operator="in",in="f2",in2="cm2",result="c2")
+      feMerge
+        feMergeNode(in="c2")
+        feMergeNode(in="c1")
+        feMergeNode(in="SourceGraphic")
+
+  text(x="250",y="75",filter="url(#lego)",fill="#fff") Hello World!
