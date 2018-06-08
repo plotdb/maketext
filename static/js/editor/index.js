@@ -11,6 +11,17 @@ $(document).ready(function(){
   }
   window.editor = editor = {
     effects: effects,
+    toggle: function(v){
+      var svg;
+      if (v == null) {
+        v = !document.body.classList.contains('editing');
+      }
+      document.body.classList[!v ? 'remove' : 'add']('editing');
+      if (!v) {
+        svg = document.querySelector('#cooltext svg');
+        return svg.parentNode.removeChild(svg);
+      }
+    },
     config: {
       cur: {},
       old: {}

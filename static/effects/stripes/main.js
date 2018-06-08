@@ -7,16 +7,45 @@ ret = {
   slug: '',
   init: function(){},
   edit: {
-    color: {
-      name: "color",
+    color1: {
+      name: "color1",
       type: 'color',
-      'default': '#f00'
+      'default': '#f92'
+    },
+    color2: {
+      name: "color2",
+      type: 'color',
+      'default': '#e00'
+    },
+    direction: {
+      name: 'direction',
+      type: 'number',
+      'default': 24,
+      min: 0,
+      max: 360,
+      step: 1
     }
   },
   watch: function(n, o, node){
-    if (n.color) {
-      return node.querySelector('feFlood').setAttribute('flood-color', n.color);
+    var stop, angle, dx, dy, ref$, x1, y1, x2, y2, x$;
+    stop = node.querySelectorAll('stop');
+    if (n.color1 != null) {
+      stop[0].setAttribute('stop-color', n.color1);
     }
+    if (n.color2 != null) {
+      stop[1].setAttribute('stop-color', n.color2);
+    }
+    angle = n.direction || 0;
+    dx = Math.cos(angle * Math.PI / 180) * 0.5;
+    dy = Math.sin(angle * Math.PI / 180) * 0.5;
+    ref$ = [0.5 - dx, 0.5 - dy], x1 = ref$[0], y1 = ref$[1];
+    ref$ = [0.5 + dx, 0.5 + dy], x2 = ref$[0], y2 = ref$[1];
+    x$ = node.querySelector('linearGradient');
+    x$.setAttribute('x1', x1);
+    x$.setAttribute('y1', y1);
+    x$.setAttribute('x2', x2);
+    x$.setAttribute('y2', y2);
+    return x$;
   },
   dom: function(config){}
 };

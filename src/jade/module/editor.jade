@@ -45,5 +45,4 @@ include /module/download.jade
             .btn.btn-outline-dark(onclick="convert.png()") PNG
       .inline-block
         //-.btn.btn-outline-dark.mr-2 Save Config
-        .btn.btn-outline-dark.mr-2(
-        onclick="document.body.classList.remove('editing')") #[big(style="line-height:1em") &times;] Close
+        .btn.btn-outline-dark.mr-2(onclick="editor.toggle(false)") #[big(style="line-height:1em") &times;] Close

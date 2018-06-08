@@ -1,0 +1,47 @@
+svg(xmlns="http://www.w3.org/2000/svg",viewBox="0 0 500 150",style="background:#b55500")
+  defs
+    filter#cake(x="-100%",y="-100%",width="300%",height="300%")
+      feFlood(flood-color="#2d1500",result="flood-shadow")
+      feFlood(flood-color="#894619")
+      feComposite(operator="in",in2="SourceAlpha")
+      feConvolveMatrix(order="7,10",divisor="1",result="conv",kernelMatrix=
+      "0 0 0 1 0 0 0 " +
+      "0 0 1 0 1 0 0 " +
+      "0 0 1 0 1 0 0 " +
+      "0 1 0 0 0 1 0 " +
+      "0 1 0 0 0 1 0 " +
+      "0 1 0 0 0 1 0 " +
+      "1 0 0 0 0 0 1 " +
+      "1 0 0 0 0 0 1 " +
+      "0 1 1 0 1 1 0 " +
+      "0 0 0 1 0 0 0 ")
+      feGaussianBlur(stdDeviation="0.5")
+      feOffset(dy="4",result="offset")
+      feComposite(operator="in",in="flood-shadow",in2="offset")
+      feGaussianBlur(stdDeviation="4")
+      feComponentTransfer
+        feFuncA(type="linear",slope="0.7",intercept="-0.2")
+      feOffset(dy="4",result="shadow")
+      feGaussianBlur(in="SourceGraphic",stdDeviation="0.5")
+      feOffset(dy="0",result="x0")
+      feGaussianBlur(in="SourceGraphic",stdDeviation="1")
+      feComponentTransfer
+        feFuncA(type="linear",slope="0.8",intercept="-.01")
+      feOffset(dy="1",result="x1")
+      feGaussianBlur(in="SourceGraphic",stdDeviation="2")
+      feComponentTransfer
+        feFuncA(type="linear",slope="0.7",intercept="-.01")
+      feOffset(dy="2",result="x2")
+      feGaussianBlur(in="SourceGraphic",stdDeviation="3")
+      feComponentTransfer
+        feFuncA(type="linear",slope="0.6",intercept="-.01")
+      feOffset(dy="3",result="x3")
+      feMerge
+        feMergeNode(in="shadow")
+        feMergeNode(in="offset")
+        feMergeNode(in="x3")
+        feMergeNode(in="x2")
+        feMergeNode(in="x1")
+        feMergeNode(in="x0")
+
+  text(x="250",y="75",filter="url(#cake)",fill="#ffd800") Hello World!

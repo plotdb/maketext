@@ -7,6 +7,12 @@ for k,v of effects =>
 
 window.editor = editor = do
   effects: effects
+  toggle: (v) ->
+    if !v? => v = !document.body.classList.contains(\editing)
+    document.body.classList[if !v => \remove else \add] \editing
+    if !v =>
+      svg = document.querySelector '#cooltext svg'
+      svg.parentNode.removeChild svg
   config: cur: {}, old: {}
 
 update-text = (node) ->
