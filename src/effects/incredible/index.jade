@@ -1,4 +1,4 @@
-svg(xmlns="http://www.w3.org/2000/svg",viewBox="0 0 500 150",style="background:#de0000")
+svg(xmlns="http://www.w3.org/2000/svg",xmlns:xlink="http://www.w3.org/1999/xlink",viewBox="0 0 500 150",style="background:#de0000")
   defs
     linearGradient#incredible-gradient(x1="0",x2="1",y1="0",y2="0")
       stop(offset="0",stop-color="#ff4")
@@ -8,8 +8,8 @@ svg(xmlns="http://www.w3.org/2000/svg",viewBox="0 0 500 150",style="background:#
       feFlood(flood-color="#921",result="flood-stroke")
       feFlood(flood-color="#fff",result="flood-outline")
       feFlood(flood-color="#000",result="flood-shadow")
-      feImage(x="0",y="0",width="500",height="150",href='data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" x="0" y="0" width="500" height="150"><radialGradient id="incredible-gradient"><stop offset="0" stop-color="#d0d0d0"/><stop offset="1" stop-color="#e4e4e4"/></radialGradient><rect x="0" y="0" width="500" height="150" fill="url(#incredible-gradient)"/></svg>',result="image")
-      feImage(x="0",y="0",width="10",height="10",href='data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" x="0" y="0" width="10" height="10"><circle cx="5" cy="5" r="3"/></svg>',result="dot")
+      feImage(x="0",y="0",width="500",height="150",xlink:href='data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" x="0" y="0" width="500" height="150"><radialGradient id="incredible-gradient"><stop offset="0" stop-color="#d0d0d0"/><stop offset="1" stop-color="#e4e4e4"/></radialGradient><rect x="0" y="0" width="500" height="150" fill="url(#incredible-gradient)"/></svg>',result="image")
+      feImage(x="0",y="0",width="10",height="10",xlink:href='data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" x="0" y="0" width="10" height="10"><circle cx="5" cy="5" r="3"/></svg>',result="dot")
       feTile(in="dot",result="tile")
       feGaussianBlur(stdDeviation="1.5",result="blur-tile")
       feBlend(in2="image",in="blur-tile",mode="soft-light")

@@ -1,4 +1,4 @@
-svg(xmlns="http://www.w3.org/2000/svg",viewBox="0 0 500 150",style="background:#ddd;")
+svg(xmlns="http://www.w3.org/2000/svg",xmlns:xlink="http://www.w3.org/1999/xlink",viewBox="0 0 500 150",style="background:#ddd;")
   defs
     filter#christmas(x="-100%",y="-100%",width="300%",height="300%")
       feGaussianBlur(in="SourceAlpha",stdDeviation="3",result="blur")
@@ -10,7 +10,7 @@ svg(xmlns="http://www.w3.org/2000/svg",viewBox="0 0 500 150",style="background:#
         feFuncA(type="linear",slope="2.5",intercept="-1")
       feComponentTransfer(in="specular3",result="specular4")
         feFuncA(type="linear",slope="2",intercept="-1")
-      feImage(href='data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="1000px" height="1000px"><defs><pattern id="pattern" patternUnits="userSpaceOnUse" width="10" height="10"><rect x="0" y="0" width="10" height="10" fill="#fff"/><path d="M-10 -10L30 30M0 -10L40 30M-10 0L30 40" stroke="#f00" stroke-width="3"/></pattern></defs><rect x="0" y="0" width="100%" height="100%" fill="url(\#pattern)"/></svg>',x="0",y="0",width="1000",height="1000",result="image")
+      feImage(xlink:href='data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="1000px" height="1000px"><defs><pattern id="pattern" patternUnits="userSpaceOnUse" width="10" height="10"><rect x="0" y="0" width="10" height="10" fill="#fff"/><path d="M-10 -10L30 30M0 -10L40 30M-10 0L30 40" stroke="#f00" stroke-width="3"/></pattern></defs><rect x="0" y="0" width="100%" height="100%" fill="url(\#pattern)"/></svg>',x="0",y="0",width="1000",height="1000",result="image")
       feTile(in="image",result="tile")
 
       feComposite(operator="in",in="tile",in2="SourceAlpha",result="tiling")

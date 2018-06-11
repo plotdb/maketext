@@ -94,7 +94,7 @@ var slice$ = [].slice;
     if (/^#/.exec(node.nodeName)) {
       return [];
     }
-    href = node.getAttribute('xlink:href');
+    href = node.getAttribute('xlink:href') || node.getAttribute('href');
     if (href && !/^#/.exec(href)) {
       width = node.getAttribute('width');
       height = node.getAttribute('height');

@@ -59,7 +59,7 @@ ret = {
     d = r * 2 + p;
     c = r + p * 0.5;
     x$ = node.querySelector('feImage');
-    x$.setAttribute('href', "data:image/svg+xml,<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"1000px\" height=\"1000px\">\n  <defs>\n    <pattern id=\"pattern\" patternUnits=\"userSpaceOnUse\" width=\"" + d + "\" height=\"" + d + "\">\n      <circle cx=\"" + c + "\" cy=\"" + c + "\" r=\"" + r + "\" fill=\"red\"/>\n    </pattern>\n  </defs>\n  <rect x=\"0\" y=\"0\" width=\"100%\" height=\"100%\" fill=\"url(#pattern)\"/>\n</svg>");
+    x$.setAttributeNS('http://www.w3.org/1999/xlink', 'href', "data:image/svg+xml,<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"1000px\" height=\"1000px\">\n  <defs>\n    <pattern id=\"pattern\" patternUnits=\"userSpaceOnUse\" width=\"" + d + "\" height=\"" + d + "\">\n      <circle cx=\"" + c + "\" cy=\"" + c + "\" r=\"" + r + "\" fill=\"red\"/>\n    </pattern>\n  </defs>\n  <rect x=\"0\" y=\"0\" width=\"100%\" height=\"100%\" fill=\"url(#pattern)\"/>\n</svg>");
     x$.setAttribute('width', "1000px");
     x$.setAttribute('height', "1000px");
     angle = n.direction || 0;

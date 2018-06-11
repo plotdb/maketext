@@ -2791,7 +2791,7 @@ body.editing #cooltext {
   text-align: center;
 }
 #download.modal .card .result {
-  width: 500px;
+  width: 600px;
   height: 170px;
   background: center center no-repeat;
   background-size: contain;

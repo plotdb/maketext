@@ -138,7 +138,7 @@ $(document).ready(function(){
     });
   };
   document.querySelector('.gallery').addEventListener('click', function(e){
-    var target, type, bkcolor, effect, options, colors, k, v, ref$, node, results$ = [];
+    var target, type, svg, bkcolor, effect, options, colors, k, v, ref$, node, ref1$, results$ = [];
     target = e.target;
     if (!(target && target.classList && target.classList.contains('item'))) {
       return;
@@ -148,8 +148,22 @@ $(document).ready(function(){
       return;
     }
     document.querySelector('#cooltext').innerHTML = effects[type].html;
-    bkcolor = document.querySelector('#cooltext svg').style.background || '#fff';
-    document.body.classList.add('editing');
+    svg = document.querySelector('#cooltext svg');
+    bkcolor = svg.style.background || '#fff';
+    Array.from(svg.querySelectorAll('feImage')).map(function(d, i){
+      var href, ref$, w, h;
+      href = d.getAttributeNS('http://www.w3.org/1999/xlink', 'href') || d.getAttribute('href');
+      if (/^data:image/.exec(href)) {
+        return;
+      }
+      ref$ = [d.getAttribute('width'), d.getAttribute('height')].map(function(it){
+        return (/(\d+)/.exec(it) || [0, 1024])[1];
+      }), w = ref$[0], h = ref$[1];
+      return smiltool.urlToDataurl(href, w, h).then(function(it){
+        return d.setAttribute('href', it);
+      });
+    });
+    editor.toggle(true);
     Array.from(document.querySelectorAll('#cooltext text')).map(function(it){
       return it.textContent = document.querySelector('#text-input').value || 'Hello World';
     });
@@ -191,13 +205,17 @@ $(document).ready(function(){
       setPalette([bkcolor].concat(colors));
       for (k in ref$ = effect.js.edit) {
         v = ref$[k];
-        results$.push(editor.update(k, v['default']));
+        editor.update(k, v['default']);
       }
-      return results$;
     } else {
       options.innerHTML = "<div class='col-sm'><div class='empty'></div></div>";
-      return setPalette([bkcolor]);
+      setPalette([bkcolor]);
     }
+    for (k in ref$ = (ref1$ = editor.config).cur || (ref1$.cur = {})) {
+      v = ref$[k];
+      results$.push(editor.update(k, v));
+    }
+    return results$;
   });
   clusterize = new Clusterize({
     rows: html,

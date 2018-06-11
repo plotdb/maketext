@@ -24,10 +24,18 @@ ret = {
       min: 0,
       max: 360,
       step: 1
+    },
+    density: {
+      name: 'density',
+      type: 'number',
+      'default': 4,
+      min: 1,
+      max: 10,
+      step: 0.1
     }
   },
   watch: function(n, o, node){
-    var stop, angle, dx, dy, ref$, x1, y1, x2, y2, x$;
+    var stop, angle, dx, dy, ref$, x1, y1, x2, y2, x$, w, w2, s, d, code;
     stop = node.querySelectorAll('stop');
     if (n.color1 != null) {
       stop[0].setAttribute('stop-color', n.color1);
@@ -45,7 +53,12 @@ ret = {
     x$.setAttribute('y1', y1);
     x$.setAttribute('x2', x2);
     x$.setAttribute('y2', y2);
-    return x$;
+    if (n.density != null) {
+      ref$ = [n.density, n.density * 2, n.density * 0.25], w = ref$[0], w2 = ref$[1], s = ref$[2];
+      d = ['M', -w, -w, 'L', w2, w2, 'M', -w2, -w, 'L', w, w2, 'M', -w, -w2, 'L', w2, w].join(' ');
+      code = btoa("<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"2000px\" height=\"1000px\"><defs><pattern id=\"pattern\" patternUnits=\"userSpaceOnUse\" x=\"0\" y=\"0\" width=\"" + w + "\" height=\"" + w + "\"><path d=\"" + d + "\" stroke=\"#000\" stroke-width=\"" + s + "\"/></pattern></defs><rect x=\"0\" y=\"0\" width=\"100%\" height=\"100%\" fill=\"url(#pattern)\"/></svg>");
+      return node.querySelector('feImage').setAttributeNS('http://www.w3.org/1999/xlink', 'href', "data:image/svg+xml;base64," + code);
+    }
   },
   dom: function(config){}
 };

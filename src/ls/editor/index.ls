@@ -84,8 +84,14 @@ document.querySelector \.gallery .addEventListener \click, (e) ->
   type = target.getAttribute \data-type
   if !type => return
   document.querySelector \#cooltext .innerHTML = effects[type].html
-  bkcolor = (document.querySelector '#cooltext svg' .style.background) or '#fff'
-  document.body.classList.add \editing
+  svg = document.querySelector '#cooltext svg'
+  bkcolor = (svg.style.background) or '#fff'
+  Array.from(svg.querySelectorAll \feImage).map (d,i) ->
+    href = d.getAttributeNS(\http://www.w3.org/1999/xlink, \href) or d.getAttribute(\href)
+    if /^data:image/.exec href => return
+    [w,h] = [d.getAttribute(\width), d.getAttribute(\height)].map -> (/(\d+)/.exec(it) or [0,1024]).1
+    smiltool.url-to-dataurl href, w, h .then -> d.setAttribute \href, it
+  editor.toggle true
   Array.from(document.querySelectorAll('#cooltext text')).map ->
     it.textContent = (document.querySelector('#text-input').value or 'Hello World')
   editor.effects.type = type
@@ -113,6 +119,7 @@ document.querySelector \.gallery .addEventListener \click, (e) ->
   else
     options.innerHTML = "<div class='col-sm'><div class='empty'></div></div>"
     set-palette [bkcolor]
+  for k,v of editor.config.{}cur => editor.update k, v
 
 
 

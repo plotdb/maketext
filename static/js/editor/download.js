@@ -2,12 +2,21 @@
 window.convert = {
   prepare: function(){
     return new Promise(function(res, rej){
-      var svg, style, node, this$ = this;
+      var svg, feImages, style, node, this$ = this;
       svg = document.querySelector('#cooltext svg').cloneNode(true);
-      svg.setAttribute('width', '500px');
-      svg.setAttribute('height', '150px');
+      svg.setAttribute('width', '600px');
+      svg.setAttribute('height', '170px');
+      feImages = Array.from(svg.querySelectorAll('feImage')).map(function(d, i){
+        var href, ret;
+        href = d.getAttributeNS('http://www.w3.org/1999/xlink', 'href') || d.getAttribute('href');
+        ret = /^(data:image\/svg\+xml[^,]*?),([^]+)$/gm.exec(href);
+        if (ret && !/base64/.exec(ret[1])) {
+          href = ret[1] + ";base64," + btoa(ret[2]);
+          return d.setAttributeNS('http://www.w3.org/1999/xlink', 'href', href);
+        }
+      });
       style = document.createElement("style");
-      style.textContent = "text {\n  font-size: 60px;\n  font-family: Arial Black;\n  dominant-baseline: middle;\n  text-anchor: middle;\n}";
+      style.textContent = "text {\n  font-size: 64px;\n  font-family: Arial Black;\n  dominant-baseline: middle;\n  text-anchor: middle;\n}";
       svg.appendChild(style);
       node = document.querySelector('#svg-work-area');
       if (!node) {
@@ -17,32 +26,40 @@ window.convert = {
       }
       node.appendChild(svg);
       return textToSvg.load("/assets/fonts/ttf/" + (window.fontname || 'ArialBlack') + "-Regular.ttf", function(e, tts){
-        var text, textValue, d, path, i$, ref$, len$, name, that, pbox, box, x, y;
-        text = svg.querySelector('text');
-        textValue = text.textContent || 'Hello World';
-        d = tts.getD(textValue);
-        path = document.createElementNS("http://www.w3.org/2000/svg", "path");
-        path.setAttribute('d', d);
-        for (i$ = 0, len$ = (ref$ = ['fill', 'stroke', 'stroke-width', 'filter']).length; i$ < len$; ++i$) {
-          name = ref$[i$];
-          if (that = text.getAttribute(name)) {
-            path.setAttribute(name, that);
+        return Array.from(svg.querySelectorAll('text')).map(function(text, i){
+          var textValue, d, g1, g2, path, parent, i$, ref$, len$, name, that, pbox, box, x, y;
+          text = svg.querySelector('text');
+          textValue = text.textContent || 'Hello World';
+          d = tts.getD(textValue);
+          g1 = document.createElementNS("http://www.w3.org/2000/svg", "g");
+          g2 = document.createElementNS("http://www.w3.org/2000/svg", "g");
+          path = document.createElementNS("http://www.w3.org/2000/svg", "path");
+          parent = text.parentNode;
+          path.setAttribute('d', d);
+          for (i$ = 0, len$ = (ref$ = ['fill', 'stroke', 'stroke-width']).length; i$ < len$; ++i$) {
+            name = ref$[i$];
+            if (that = text.getAttribute(name)) {
+              path.setAttribute(name, that);
+            }
           }
-        }
-        text.parentNode.insertBefore(path, text);
-        text.parentNode.removeChild(text);
-        ref$ = [
-          path.getBBox(), {
-            width: 500,
-            height: 150
-          }
-        ], pbox = ref$[0], box = ref$[1];
-        x = (box.width - pbox.width) * 0.5 - pbox.x;
-        y = (box.height - pbox.height) * 0.5 - pbox.y;
-        path.setAttribute("transform", "translate(" + x + ", " + y + ")");
-        return res({
-          svg: svg,
-          text: textValue
+          parent.insertBefore(g1, text);
+          g1.appendChild(g2);
+          g2.appendChild(path);
+          g1.setAttribute('filter', text.getAttribute('filter'));
+          parent.removeChild(text);
+          ref$ = [
+            path.getBBox(), {
+              width: 500,
+              height: 150
+            }
+          ], pbox = ref$[0], box = ref$[1];
+          x = (box.width - pbox.width) * 0.5 - pbox.x;
+          y = (box.height - pbox.height) * 0.5 - pbox.y;
+          g2.setAttribute("transform", "translate(" + x + ", " + y + ")");
+          return res({
+            svg: svg,
+            text: textValue
+          });
         });
       });
     });
@@ -90,7 +107,7 @@ window.convert = {
       textValue = text;
       return smiltool.svgToDataurl(svg.outerHTML);
     }).then(function(it){
-      return smiltool.urlToDataurl(it, 500, 150);
+      return smiltool.urlToDataurl(it, 600, 170);
     }).then(function(it){
       return smiltool.dataurlToBlob(it);
     }).then(function(it){
