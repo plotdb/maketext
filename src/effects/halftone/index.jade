@@ -1,21 +1,19 @@
 svg(viewBox="0 0 500 150",xmlns="http://www.w3.org/2000/svg",xmlns:xlink="http://www.w3.org/1999/xlink")
   defs
-    linearGradient#g(x1="0.45",y1="0.20",x2="0.54",y2="0.79",gradientUnits="objectBoundingBox")
+    linearGradient#halftone-gradient(x1="0.45",y1="0.20",x2="0.54",y2="0.79",gradientUnits="objectBoundingBox")
       stop(offset="0",stop-color="#0ff",stop-opacity="0.8")
       stop(offset="0.5",stop-color="#f0f",stop-opacity="0.9")
       stop(offset="1",stop-color="#ff0",stop-opacity="1")
-    pattern#pat(x="0",y="0",width="10",height="10",patternUnits="userSpaceOnUse")
-      circle(cx="5",cy="5",r="3",fill="url(#g)")
 
-    filter#f
+    filter#halftone
       feFlood(result="color",flood-color="red",in="GraphicAlpha")
-      feImage(xlink:href='data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="1000px" height="1000px"> <defs> <pattern id="pattern" patternUnits="userSpaceOnUse" width="5.2" height="5.2"> <circle cx="2.6" cy="2.6" r="2" fill="red"/> </pattern> </defs> <rect x="0" y="0" width="100%" height="100%" fill="url(#pattern)"/> </svg>',
+      feImage(xlink:href='data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMDAwcHgiIGhlaWdodD0iMTAwMHB4Ij4KICA8ZGVmcz4KICAgIDxwYXR0ZXJuIGlkPSJwYXR0ZXJuIiBwYXR0ZXJuVW5pdHM9InVzZXJTcGFjZU9uVXNlIiB3aWR0aD0iNS4zMDAwMDAwMDAwMDAwMDEiIGhlaWdodD0iNS4zMDAwMDAwMDAwMDAwMDEiPgogICAgICA8Y2lyY2xlIGN4PSIyLjY1MDAwMDAwMDAwMDAwMDQiIGN5PSIyLjY1MDAwMDAwMDAwMDAwMDQiIHI9IjIuMSIgZmlsbD0icmVkIi8+CiAgICA8L3BhdHRlcm4+CiAgPC9kZWZzPgogIDxyZWN0IHg9IjAiIHk9IjAiIHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9InVybCgjcGF0dGVybikiLz4KPC9zdmc+',
       x="0",y="0",width="1000",height="1000",result="image")
       feTile(in="image",result="tile")
       feComposite(operator="in",in="SourceGraphic",in2="tile",result="dot")
-      feComposite(operator="in",in="dot",in2="SourceGraphic",ret="dotted")
-      feGaussianBlur(in="dotted2",stdDeviation="0.8")
+      feComposite(operator="in",in="dot",in2="SourceGraphic",result="dotted")
+      feGaussianBlur(in="dotted",stdDeviation="0.8")
       feComponentTransfer(result="cutoff")
         feFuncA(type="linear",slope="10",intercept="-3")
 
-  text(x="250",y="75",fill="url(#g)",font-family="Arial Black",filter="url(#f)") Hello World
+  text(x="250",y="75",fill="url(#halftone-gradient)",font-family="Arial Black",filter="url(#halftone)") Hello World

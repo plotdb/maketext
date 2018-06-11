@@ -1,13 +1,13 @@
 svg(xmlns="http://www.w3.org/2000/svg",viewBox="0 0 500 150",style="background:#444")
   defs
-    filter#crystal
+    filter#crystal(x="-100%",y="-100%",width="300%",height="300%")
       feMorphology(operator="dilate",radius="2",in="SourceGraphic",result="border")
       feFlood(flood-color="#fff",result="black")
       feMorphology(operator="dilate",radius="2",in="SourceGraphic",result="erode")
       feGaussianBlur(in="erode",stdDeviation="4",result="blur")
       feOffset(in="blur",dx="2",dy="2",result="offset")
       feComposite(operator="atop",in="offset",in2="black",result="merge")
-      feComposite(operator="in",in="a",in2="SourceGraphic",result="inner-shadow")
+      feComposite(operator="in",in="merge",in2="SourceGraphic",result="inner-shadow")
       feGaussianBlur(in="SourceGraphic",stdDeviation="2.5",result="shadow1")
       feOffset(in="shadow1",dx="0",dy="5",result="shadow")
       feSpecularLighting(in="SourceGraphic",result="specular",

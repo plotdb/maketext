@@ -20,8 +20,8 @@ ret = do
     c = r + p * 0.5
 
     node.querySelector \feImage
-      ..setAttributeNS \http://www.w3.org/1999/xlink, \href, """
-        data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="1000px" height="1000px">
+      ..setAttributeNS \http://www.w3.org/1999/xlink, \href, "data:image/svg+xml;base64," + btoa """
+        <svg xmlns="http://www.w3.org/2000/svg" width="1000px" height="1000px">
           <defs>
             <pattern id="pattern" patternUnits="userSpaceOnUse" width="#d" height="#d">
               <circle cx="#{c}" cy="#{c}" r="#{r}" fill="red"/>
