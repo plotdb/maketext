@@ -16,10 +16,22 @@ ret = {
       name: 'color2',
       type: 'color',
       'default': '#f00'
+    },
+    density: {
+      name: 'density',
+      type: 'number',
+      'default': 10,
+      min: 2,
+      max: 20,
+      step: 0.1
     }
   },
   watch: function(n, o, node){
-    return node.querySelector('feImage').setAttributeNS('http://www.w3.org/1999/xlink', 'href', "data:image/svg+xml,<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"1000px\" height=\"1000px\"><defs><pattern id=\"pattern\" patternUnits=\"userSpaceOnUse\" width=\"10\" height=\"10\"><rect x=\"0\" y=\"0\" width=\"10\" height=\"10\" fill=\"" + n.color1 + "\"/><path d=\"M-10 -10L30 30M0 -10L40 30M-10 0L30 40\" stroke=\"" + n.color2 + "\" stroke-width=\"3\"/></pattern></defs><rect x=\"0\" y=\"0\" width=\"100%\" height=\"100%\" fill=\"url(#pattern)\"/></svg>");
+    var density, ref$, w, w2, s, d;
+    density = n.density || 3;
+    ref$ = [density, density * 2, density * 0.25], w = ref$[0], w2 = ref$[1], s = ref$[2];
+    d = ['M', -w, -w, 'L', w2, w2, 'M', -w2, -w, 'L', w, w2, 'M', -w, -w2, 'L', w2, w].join(' ');
+    return node.querySelector('feImage').setAttributeNS('http://www.w3.org/1999/xlink', 'href', "data:image/svg+xml;base64," + btoa("<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"2000px\" height=\"1000px\"><defs><pattern id=\"pattern\" patternUnits=\"userSpaceOnUse\" x=\"0\" y=\"0\" width=\"" + w + "\" height=\"" + w + "\"><rect x=\"0\" y=\"0\" width=\"" + w + "\" height=\"" + w + "\" fill=\"" + n.color1 + "\"/><path d=\"" + d + "\" stroke=\"" + n.color2 + "\" stroke-width=\"" + s + "\"/></pattern></defs><rect x=\"0\" y=\"0\" width=\"100%\" height=\"100%\" fill=\"url(#pattern)\"/></svg>"));
   },
   dom: function(config){}
 };
