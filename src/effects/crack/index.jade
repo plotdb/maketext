@@ -29,11 +29,11 @@ svg(xmlns="http://www.w3.org/2000/svg",xmlns:xlink="http://www.w3.org/1999/xlink
         feMergeNode(in="output")
         feMergeNode(in="merge2")
       feComposite(operator="in",in="flood",in2="merge3",result="merge3-flood")
-      feComponentTransfer
-        feFuncA(type="linear",slope="0.7",intercept="-0.1",result="merge3-comp")
+      feComponentTransfer(result="merge3-comp")
+        feFuncA(type="linear",slope="0.7",intercept="-0.1")
       feGaussianBlur(in="merge3-comp",stdDeviation="3",result="blur")
       feOffset(dy="3",in="blur",result="blur-offset")
-      feMerge(result="merge4")
+      feMerge
         feMergeNode(in="blur-offset")
         feMergeNode(in="merge3")
 
