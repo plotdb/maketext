@@ -2,8 +2,9 @@
 window.convert = do
   prepare: -> new Promise (res, rej) ->
     svg = document.querySelector '#cooltext svg' .cloneNode true
-    svg.setAttribute(\width, '600px')
-    svg.setAttribute(\height, '170px')
+    svg-width = document.querySelector '#cooltext' .getBoundingClientRect!width
+    svg.setAttribute \width, "#{svg-width}px"
+    svg.setAttribute \height, \170px
     feImages = Array.from( svg.querySelectorAll \feImage )
       .map (d,i) ->
         href = d.getAttributeNS(\http://www.w3.org/1999/xlink, \href) or d.getAttribute(\href)
@@ -17,7 +18,7 @@ window.convert = do
     text {
       font-size: 64px;
       font-family: Arial Black;
-      dominant-baseline: middle;
+      dominant-baseline: central;
       text-anchor: middle;
     }
     """
@@ -32,8 +33,10 @@ window.convert = do
     (e, tts) <~ text-to-svg.load "/assets/fonts/ttf/#{window.fontname or 'ArialBlack'}-Regular.ttf"
     (text, i) <~ Array.from(svg.querySelectorAll(\text)).map _
     text = svg.querySelector('text')
+    fontSize = getComputedStyle(text).fontSize
+    fontSize = +(/(\d+)/.exec(fontSize) or [0,64]).1
     text-value = text.textContent or 'Hello World'
-    d = tts.getD text-value
+    d = tts.getD text-value, {fontSize}
     g1 = document.createElementNS("http://www.w3.org/2000/svg", "g")
     g2 = document.createElementNS("http://www.w3.org/2000/svg", "g")
     path = document.createElementNS("http://www.w3.org/2000/svg", "path")
@@ -52,7 +55,7 @@ window.convert = do
     x = ( box.width - pbox.width ) * 0.5 - pbox.x
     y = ( box.height - pbox.height ) * 0.5 - pbox.y
     g2.setAttribute("transform", "translate(#x, #y)")
-    res {svg: svg, text: text-value}
+    res {svg: svg, text: text-value, width: svg-width}
 
   download: (option = {}) ->
     $(\#download).modal \show
@@ -72,11 +75,12 @@ window.convert = do
       .then ({svg, text}) ~>
         @download {content: svg.outerHTML, type: 'image/svg+xml', name: text, postfix: \svg}
   png: ->
-    text-value = ''
+    [text-value,svg-width] = ['', 1024]
     @prepare!
-      .then ({svg, text}) ->
+      .then ({svg, text, width}) ->
         text-value := text
+        svg-width := width
         smiltool.svg-to-dataurl svg.outerHTML
-      .then -> smiltool.url-to-dataurl it, 600, 170
+      .then -> smiltool.url-to-dataurl it, svg-width, 170
       .then -> smiltool.dataurl-to-blob it
       .then ~> @download {blob: it, name: text-value, postfix: \png}

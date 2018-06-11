@@ -149,9 +149,10 @@ $(document).ready(function(){
     }
     document.querySelector('#cooltext').innerHTML = effects[type].html;
     svg = document.querySelector('#cooltext svg');
-    bkcolor = svg.style.background || '#fff';
+    bkcolor = getComputedStyle(svg).backgroundColor || '#fff';
     Array.from(svg.querySelectorAll('feImage')).map(function(d, i){
       var href, ref$, w, h;
+      return;
       href = d.getAttributeNS('http://www.w3.org/1999/xlink', 'href') || d.getAttribute('href');
       if (/^data:image/.exec(href)) {
         return;
@@ -160,7 +161,7 @@ $(document).ready(function(){
         return (/(\d+)/.exec(it) || [0, 1024])[1];
       }), w = ref$[0], h = ref$[1];
       return smiltool.urlToDataurl(href, w, h).then(function(it){
-        return d.setAttribute('href', it);
+        return d.setAttributeNS('http://www.w3.org/1999/xlink', 'href', it);
       });
     });
     editor.toggle(true);

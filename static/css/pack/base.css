@@ -3568,7 +3568,7 @@ body.editing {
   vertical-align: middle;
 }
 #cooltext {
-  width: 600px;
+  width: 100%;
   height: 170px;
   position: absolute;
   z-index: -1;
@@ -3589,7 +3589,7 @@ body.editing {
 #cooltext svg {
   display: block;
   margin: auto;
-  width: 600px;
+  width: 100%;
 }
 body.editing #editor {
   height: 100%;
@@ -3699,7 +3699,7 @@ body.editing #cooltext {
   height: 160px;
 }
 text {
-  dominant-baseline: middle;
+  dominant-baseline: central;
   text-anchor: middle;
   font-size: 64px;
   font-family: 'Arial Black';

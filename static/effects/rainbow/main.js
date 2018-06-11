@@ -45,10 +45,18 @@ ret = {
     direction: {
       name: 'direction',
       type: 'number',
-      'default': 24,
+      'default': 0,
       min: 0,
       max: 360,
       step: 1
+    },
+    depth: {
+      name: 'depth',
+      type: 'number',
+      'default': 2,
+      main: 1,
+      max: 5,
+      step: 0.1
     }
   },
   watch: function(n, o, node){
@@ -56,12 +64,16 @@ ret = {
     Array.from(node.querySelectorAll('stop')).map(function(d, i){
       return d.setAttribute('stop-color', n["color" + (i + 1)]);
     });
+    if (n.depth != null) {
+      node.querySelector('feMorphology').setAttribute('radius', "1," + n.depth);
+      node.querySelector('feOffset').setAttribute('dy', n.depth);
+    }
     box = node.querySelector('text').getBBox();
     angle = n.direction || 0;
-    dx = Math.cos(angle * Math.PI / 180) * 0.5 * box.width;
-    dy = Math.sin(angle * Math.PI / 180) * 0.5 * box.height;
-    ref$ = [box.x + box.width * 0.5 - dx, box.y + box.height * 0.5 - dy], x1 = ref$[0], y1 = ref$[1];
-    ref$ = [box.x + box.width * 0.5 + dx, box.y + box.height * 0.5 + dy], x2 = ref$[0], y2 = ref$[1];
+    dx = Math.cos(angle * Math.PI / 180) * 0.5;
+    dy = Math.sin(angle * Math.PI / 180) * 0.5;
+    ref$ = [0.5 - dx, 0.5 - dy], x1 = ref$[0], y1 = ref$[1];
+    ref$ = [0.5 + dx, 0.5 + dy], x2 = ref$[0], y2 = ref$[1];
     x$ = node.querySelector('linearGradient');
     x$.setAttribute('x1', x1);
     x$.setAttribute('y1', y1);

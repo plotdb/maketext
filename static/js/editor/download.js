@@ -2,9 +2,10 @@
 window.convert = {
   prepare: function(){
     return new Promise(function(res, rej){
-      var svg, feImages, style, node, this$ = this;
+      var svg, svgWidth, feImages, style, node, this$ = this;
       svg = document.querySelector('#cooltext svg').cloneNode(true);
-      svg.setAttribute('width', '600px');
+      svgWidth = document.querySelector('#cooltext').getBoundingClientRect().width;
+      svg.setAttribute('width', svgWidth + "px");
       svg.setAttribute('height', '170px');
       feImages = Array.from(svg.querySelectorAll('feImage')).map(function(d, i){
         var href, ret;
@@ -16,7 +17,7 @@ window.convert = {
         }
       });
       style = document.createElement("style");
-      style.textContent = "text {\n  font-size: 64px;\n  font-family: Arial Black;\n  dominant-baseline: middle;\n  text-anchor: middle;\n}";
+      style.textContent = "text {\n  font-size: 64px;\n  font-family: Arial Black;\n  dominant-baseline: central;\n  text-anchor: middle;\n}";
       svg.appendChild(style);
       node = document.querySelector('#svg-work-area');
       if (!node) {
@@ -27,10 +28,14 @@ window.convert = {
       node.appendChild(svg);
       return textToSvg.load("/assets/fonts/ttf/" + (window.fontname || 'ArialBlack') + "-Regular.ttf", function(e, tts){
         return Array.from(svg.querySelectorAll('text')).map(function(text, i){
-          var textValue, d, g1, g2, path, parent, i$, ref$, len$, name, that, pbox, box, x, y;
+          var fontSize, textValue, d, g1, g2, path, parent, i$, ref$, len$, name, that, pbox, box, x, y;
           text = svg.querySelector('text');
+          fontSize = getComputedStyle(text).fontSize;
+          fontSize = +(/(\d+)/.exec(fontSize) || [0, 64])[1];
           textValue = text.textContent || 'Hello World';
-          d = tts.getD(textValue);
+          d = tts.getD(textValue, {
+            fontSize: fontSize
+          });
           g1 = document.createElementNS("http://www.w3.org/2000/svg", "g");
           g2 = document.createElementNS("http://www.w3.org/2000/svg", "g");
           path = document.createElementNS("http://www.w3.org/2000/svg", "path");
@@ -58,7 +63,8 @@ window.convert = {
           g2.setAttribute("transform", "translate(" + x + ", " + y + ")");
           return res({
             svg: svg,
-            text: textValue
+            text: textValue,
+            width: svgWidth
           });
         });
       });
@@ -99,15 +105,16 @@ window.convert = {
     });
   },
   png: function(){
-    var textValue, this$ = this;
-    textValue = '';
+    var ref$, textValue, svgWidth, this$ = this;
+    ref$ = ['', 1024], textValue = ref$[0], svgWidth = ref$[1];
     return this.prepare().then(function(arg$){
-      var svg, text;
-      svg = arg$.svg, text = arg$.text;
+      var svg, text, width;
+      svg = arg$.svg, text = arg$.text, width = arg$.width;
       textValue = text;
+      svgWidth = width;
       return smiltool.svgToDataurl(svg.outerHTML);
     }).then(function(it){
-      return smiltool.urlToDataurl(it, 600, 170);
+      return smiltool.urlToDataurl(it, svgWidth, 170);
     }).then(function(it){
       return smiltool.dataurlToBlob(it);
     }).then(function(it){

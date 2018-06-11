@@ -85,12 +85,13 @@ document.querySelector \.gallery .addEventListener \click, (e) ->
   if !type => return
   document.querySelector \#cooltext .innerHTML = effects[type].html
   svg = document.querySelector '#cooltext svg'
-  bkcolor = (svg.style.background) or '#fff'
+  bkcolor = (getComputedStyle(svg).backgroundColor) or '#fff'
   Array.from(svg.querySelectorAll \feImage).map (d,i) ->
+    return
     href = d.getAttributeNS(\http://www.w3.org/1999/xlink, \href) or d.getAttribute(\href)
     if /^data:image/.exec href => return
     [w,h] = [d.getAttribute(\width), d.getAttribute(\height)].map -> (/(\d+)/.exec(it) or [0,1024]).1
-    smiltool.url-to-dataurl href, w, h .then -> d.setAttribute \href, it
+    smiltool.url-to-dataurl href, w, h .then -> d.setAttributeNS \http://www.w3.org/1999/xlink, \href, it
   editor.toggle true
   Array.from(document.querySelectorAll('#cooltext text')).map ->
     it.textContent = (document.querySelector('#text-input').value or 'Hello World')

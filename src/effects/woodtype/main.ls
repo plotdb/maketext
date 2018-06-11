@@ -1,4 +1,5 @@
 ret = do
+  debug: true
   name: ''
   desc: ''
   tags: ''
@@ -13,11 +14,12 @@ ret = do
     if n.fill? => flood.0.setAttribute \flood-color, n.fill
     if n.stroke? => flood.1.setAttribute \flood-color, n.stroke
     if n.inner-fill? =>
-      node.querySelector \feImage .setAttribute \href, """
-      data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="10px" height="4px">
-      <rect fill="#{n.inner-fill}" width="10" height="2"/>
+      node.querySelector \feImage
+        .setAttributeNS \http://www.w3.org/1999/xlink, \href, "data:image/svg+xml;base64," + btoa("""
+      <svg xmlns="http://www.w3.org/2000/svg" width="1000px" height="4px" viewBox="0 0 1000 4">
+      <rect fill="#{n.inner-fill}" width="1000" height="2"/>
       </svg> 
-      """
+      """)
 
   dom: (config) ->
 
