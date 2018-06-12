@@ -3784,5 +3784,11 @@ text {
 #disqus_thread {
   max-width: 1024px;
   width: 90%;
+  min-height: 100px;
   margin: 60px auto 30px;
+  background: url("/assets/img/loader/comment.gif") center center no-repeat;
+}
+#disqus_thread iframe,
+#disqus_thread [dir=ltr] {
+  background: #fff;
 }
