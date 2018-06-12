@@ -1,0 +1,12 @@
+svg(xmlns="http://www.w3.org/2000/svg",viewBox="0 0 500 150",style="background:#051103")
+  defs
+    linearGradient#glowing-gradient(x1="0.81",x2="0.18",y1="0.88",y2="0.11")
+      stop(offset="0",stop-color="#67ff43")
+      stop(offset="1",stop-color="#90ffff")
+    filter#glowing(x="-100%",y="-100%",width="300%",height="300%")
+      feGaussianBlur(in="SourceGraphic",result="blur",stdDeviation="10")
+      feMerge
+        feMergeNode(in="blur")
+        feMergeNode(in="SourceGraphic")
+
+  text(x="250",y="75",filter="url(#glowing)",fill="url(#glowing-gradient)") Hello World!

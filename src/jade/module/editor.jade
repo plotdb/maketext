@@ -12,20 +12,21 @@ include /module/download.jade
     +slider
 
 #editor
-  .row(style="max-width:1024px;margin:auto")
-    .col
-      label Text
-      input#text-input.form-control.form-control-sm(value="Hello World!")
-    .col-sm
-      label Font
-      .btn.btn-sm.btn-outline-dark.mr-1.block(data-toggle="modal",data-target="#font-picker") Choose ...
-    #font-size-slider.col-sm
-      label Font Size
-      +slider
-    .col-sm
-      label Background
-      +color-input('background')
-  .advanced
+  .config
+    .row(style="max-width:1024px;margin:auto")
+      .col
+        label Text
+        input#text-input.form-control.form-control-sm(value="Hello World!")
+      .col-sm
+        label Font
+        .btn.btn-sm.btn-outline-dark.mr-1.block(data-toggle="modal",data-target="#font-picker") Choose ...
+      #font-size-slider.col-sm
+        label Font Size
+        +slider
+      .col-sm
+        label Background
+        +color-input('background')
+    //-.advanced
     .row.mt-3(style="max-width:1024px;margin:auto;display:flex")
       #palette-btn.col-sm-3
         label Palette
@@ -33,16 +34,16 @@ include /module/download.jade
           each i in ['#f00','#0f0','#00f','#0ff']
             .color(style="background:#{i}")
       #editor-custom-options.col-sm-9.row(style="margin-left:0;padding:0")
-    hr
-    br
-    #cooltext
-    .footer.text-center
-      .inline-block.text-left
-        label Download As ...
-        .block.mr-2(style="display:inline-block;width:300px")
-          .btn-group
-            .btn.btn-outline-dark(onclick="convert.svg()") SVG
-            .btn.btn-outline-dark(onclick="convert.png()") PNG
-      .inline-block
-        //-.btn.btn-outline-dark.mr-2 Save Config
-        .btn.btn-outline-dark.mr-2(onclick="editor.toggle(false)") #[big(style="line-height:1em") &times;] Close
+  //-hr
+  br
+  #cooltext
+  .footer.text-center
+    .inline-block.text-left
+      label Download As ...
+      .block.mr-2(style="display:inline-block;width:300px")
+        .btn-group
+          .btn.btn-outline-dark(onclick="convert.svg()") SVG
+          .btn.btn-outline-dark(onclick="convert.png()") PNG
+    .inline-block
+      //-.btn.btn-outline-dark.mr-2 Save Config
+      .btn.btn-outline-dark.mr-2(onclick="editor.toggle(false)") #[big(style="line-height:1em") &times;] Close

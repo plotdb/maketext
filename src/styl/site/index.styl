@@ -2,6 +2,7 @@
 @import '../basic.styl'
 
 @import 'landing.styl'
+@import 'info.styl'
 @import 'editor.styl'
 @import 'gallery.styl'
 @import 'effect-base.styl'
@@ -16,3 +17,43 @@
 
 .clusterize-scroll
   max-height: 100%
+
+.green
+  color: #00eaa2
+
+.btn.btn-action
+  /* fallback for old browsers */
+  background: #1D976C
+  /* Chrome 10-25, Safari 5.1-6 */
+  background: -webkit-linear-gradient(to right, #93F9B9, #1D976C)
+  /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+  background: linear-gradient(to right, #93F9B9, #1D976C)
+  border: none
+  color: #fff
+  transition(background 0.5s ease-in-out)
+
+.btn.btn-action:hover
+  /* fallback for old browsers */
+  background: #1D976C
+  /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+  background: linear-gradient(to right, #4ea06d, #0a5037)
+
+#footer
+  background: linear-gradient(45deg, #2f4a7f, #0a7b8d)
+  padding: 40px 10px
+  color: #fff
+  & > .row
+    max-width: 1024px
+    width: 90%
+    margin: auto
+  a
+    color: #fff
+    .fa
+      vertical-align: middle
+  a:hover
+    color: #ffe
+
+#disqus_thread
+  max-width: 1024px
+  width: 90%
+  margin: 60px auto 30px

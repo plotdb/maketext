@@ -14,10 +14,11 @@ svg(xmlns="http://www.w3.org/2000/svg",viewBox="0 0 500 150",style="background:#
       surfaceScale="1.5",specularConstant="100",specularExponent="10",lighting-color="#fff")
         fePointLight(x="250",y="-300",z="-400")
       feGaussianBlur(in="specular",stdDeviation="1",result="specular2")
+      feComposite(operator="in",in="specular2",in2="SourceAlpha",result="specular3")
       feMerge(result="merge")
         feMergeNode(in="border")
         feMergeNode(in="inner-shadow")
-        feMergeNode(in="specular2")
+        feMergeNode(in="specular3")
       feComponentTransfer(in="merge",result="final")
         feFuncA(type="linear",slope="0.9",intercept="0")
       feMerge

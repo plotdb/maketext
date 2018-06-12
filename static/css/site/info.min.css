@@ -1,0 +1,13 @@
+#info {
+  background: linear-gradient(to right, #f7f8f9, #fafbfc);
+  border-top: 1px solid #ccc;
+  border-bottom: 1px solid #ccc;
+  margin-top: 60px;
+  padding: 80px 0 120px;
+}
+#info > .inner {
+  font-size: 1.5em;
+  margin: auto;
+  width: 90%;
+  max-width: 1024px;
+}

@@ -91,7 +91,6 @@ document.querySelector \.gallery .addEventListener \click, (e) ->
   svg = document.querySelector '#cooltext svg'
   bkcolor = (getComputedStyle(svg).backgroundColor) or '#fff'
   Array.from(svg.querySelectorAll \feImage).map (d,i) ->
-    return
     href = d.getAttributeNS(\http://www.w3.org/1999/xlink, \href) or d.getAttribute(\href)
     if /^data:image/.exec href => return
     [w,h] = [d.getAttribute(\width), d.getAttribute(\height)].map -> (/(\d+)/.exec(it) or [0,1024]).1

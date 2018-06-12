@@ -155,7 +155,6 @@ $(document).ready(function(){
     bkcolor = getComputedStyle(svg).backgroundColor || '#fff';
     Array.from(svg.querySelectorAll('feImage')).map(function(d, i){
       var href, ref$, w, h;
-      return;
       href = d.getAttributeNS('http://www.w3.org/1999/xlink', 'href') || d.getAttribute('href');
       if (/^data:image/.exec(href)) {
         return;
