@@ -138,7 +138,7 @@ $(document).ready(function(){
     });
   };
   document.querySelector('.gallery').addEventListener('click', function(e){
-    var target, type, svg, bkcolor, effect, options, colors, k, v, ref$, node, ref1$, results$ = [];
+    var target, type, html, svg, bkcolor, effect, options, colors, k, v, ref$, node, ref1$, results$ = [];
     target = e.target;
     if (!(target && target.classList && target.classList.contains('item'))) {
       return;
@@ -147,7 +147,10 @@ $(document).ready(function(){
     if (!type) {
       return;
     }
-    document.querySelector('#cooltext').innerHTML = effects[type].html;
+    html = effects[type].html;
+    html = html.replace(/id="([^"]+)"/g, 'id="editing-$1"');
+    html = html.replace(/url\(#([^)]+)\)/g, 'url(#editing-$1)');
+    document.querySelector('#cooltext').innerHTML = html;
     svg = document.querySelector('#cooltext svg');
     bkcolor = getComputedStyle(svg).backgroundColor || '#fff';
     Array.from(svg.querySelectorAll('feImage')).map(function(d, i){

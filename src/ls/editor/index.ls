@@ -83,7 +83,11 @@ document.querySelector \.gallery .addEventListener \click, (e) ->
   if !(target and target.classList  and target.classList.contains \item) => return
   type = target.getAttribute \data-type
   if !type => return
-  document.querySelector \#cooltext .innerHTML = effects[type].html
+  html = effects[type].html
+  # for Safari: duplicate id makes effect gone, so we rename them.
+  html = html.replace /id="([^"]+)"/g, 'id="editing-$1"'
+  html = html.replace /url\(#([^)]+)\)/g, 'url(#editing-$1)'
+  document.querySelector \#cooltext .innerHTML = html
   svg = document.querySelector '#cooltext svg'
   bkcolor = (getComputedStyle(svg).backgroundColor) or '#fff'
   Array.from(svg.querySelectorAll \feImage).map (d,i) ->
