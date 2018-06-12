@@ -16,6 +16,8 @@ html(lang="en")
   include /mixins/index.jade
   block vars
   head(prefix="og: http://ogp.me/ns#")
+    if !debug
+      include /module/ga.jade
     include /module/head.jade
     +css("/css/pack/base.css")
     block head
@@ -28,5 +30,3 @@ html(lang="en")
     //-#notifications
       .notify(ng-repeat="n in notifications",ng-class="'notify-'+n.type",ng-cloak) {{n.message}}
     block body
-    if !debug
-      include /module/ga.jade
