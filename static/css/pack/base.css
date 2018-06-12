@@ -855,7 +855,7 @@
 }
 @font-face {
   font-family: Abeezee;
-  src: url("/assets/fonts/ttf/Abeezee-Regular.ttf");
+  src: url("/assets/fonts/ttf/ABeeZee-Regular.ttf");
 }
 html,
 body {
@@ -863,10 +863,10 @@ body {
   height: 100%;
   margin: 0;
   padding: 0;
-  font-family: Abel;
+  font-family: Abel, Helvetica, Arial;
 }
 h1 {
-  font-family: Abeezee;
+  font-family: Abeezee, Serif;
 }
  {
   width: 100%;
