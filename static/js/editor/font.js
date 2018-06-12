@@ -42,5 +42,5 @@ $(document).ready(function(){
     }
     return useFont(target.querySelector('span').innerText);
   });
-  return useFont('sansitaOne');
+  return useFont('SansitaOne');
 });
