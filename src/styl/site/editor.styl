@@ -113,15 +113,19 @@ body.editing
 #download.modal .card
   centered()
   width: 90%
-  height: 90%
   max-width: 640px
-  min-height: 360px
-  max-height: 360px
+  height: 380px
   text-align: center
   .result
-    width: 600px
-    height: 170px
     background: center center no-repeat
     background-size: contain
     margin: auto
+    min-height: 200px
+    img
+      position: absolute
+      left: -600px
+      right: -600px
+      top: -50px
+      bottom: -50px
+      margin: auto
 

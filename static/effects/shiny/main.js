@@ -46,6 +46,10 @@ ret = {
     dy = Math.sin(angle * Math.PI / 180) * 37.5;
     ref$ = [250 - dx, 75 - dy], x1 = ref$[0], y1 = ref$[1];
     ref$ = [250 + dx, 75 + dy], x2 = ref$[0], y2 = ref$[1];
+    dx = Math.cos(angle * Math.PI / 180) * 0.5;
+    dy = Math.sin(angle * Math.PI / 180) * 0.5;
+    ref$ = [0.5 - dx, 0.5 - dy], x1 = ref$[0], y1 = ref$[1];
+    ref$ = [0.5 + dx, 0.5 + dy], x2 = ref$[0], y2 = ref$[1];
     x$ = node.querySelector('linearGradient');
     x$.setAttribute('x1', x1);
     x$.setAttribute('y1', y1);

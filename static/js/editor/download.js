@@ -2,9 +2,10 @@
 window.convert = {
   prepare: function(){
     return new Promise(function(res, rej){
-      var svg, svgWidth, feImages, style, node, this$ = this;
+      var svg, svgWidth, textBox, feImages, style, node, this$ = this;
       svg = document.querySelector('#cooltext svg').cloneNode(true);
       svgWidth = document.querySelector('#cooltext').getBoundingClientRect().width;
+      textBox = document.querySelector('#cooltext text').getBoundingClientRect();
       svg.setAttribute('width', svgWidth + "px");
       svg.setAttribute('height', '170px');
       feImages = Array.from(svg.querySelectorAll('feImage')).map(function(d, i){
@@ -52,26 +53,29 @@ window.convert = {
           g2.appendChild(path);
           g1.setAttribute('filter', text.getAttribute('filter'));
           parent.removeChild(text);
-          ref$ = [
-            path.getBBox(), {
-              width: 500,
-              height: 150
-            }
-          ], pbox = ref$[0], box = ref$[1];
+          pbox = path.getBBox();
+          box = {
+            width: textBox.width * 1.2 + 20,
+            height: textBox.height * 1.2 + 20
+          };
           x = (box.width - pbox.width) * 0.5 - pbox.x;
           y = (box.height - pbox.height) * 0.5 - pbox.y;
           g2.setAttribute("transform", "translate(" + x + ", " + y + ")");
+          svg.setAttribute('viewBox', "0 0 " + box.width + " " + box.height);
+          svg.setAttribute('width', box.width + "px");
+          svg.setAttribute('height', box.height + "px");
           return res({
             svg: svg,
             text: textValue,
-            width: svgWidth
+            width: box.width,
+            height: box.height
           });
         });
       });
     });
   },
   download: function(option){
-    var that, blob, url, x$, y$;
+    var that, blob, url, x$;
     option == null && (option = {});
     $('#download').modal('show');
     if (that = option.blob) {
@@ -84,19 +88,21 @@ window.convert = {
       null;
     }
     url = URL.createObjectURL(blob);
-    x$ = document.querySelector('#download .result');
-    x$.style.backgroundImage = "url(" + url + ")";
-    y$ = document.querySelector('#download .btn');
-    y$.setAttribute('href', url);
-    y$.setAttribute('download', (option.name || 'output') + "." + (option.postfix || 'png'));
-    return y$;
+    document.querySelector('#download img').setAttribute('src', url);
+    document.querySelector('#download .result').style.height = option.height + "px";
+    x$ = document.querySelector('#download .btn');
+    x$.setAttribute('href', url);
+    x$.setAttribute('download', (option.name || 'output') + "." + (option.postfix || 'png'));
+    return x$;
   },
   svg: function(){
     var this$ = this;
     return this.prepare().then(function(arg$){
-      var svg, text;
-      svg = arg$.svg, text = arg$.text;
+      var svg, text, width, height;
+      svg = arg$.svg, text = arg$.text, width = arg$.width, height = arg$.height;
       return this$.download({
+        width: width,
+        height: height,
         content: svg.outerHTML,
         type: 'image/svg+xml',
         name: text,
@@ -105,20 +111,28 @@ window.convert = {
     });
   },
   png: function(){
-    var ref$, textValue, svgWidth, this$ = this;
-    ref$ = ['', 1024], textValue = ref$[0], svgWidth = ref$[1];
+    var ref$, textValue, box, this$ = this;
+    ref$ = [
+      '', {
+        width: 500,
+        height: 150
+      }
+    ], textValue = ref$[0], box = ref$[1];
     return this.prepare().then(function(arg$){
-      var svg, text, width;
-      svg = arg$.svg, text = arg$.text, width = arg$.width;
+      var svg, text, width, height;
+      svg = arg$.svg, text = arg$.text, width = arg$.width, height = arg$.height;
       textValue = text;
-      svgWidth = width;
+      box.width = width;
+      box.height = height;
       return smiltool.svgToDataurl(svg.outerHTML);
     }).then(function(it){
-      return smiltool.urlToDataurl(it, svgWidth, 170);
+      return smiltool.urlToDataurl(it, box.width, box.height);
     }).then(function(it){
       return smiltool.dataurlToBlob(it);
     }).then(function(it){
       return this$.download({
+        width: box.width,
+        height: box.height,
         blob: it,
         name: textValue,
         postfix: 'png'

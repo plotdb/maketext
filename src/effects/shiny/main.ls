@@ -18,6 +18,10 @@ ret = do
     dy = Math.sin(angle * Math.PI / 180) * 37.5
     [x1, y1] = [250 - dx, 75 - dy]
     [x2, y2] = [250 + dx, 75 + dy]
+    dx = Math.cos(angle * Math.PI / 180) * 0.5
+    dy = Math.sin(angle * Math.PI / 180) * 0.5
+    [x1, y1] = [0.5 - dx, 0.5 - dy]
+    [x2, y2] = [0.5 + dx, 0.5 + dy]
     node.querySelector('linearGradient')
       ..setAttribute \x1, x1
       ..setAttribute \y1, y1

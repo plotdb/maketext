@@ -3,6 +3,7 @@ window.convert = do
   prepare: -> new Promise (res, rej) ->
     svg = document.querySelector '#cooltext svg' .cloneNode true
     svg-width = document.querySelector '#cooltext' .getBoundingClientRect!width
+    text-box = document.querySelector '#cooltext text' .getBoundingClientRect!
     svg.setAttribute \width, "#{svg-width}px"
     svg.setAttribute \height, \170px
     feImages = Array.from( svg.querySelectorAll \feImage )
@@ -51,11 +52,15 @@ window.convert = do
     g2.appendChild(path)
     g1.setAttribute \filter, text.getAttribute(\filter)
     parent.removeChild(text)
-    [pbox, box] = [path.getBBox!, {width: 500, height: 150}]
+    pbox = path.getBBox!
+    box = {width: text-box.width * 1.2 + 20, height: text-box.height * 1.2 + 20}
     x = ( box.width - pbox.width ) * 0.5 - pbox.x
     y = ( box.height - pbox.height ) * 0.5 - pbox.y
     g2.setAttribute("transform", "translate(#x, #y)")
-    res {svg: svg, text: text-value, width: svg-width}
+    svg.setAttribute \viewBox, "0 0 #{box.width} #{box.height}"
+    svg.setAttribute \width, "#{box.width}px"
+    svg.setAttribute \height, "#{box.height}px"
+    res {svg: svg, text: text-value, width: box.width, height: box.height} #svg-width}
 
   download: (option = {}) ->
     $(\#download).modal \show
@@ -64,23 +69,23 @@ window.convert = do
     else if option.content => blob = new Blob [option.content], {type: option.type}
     else null
     url = URL.createObjectURL blob
-    document.querySelector('#download .result')
-      ..style.backgroundImage = "url(#{url})"
+    document.querySelector('#download img').setAttribute \src, url
+    document.querySelector('#download .result').style.height = "#{option.height}px"
     document.querySelector('#download .btn')
       ..setAttribute \href, url
       ..setAttribute \download, "#{option.name or 'output'}.#{option.postfix or 'png'}"
 
   svg: ->
     @prepare!
-      .then ({svg, text}) ~>
-        @download {content: svg.outerHTML, type: 'image/svg+xml', name: text, postfix: \svg}
+      .then ({svg, text, width, height}) ~>
+        @download {width, height, content: svg.outerHTML, type: 'image/svg+xml', name: text, postfix: \svg}
   png: ->
-    [text-value,svg-width] = ['', 1024]
+    [text-value, box] = ['', {width: 500, height: 150}]
     @prepare!
-      .then ({svg, text, width}) ->
+      .then ({svg, text, width, height}) ->
         text-value := text
-        svg-width := width
+        box <<< {width, height}
         smiltool.svg-to-dataurl svg.outerHTML
-      .then -> smiltool.url-to-dataurl it, svg-width, 170
+      .then -> smiltool.url-to-dataurl it, box.width, box.height
       .then -> smiltool.dataurl-to-blob it
-      .then ~> @download {blob: it, name: text-value, postfix: \png}
+      .then ~> @download {width: box.width, height: box.height, blob: it, name: text-value, postfix: \png}
