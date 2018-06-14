@@ -185,9 +185,9 @@ backend = do
         successRedirect: \/u/200
         failureRedirect: \/u/403
 
-    if config.usedb =>
-      backend.csrfProtection = csurf!
-      app.use backend.csrfProtection
+    #if config.usedb =>
+    #  backend.csrfProtection = csurf!
+    #  app.use backend.csrfProtection
     app.use "/e", extapi!
 
     app.get \/js/global.js, (backend.csrfProtection or (req,res,next)->next!), (req, res) ->

@@ -2,6 +2,12 @@ require! <[../../../secret ../postgresql pg bluebird]>
 
 queries = []
 
+queries.push init-newsletter-table = """create table if not exists newsletter (
+  key serial primary key,
+  email text not null unique constraint nlen check (char_length(email) <= 100),
+  createdtime timestamp default now()
+)"""
+
 queries.push init-users-table = """create table if not exists users (
   key serial primary key,
   username text not null unique constraint nlen check (char_length(username) <= 100),

@@ -65,3 +65,25 @@ keyframes(popup)
   background: url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMCIgaGVpZ2h0PSIxMCIgdmlld0JveD0iMCAwIDEwIDEwIj48cGF0aCBkPSJNLTEwIC0xMEwyMCAyME0tMjAgLTEwTDEwIDIwTS0xMCAtMjBMMjAgMTAiIHN0cm9rZT0iI2ZhZmJmYyIgc3Ryb2tlLXdpZHRoPSIxIi8+PC9zdmc+) #fdfffe;
   box-shadow: 0 15px 20px rgba(0,0,0,0.1);
 }
+#subscribe .btn {
+  position: relative;
+}
+#subscribe .btn:after {
+  content: "";
+  display: block;
+  position: absolute;
+  right: 15px;
+  top: 11px;
+  font: normal normal normal 24px/1 FontAwesome;
+}
+keyframes(rotate)
+#subscribe.loading .btn:after {
+  content: "\f110";
+}
+#subscribe.done .btn:after {
+  content: "\f00c";
+}
+#subscribe.fail .btn:after {
+  content: "\f00d";
+  color: #f00;
+}

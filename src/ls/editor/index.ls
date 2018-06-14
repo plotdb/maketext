@@ -159,3 +159,21 @@ ldColorPicker.init!
 Array.from(document.querySelectorAll('#font-size-slider .up.irs-input')).map (d,i) ->
   $(d).ionRangeSlider do
     onChange: (data) -> editor.update \fontSize, data.from
+
+window.subscribe = ->
+  node = document.querySelector(\#subscribe)
+  node.classList.remove 'done', 'fail'
+  node.classList.add \loading
+  email = document.querySelector(\#email).value
+  ret = /^[^@]+@[^.]+\.(.+)$/.exec(email or '')
+  if !ret or !email => return
+  $.ajax do
+    url: \/d/newsletter-subscription
+    method: \PUT
+    data: {email}
+  .then ->
+    node.classList.remove \loading
+    node.classList.add \done
+  .fail ->
+    node.classList.remove \loading
+    node.classList.add \fail

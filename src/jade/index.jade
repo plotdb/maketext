@@ -90,9 +90,9 @@ block body
         h3 Get on the list
         .sep
         p we are constantly building better tools for the web, often with open-sourced libraries for anyone to use. Our portfolio includes data visualization service "#[a(href="https://plotdb.com",target="_blank") PlotDB]", animation service "#[a(href="https://loading.io/") loading.io]", and real-time collaborative web design service "#[a(href="https://makeweb.io") makeweb.io]". Want to get noticed when we release our next service? Just subscribe our newsletter! :)
-        input.form-control.form-control-lg.mb-2(type="text",
+        input#email.form-control.form-control-lg.mb-2(type="text",
         placeholder="Sign up to be the first to hear about the next launch")
-        .btn.btn-block.btn-action.btn-lg Get on the list
+        .btn.btn-block.btn-action.btn-lg(onclick="subscribe()") Get on the list
 
   #disqus_thread
   script.

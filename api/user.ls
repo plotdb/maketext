@@ -46,3 +46,9 @@ api.put \/me/su/:id, (req, res) ->
       return null
     .catch aux.error-handler res
 
+api.put \/newsletter-subscription, (req, res) ->
+  email = req.{}body.email
+  if !email or !email.length or email.length > 64 or !/^[-a-z0-9~!$%^&*_=+}{\'?]+(\.[-a-z0-9~!$%^&*_=+}{\'?]+)*@([a-z0-9_][-a-z0-9_]*(\.[-a-z0-9_]+)*\.[a-z]{2,}|([0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}))(:[0-9]{1,5})?$/i.exec(email) => return aux.r400 res
+  io.query "insert into newsletter (email) values ($1)", [email]
+    .then -> return res.send!
+    .catch -> return res.send!
