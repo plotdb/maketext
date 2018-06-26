@@ -29,8 +29,8 @@ window.convert = {
       node.appendChild(svg);
       return textToSvg.load("/assets/fonts/ttf/" + (window.fontname || 'ArialBlack') + "-Regular.ttf", function(e, tts){
         return Array.from(svg.querySelectorAll('text')).map(function(text, i){
-          var fontSize, textValue, d, g1, g2, path, parent, i$, ref$, len$, name, that, pbox, box, x, y;
-          text = svg.querySelector('text');
+          var textbox, fontSize, textValue, d, g1, g2, path, parent, i$, ref$, len$, name, that, pbox, box, x, y;
+          textbox = text.getBBox();
           fontSize = getComputedStyle(text).fontSize;
           fontSize = +(/(\d+)/.exec(fontSize) || [0, 64])[1];
           textValue = text.textContent || 'Hello World';
@@ -51,17 +51,19 @@ window.convert = {
           parent.insertBefore(g1, text);
           g1.appendChild(g2);
           g2.appendChild(path);
-          g1.setAttribute('filter', text.getAttribute('filter'));
+          if (that = text.getAttribute('filter')) {
+            g1.setAttribute('filter', that);
+          }
           parent.removeChild(text);
           pbox = path.getBBox();
           box = {
             width: textBox.width * 1.2 + 20,
             height: textBox.height * 1.2 + 20
           };
-          x = (box.width - pbox.width) * 0.5 - pbox.x;
-          y = (box.height - pbox.height) * 0.5 - pbox.y;
+          x = -path.getBBox().width * 0.5 - path.getBBox().x + textbox.width * 0.5 + textbox.x;
+          y = path.getBBox().height * 0.5 + textbox.height * 0.5 + textbox.y;
           g2.setAttribute("transform", "translate(" + x + ", " + y + ")");
-          svg.setAttribute('viewBox', "0 0 " + box.width + " " + box.height);
+          svg.setAttribute('viewBox', "0 0 500 150");
           svg.setAttribute('width', box.width + "px");
           svg.setAttribute('height', box.height + "px");
           return res({

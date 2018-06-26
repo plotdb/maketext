@@ -4,6 +4,7 @@ window.convert = do
     svg = document.querySelector '#cooltext svg' .cloneNode true
     svg-width = document.querySelector '#cooltext' .getBoundingClientRect!width
     text-box = document.querySelector '#cooltext text' .getBoundingClientRect!
+
     svg.setAttribute \width, "#{svg-width}px"
     svg.setAttribute \height, \170px
     feImages = Array.from( svg.querySelectorAll \feImage )
@@ -33,7 +34,10 @@ window.convert = do
 
     (e, tts) <~ text-to-svg.load "/assets/fonts/ttf/#{window.fontname or 'ArialBlack'}-Regular.ttf"
     (text, i) <~ Array.from(svg.querySelectorAll(\text)).map _
-    text = svg.querySelector('text')
+    #text = svg.querySelector('text')
+
+    textbox = text.getBBox!
+
     fontSize = getComputedStyle(text).fontSize
     fontSize = +(/(\d+)/.exec(fontSize) or [0,64]).1
     text-value = text.textContent or 'Hello World'
@@ -50,14 +54,21 @@ window.convert = do
     # this can fix some issue in firefox / safari when using feImage
     g1.appendChild(g2)
     g2.appendChild(path)
-    g1.setAttribute \filter, text.getAttribute(\filter)
+    if text.getAttribute(\filter) => g1.setAttribute \filter, that
     parent.removeChild(text)
     pbox = path.getBBox!
+
     box = {width: text-box.width * 1.2 + 20, height: text-box.height * 1.2 + 20}
-    x = ( box.width - pbox.width ) * 0.5 - pbox.x
-    y = ( box.height - pbox.height ) * 0.5 - pbox.y
+    # fit viewBox to size?
+    # x = ( box.width - pbox.width ) * 0.5 - pbox.x
+    # y = ( box.height - pbox.height ) * 0.5 - pbox.y
+    x = -path.getBBox!width * 0.5 - path.getBBox!x + textbox.width * 0.5 + textbox.x
+    y = path.getBBox!height * 0.5                  + textbox.height * 0.5 + textbox.y
+
     g2.setAttribute("transform", "translate(#x, #y)")
-    svg.setAttribute \viewBox, "0 0 #{box.width} #{box.height}"
+    svg.setAttribute \viewBox, "0 0 500 150"
+    # fit viewBox to size?
+    #svg.setAttribute \viewBox, "0 0 #{box.width} #{box.height}"
     svg.setAttribute \width, "#{box.width}px"
     svg.setAttribute \height, "#{box.height}px"
     res {svg: svg, text: text-value, width: box.width, height: box.height} #svg-width}

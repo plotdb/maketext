@@ -13,7 +13,7 @@ window.editor = editor = do
     if !v =>
       svg = document.querySelector '#cooltext svg'
       svg.parentNode.removeChild svg
-  config: cur: {}, old: {}
+  config: cur: {fontSize: 64}, old: {}
 
 update-text = (node) ->
   node = node or document.querySelector('#text-input')

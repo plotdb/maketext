@@ -23,7 +23,9 @@ $(document).ready(function(){
       }
     },
     config: {
-      cur: {},
+      cur: {
+        fontSize: 64
+      },
       old: {}
     }
   };
