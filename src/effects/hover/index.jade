@@ -1,0 +1,11 @@
+svg(xmlns="http://www.w3.org/2000/svg",viewBox="0 0 500 150",style="background:#596886")
+  defs
+    filter#hover(x="-100%",y="-100%",width="300%",height="300%")
+      feFlood(flood-color="#052b4a",result="flood")
+      feComposite(operator="in",in2="SourceAlpha",in="flood",result="shadow")
+      feOffset(dx="-3.5",dy="-3.5",in="SourceGraphic",result="offset-1")
+      feOffset(dx="3.5",dy="3.5",in="shadow",result="offset-2")
+      feMerge
+        feMergeNode(in="offset-2")
+        feMergeNode(in="offset-1")
+  text(x="250",y="75",fill="#ffd5af",filter="url(#hover)") Hello World

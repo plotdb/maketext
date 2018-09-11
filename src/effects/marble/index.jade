@@ -1,0 +1,13 @@
+svg(xmlns="http://www.w3.org/2000/svg",viewBox="0 0 500 150",style="background:#fff")
+  defs
+    filter#marble(x="-100%",y="-100%",width="300%",height="300%")
+      feFlood(flood-color="#b44607",result="flood-1")
+      feComposite(operator="in",in="flood-1",in2="SourceAlpha",result="flood-2")
+      feTurbulence(baseFrequency="0.07",type="fractalNoise",numOctaves="1",seed="2",result="bs-1")
+      feGaussianBlur(stdDeviation="1",in="flood-2",result="bs-2")
+      feDisplacementMap(scale="110",in="bs-2",in2="bs-1",result="bs-3")
+      feComposite(operator="in",in="bs-3",in2="SourceAlpha",result="texture")
+      feMerge
+        feMergeNode(in="SourceGraphic")
+        feMergeNode(in="texture")
+  text(x="250",y="75",fill="#e49c49",filter="url(#marble)") Hello World

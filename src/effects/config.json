@@ -1,5 +1,6 @@
 {
   "order": [
+    "marble",
     "metal",
     "stain",
     "woodtype",
@@ -23,6 +24,7 @@
     "vr",
     "extrusion",
     "shiny",
+    "hover",
     "extrude-glow"
   ]
 }

@@ -5,3 +5,5 @@ secret.ls
 !.gitignore
 npm-debug.log
 config/nginx/local.config
+src/jade/sample.jade
+static/sample.html
