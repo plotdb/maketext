@@ -20,6 +20,7 @@
       /assets/clusterize/0.18.1/clusterize.min.js
       /assets/ion-rangeslider/2.1.7/js/ion.rangeSlider.min.js
       /assets/smiltool/latest/index.js
+      /assets/d3/d3-color/1.2.3/d3-color.min.js
       /effects/effects.js
       /assets/fonts/fonts.js
       /assets/tmp/palettes.js
