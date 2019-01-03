@@ -37,11 +37,15 @@ block body
           input.form-control.input-lg(type="text", placeholder="for example, 'Cool Text!'")
           .input-group-append(style="width:150px")
             .btn.btn-action.btn-block(onclick="scrollto('#top')") Make Text #[span.cool Cooler]
+        br
+        a(href="/fancy/") or, show me more copyable 𝕗𝕒𝕟𝕔𝕪 𝕥𝕖𝕩𝕥!!
   #top(style="transform:translate(0,-80px)")
   br
   .text-center: .big Then, pick an effect you'd like to use
   +nbr(2)
   #gallery.gallery
+  +nbr(2)
+  .text-center: big: a(href="/fancy/") need 𝔉𝔞𝔫𝔠𝔶 𝔗𝔢𝔵𝔱 in plain text? check out the fancy text generator!
   br
   #info: .inner
     .text-center
@@ -74,6 +78,9 @@ block body
     br
     h3 Embedded Font
     p To make custom web font works in SVG files, we actually convert every letter from text into SVG path instead of embedding the whole font file inside it. This can make the file smaller ( if the text is short ), but then it won't be able to change the text after generation of the SVG file, and the SVG file can't be indexed by search engine through its content. You can still use the #[code alt] attribute in #[code img] tag for SEO though.
+    br
+    h3 Copyable Cool Text
+    p While cool text in images are great, sometimes we need to use them in text posts or even messengers. Check out our #[a(href="/fancy/") Fancy Text Generator], which is dedicated for this purpose: generate stylish text that are copyable!
     +nbr(2) 
     h2 Resources
     .sep
@@ -131,3 +138,4 @@ block body
           .ml-3 data visualization as a service
 
     +nbr(2)
+  script(src="/js/pack/land.js")

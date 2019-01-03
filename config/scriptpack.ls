@@ -24,6 +24,8 @@
       /effects/effects.js
       /assets/fonts/fonts.js
       /assets/tmp/palettes.js
+    ]>
+    land: <[
       /js/editor/index.js
       /js/editor/palette.js
       /js/editor/font.js

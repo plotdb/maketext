@@ -1,0 +1,150 @@
+extends /base.jade
+block vars
+  - navbar = false
+  - url = "https://maketext.io/"
+block head
+  style(type="text/css").
+    .line .item {
+      height: 120px;
+      position: relative;
+    }
+    .line .item:after, .line .item:before {
+      display: block;
+      content: "Copy";
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      width: 70px;
+      text-align: center;
+      height: 29px;
+      line-height: 22px;
+      font-size: 16px;
+      background: #eee;
+      border-radius: 5px;
+      padding: 3px 7px;
+      transition: opacity 0.2s ease-in-out;
+      opacity: 0;
+    }
+    .line .item:hover:after {
+      opacity: 1;
+    }
+    .line .item.active:before {
+      opacity: 1;
+    }
+    .line .item:before {
+      content: "Copied";
+      background: #2b4;
+      color: #fff;
+      z-index: 1;
+    }
+  script(src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.0/clipboard.min.js")
+block body
+  #editor
+    .config
+      .row(style="max-width:1024px;margin:auto")
+        .col
+          label Text
+          input#text-input.form-control.form-control-sm(value="Fancy Text!")
+        .col
+          label UpperCase
+          .btn-group#text-case
+            .btn.btn-sm.btn-outline-dark(data-value="on") On
+            .btn.btn-sm.btn-outline-dark.active(data-value="off") Off
+
+
+  #landing.text-center
+    .share
+      span.mr-2 share with
+      a.mr-2(href="https://www.facebook.com/sharer/sharer.php?u=https://maketext.io/fancy/",style="font-size:0.9em;margin-top:-3px",target="_blank") facebook
+      span.mr-2 /
+      a(href="https://twitter.com/share?url=https://maketext.io/fancy/&text=super-fast%20cool%20text%20generator%20for%20modern%20age",target="_blank") twitter
+    .inner
+      .subtitle Let's make text fancy again
+      h1 #[span Fancy Text Generator]
+      +nbr(2)
+      .widget
+        big First, type some texts to start with:
+        +nbr(2)
+        .input-group
+          input.form-control.input-lg(type="text", placeholder="for example, 'Fancy Text!'")
+          .input-group-append(style="width:150px")
+            .btn.btn-action.btn-block(onclick="scrollto('#top')") Make Fancy Text
+        br
+        a(href="/") or, style your text into cool text images #[i.fa.fa-arrow-right]
+  #top(style="transform:translate(0,-80px)")
+  .text-center: .big Then, click the fancy text effect you'd like to use
+  +nbr(2)
+  #gallery.gallery(style="text-align:center;font-size:32px;line-height:120px")
+    each i in [1,2,3,4,5,6,7,8]
+      .line
+        .item 𝕗𝕒𝕟𝕔𝕪 𝕥𝕖𝕩𝕥!
+        .item 𝕗𝕒𝕟𝕔𝕪 𝕥𝕖𝕩𝕥!
+  +nbr(2)
+  .text-center: big: a(href="/") need cool text in images? check out the cool text generator!
+  br
+  #info: .inner
+    .text-center
+      span.green about this tool
+      h1 Make Text Fancy! Fancy Text Generator
+    .sep.huge-gap
+    p Wanna bomb your friends with 𝖙𝖊𝖝𝖙 𝖑𝖎𝖐𝖊 𝖙𝖍𝖎𝖘? You need fancy text generator! maketext.io's fancy text generator is dedicated to generate stylish text in #[span.green copyable, pure text format]. 
+    br
+    h3 Image v.s Text
+    p You've probably tried our #[a(href="/") Cool Text Generator], an on-the-fly stylish text generator shipped with SVG / PNG format. While cool text is cool, it's in image formats so we can only use them like an image.
+    p While images are not able to copy / paste in places like Facebook posts, messengers or other chat apps, "text" can. Fancy text generator converts your texts to similar unicode characters with different styles, and all of them are copy/paste-able in any places that support unicode with these characters.
+    br
+    p The coolest part of fancy text is it actually might be used in cool text image generator:
+    img(src="/assets/img/fancy/fancy.jpg",style="border-radius:3px;box-shadow:0 2px 4px rgba(0,0,0,.3)")
+    +nbr(3)
+    h2 Contact
+    .sep
+    p We want to build this service to its best, but there are always bugs or glitches. Feel free to contact us via #[b contact@maketext.io] by mail, or leave your words in the disqus widget below. We always appreciate your feedback and support, by which we could make this service better together.
+    br
+    #subscribe.card
+      .card-body
+        h3 Get on the list
+        .sep
+        p we are constantly building better tools for the web, often with open-sourced libraries for anyone to use. Our portfolio includes data visualization service "#[a(href="https://plotdb.com",target="_blank") PlotDB]", animation service "#[a(href="https://loading.io/") loading.io]", and real-time collaborative web design service "#[a(href="https://makeweb.io") makeweb.io]". Want to get noticed when we release our next service? Just subscribe our newsletter! :)
+        input#email.form-control.form-control-lg.mb-2(type="text",
+        placeholder="Sign up to be the first to hear about the next launch")
+        .btn.btn-block.btn-action.btn-lg(onclick="subscribe()") Get on the list
+
+  #disqus_thread
+  script.
+    var disqus_config = function () {
+    this.page.url = "https://maketext.io/fancy/";
+    this.page.identifier = "/";
+    };
+  include /module/disqus.jade
+
+
+  +nbr(5)
+  #footer
+    .row
+      .col-sm.mb-4
+        h1 Maketext.io#[span(style="vertical-align:top;font-size:14px") &copy; 2018]
+        .sep
+        p Super fast, vector-based cool text generator powered by modern web technologies.
+        br
+        .row
+          .col-sm
+            a.btn.btn-block.btn-outline-light.mr-2.mb-2(href="https://www.facebook.com/sharer/sharer.php?u=https://maketext.io",target="_blank") share with facebook #[i.fa.fa-facebook]
+          .col-sm
+            a.btn.btn-block.btn-outline-light(href="https://twitter.com/share?url=https://maketext.io&text=super-fast%20cool%20text%20generator%20for%20modern%20age",target="_blank") share with twitter #[i.fa.fa-twitter]
+          .col-sm
+
+      .col-sm
+        h1: small Partner Sites
+        .sep
+        .mb-2
+          a(href="https://loading.io") #[i.fa.fa-external-link] loading.io #[img(src="/assets/img/loader/cloudy.gif")]
+          .ml-3 animated icons and spinner service
+        .mb-2
+          a(href="https://makeweb.io") #[i.fa.fa-external-link] makeweb.io #[img(src="/assets/img/landing/makeweb.png")]
+          .ml-3 real-time collaborative web design service
+        .mb-2
+          a(href="https://plotdb.com") #[i.fa.fa-external-link] plotdb.com #[img(src="/assets/img/landing/rose.png")]
+          .ml-3 data visualization as a service
+
+    +nbr(2)
+  script(src="/js/fancy/index.js")

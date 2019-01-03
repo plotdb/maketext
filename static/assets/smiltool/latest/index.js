@@ -173,7 +173,7 @@ var slice$ = [].slice;
     return traverse(node, option);
   };
   dummy = document.createElementNS("http://www.w3.org/2000/svg", "circle");
-  document.body.append(dummy);
+  document.body.appendChild(dummy);
   dummyStyle = window.getComputedStyle(dummy);
   traverse = function(node, delay, option){
     var ref$, attrs, styles, subtags, animatedProperties, style, k, v, attr, inlineStyle, i$, to$, i, child, dur, begin, path, length, ptr, name, value, len$, ret;
