@@ -185,6 +185,6 @@ window.subscribe = ->
   .slice(0,1)
   .map ->
     node = document.querySelector('#landing input')
-    node.value = it.1
+    node.value = decodeURIComponent it.1
     update-text node
     scrollto \#top

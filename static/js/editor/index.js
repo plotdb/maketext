@@ -294,7 +294,7 @@ $(document).ready(function(){
   }).slice(0, 1).map(function(it){
     var node;
     node = document.querySelector('#landing input');
-    node.value = it[1];
+    node.value = decodeURIComponent(it[1]);
     updateText(node);
     return scrollto('#top');
   });
