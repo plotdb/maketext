@@ -1,0 +1,141 @@
+extends /base.jade
+block vars
+  - navbar = false
+  - url = "https://maketext.io/editor/0.1/"
+block head
+block body
+  include /module/editor.jade
+  svg(style="height:0;display:inline;display:none")
+    defs
+      filter#cool(x="-100%",y="-100%",width="300%",height="300%")
+        feGaussianBlur(in="SourceGraphic",stdDeviation="6")
+        feComponentTransfer
+          feFuncA(type="linear", slope="30",intercept="-2")
+        feComposite(operator="out",in2="SourceAlpha")
+      filter#landing-h1(x="-100%",y="-100%",width="300%",height="300%")
+        feMorphology(operator="dilate",radius="1",result="dilate")
+        feComposite(operator="out",in="dilate",in2="SourceAlpha",result="border")
+        feOffset(dx="-3",dy="-2",result="offset")
+        feMerge
+          feMergeNode(in="SourceGraphic")
+          feMergeNode(in="offset")
+
+  #landing.text-center
+    .share
+      span.mr-2 share with
+      a.mr-2(href="https://www.facebook.com/sharer/sharer.php?u=https://maketext.io",style="font-size:0.9em;margin-top:-3px",target="_blank") facebook
+      span.mr-2 /
+      a(href="https://twitter.com/share?url=https://maketext.io&text=super-fast%20cool%20text%20generator%20for%20modern%20age",target="_blank") twitter
+    .inner
+      .subtitle Let's make text cool again
+      h1 #[span Cool Text Generator]#[img(src="/assets/img/landing/cool.png")]
+      +nbr(2)
+      .widget
+        big First, type some texts to start with:
+        +nbr(2)
+        .input-group
+          input.form-control.input-lg(type="text", placeholder="for example, 'Cool Text!'")
+          .input-group-append(style="width:150px")
+            .btn.btn-action.btn-block(onclick="scrollto('#top')") Make Text #[span.cool Cooler]
+        br
+        a(href="/fancy/") or, show me more copyable 𝕗𝕒𝕟𝕔𝕪 𝕥𝕖𝕩𝕥!!
+  #top(style="transform:translate(0,-80px)")
+  br
+  .text-center: .big Then, pick an effect you'd like to use
+  +nbr(2)
+  #gallery.gallery
+  +nbr(2)
+  .text-center: big: a(href="/fancy/") need 𝔉𝔞𝔫𝔠𝔶 𝔗𝔢𝔵𝔱 in plain text? check out the fancy text generator!
+  br
+  #info: .inner
+    .text-center
+      span.green about this tool
+      h1 Cool Text Generator for Modern Age
+    .sep.huge-gap
+    p Sometimes we just need a decent stylish text in 10 minutes. We don't have Photoshop, we don't have good design in mind. What if there is a web service for us to browse-and-pick a nice effect, then we just customize → download → use it? And yes, maketext.io is born for this purpose.
+
+    p #[span.green Maketext.io] is the modern cool text generator that empowers SVG filters and 800+ open-font-licensed web fonts. While there are already numerous similar websites around, we handcrafted maketext.io with following guideline in mind:
+    ul
+      li Make It Quick, Make It Simple
+      li On the Web, on the Fly
+      li Easily Customizable
+      li Vector Based with Raster Support
+
+    +nbr(2)
+    h2 Technical Consideration
+    .sep
+    p For every fancy text effect, we provide both SVG and PNG format for you to download. Since SVG is well-prepared for everyone to use in HTML5 era, you will still want to know about its limitation so you can choose which one to use between SVG and PNG more wisely.
+    br
+    h3 Browser Compatibility
+    p Just like there are some CSS attributes that are not well-supported by all modern browsers, there might be difference between implementations of browsers to the SVG filter we use, specially of the old browsers like Internet Explorer.
+    p Generally speaking modern browsers like latest versions Chrome, Firefox and Safari should be able to render them correctly, but you should check if you need to support browsers like IE9. For a detail list of browser support for SVG filter, check #[a(href="https://caniuse.com/#feat=svg-filters",target="_blank") Can I Use "SVG filter"] for more information.
+    br
+    h3 Rendering Performance
+    p Rendering SVG can be more CPU-intensive than rendering raster images like PNG or JPG. This is especially true when using complicated SVG filters, and almost all filters here are complicated. Consider using CSS property "#[a(href="https://caniuse.com/#feat=will-change",target="_blank") will-change]" to prevent redundant re-rendering when you use those downloaded SVG files, just like we've done in our stylish text gallery.
+    br
+    h3 Image Quality
+    p While SVG is scalable-vector-based and should be responsive-ready, sometimes there are still unwanted aliasing/jagged edges or not-aligned shapes, due to number rounding / precision issues when rendering. If you use those SVG files with dynamic sizing, remember to check it's visual appearence in different resolution before shipping your works.
+    br
+    h3 Embedded Font
+    p To make custom web font works in SVG files, we actually convert every letter from text into SVG path instead of embedding the whole font file inside it. This can make the file smaller ( if the text is short ), but then it won't be able to change the text after generation of the SVG file, and the SVG file can't be indexed by search engine through its content. You can still use the #[code alt] attribute in #[code img] tag for SEO though.
+    br
+    h3 Copyable Cool Text
+    p While cool text in images are great, sometimes we need to use them in text posts or even messengers. Check out our #[a(href="/fancy/") Fancy Text Generator], which is dedicated for this purpose: generate stylish text that are copyable!
+    +nbr(2) 
+    h2 Resources
+    .sep
+    p While making stylish text with maketext.io, you may also want to build your own cool text filter. This article "#[a(href="https://www.smashingmagazine.com/2015/05/why-the-svg-filter-is-awesome/") The Art Of SVG Filters And Why It Is Awesome]" provides a comprehensive guide with a lot of example for anyone who want to build a cool text SVG filter from scratch, a definitely must-read. 
+    p Additionally, these filters can actually be used in any shapes, not only for text. For an inspiring example of SVG beyong merely shapes, this talk and slide about "#[a(href="https://www.visualcinnamon.com/2016/05/slides-openvis") SVGs beyond mere shapes]" is the thing you will never want to miss.
+    p The fact that these cool text effects are built with SVG filters makes it possible to couple with other css or javascript libraries. For example, you can use #[a(href="https://loading.io/animation/",target="_blank") loading.css] or #[a(href="https://loading.io/transition/",target="_blank") transition.css] to animate your stylish text. Check #[a(href="https://loading.io/animation/text",target="_blank") loading.io animated text generator] for inspiration of how loading.css can be used in text animation.
+    +nbr(2)
+    h2 Contact
+    .sep
+    p We want to build this service to its best, but there are always bugs or glitches. Feel free to contact us via #[b contact@maketext.io] by mail, or leave your words in the disqus widget below. We always appreciate your feedback and support, by which we could make this service better together.
+    br
+    #subscribe.card
+      .card-body
+        h3 Get on the list
+        .sep
+        p we are constantly building better tools for the web, often with open-sourced libraries for anyone to use. Our portfolio includes data visualization service "#[a(href="https://plotdb.com",target="_blank") PlotDB]", animation service "#[a(href="https://loading.io/") loading.io]", and real-time collaborative web design service "#[a(href="https://makeweb.io") makeweb.io]". Want to get noticed when we release our next service? Just subscribe our newsletter! :)
+        input#email.form-control.form-control-lg.mb-2(type="text",
+        placeholder="Sign up to be the first to hear about the next launch")
+        .btn.btn-block.btn-action.btn-lg(onclick="subscribe()") Get on the list
+
+  #disqus_thread
+  script.
+    var disqus_config = function () {
+    this.page.url = "https://maketext.io/";
+    this.page.identifier = "/";
+    };
+  include /module/disqus.jade
+
+  +nbr(5)
+  #footer
+    .row
+      .col-sm.mb-4
+        h1 Maketext.io#[span(style="vertical-align:top;font-size:14px") &copy; 2018]
+        .sep
+        p Super fast, vector-based cool text generator powered by modern web technologies.
+        br
+        .row
+          .col-sm
+            a.btn.btn-block.btn-outline-light.mr-2.mb-2(href="https://www.facebook.com/sharer/sharer.php?u=https://maketext.io",target="_blank") share with facebook #[i.fa.fa-facebook]
+          .col-sm
+            a.btn.btn-block.btn-outline-light(href="https://twitter.com/share?url=https://maketext.io&text=super-fast%20cool%20text%20generator%20for%20modern%20age",target="_blank") share with twitter #[i.fa.fa-twitter]
+          .col-sm
+
+      .col-sm
+        h1: small Partner Sites
+        .sep
+        .mb-2
+          a(href="https://loading.io") #[i.fa.fa-external-link] loading.io #[img(src="/assets/img/loader/cloudy.gif")]
+          .ml-3 animated icons and spinner service
+        .mb-2
+          a(href="https://makeweb.io") #[i.fa.fa-external-link] makeweb.io #[img(src="/assets/img/landing/makeweb.png")]
+          .ml-3 real-time collaborative web design service
+        .mb-2
+          a(href="https://plotdb.com") #[i.fa.fa-external-link] plotdb.com #[img(src="/assets/img/landing/rose.png")]
+          .ml-3 data visualization as a service
+
+    +nbr(2)
+  script(src="/js/pack/land.js")

@@ -177,3 +177,14 @@ window.subscribe = ->
   .fail ->
     node.classList.remove \loading
     node.classList.add \fail
+
+(window.location.search or "?").substring(1)
+  .split \&
+  .map -> it.split \=
+  .filter(-> it.0 == \t)
+  .slice(0,1)
+  .map ->
+    node = document.querySelector('#landing input')
+    node.value = it.1
+    update-text node
+    scrollto \#top

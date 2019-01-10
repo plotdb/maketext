@@ -263,7 +263,7 @@ $(document).ready(function(){
       }
     });
   });
-  return window.subscribe = function(){
+  window.subscribe = function(){
     var node, email, ret;
     node = document.querySelector('#subscribe');
     node.classList.remove('done', 'fail');
@@ -287,4 +287,15 @@ $(document).ready(function(){
       return node.classList.add('fail');
     });
   };
+  return (window.location.search || "?").substring(1).split('&').map(function(it){
+    return it.split('=');
+  }).filter(function(it){
+    return it[0] === 't';
+  }).slice(0, 1).map(function(it){
+    var node;
+    node = document.querySelector('#landing input');
+    node.value = it[1];
+    updateText(node);
+    return scrollto('#top');
+  });
 });
