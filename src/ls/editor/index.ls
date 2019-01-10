@@ -1,3 +1,6 @@
+# for API auto scrolling
+history.scrollRestoration = \manual
+
 <- $ document .ready
 
 for k,v of effects =>
@@ -211,4 +214,4 @@ window.maketext = maketext = editor: do
   .slice(0,1)
   .map ->
     maketext.editor.input decodeURIComponent it.1
-    setTimeout (-> scrollto \#top), 500
+    scrollto \#top # this only works if we disable history.scrollRestoration
