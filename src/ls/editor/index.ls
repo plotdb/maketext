@@ -178,13 +178,37 @@ window.subscribe = ->
     node.classList.remove \loading
     node.classList.add \fail
 
+/*
+# API Functionality
+ * Export Input
+   -  t: [text input]
+         auto fill text input and scroll into gallery
+
+ * Export events:
+   - image.ready / fired when use click SVG/PNG button
+     - type: ANY(image/png image/svg+xml)
+     - name: [name]
+     - blob: [blob-url-to-the-image]
+
+ * Eventbus usage example:
+   - maketext.editor.on \image.ready, -> console.log it
+*/
+
+window.maketext = maketext = editor: do
+  input: ->
+    node = document.querySelector('#landing input')
+    node.value = it
+    update-text node
+  evt-handler: {}
+  on: (n, cb) -> @evt-handler.[][n].push cb
+  fire: (n, ...v) -> for cb in (@evt-handler[n] or []) => cb.apply @, v
+
+
 (window.location.search or "?").substring(1)
   .split \&
   .map -> it.split \=
   .filter(-> it.0 == \t)
   .slice(0,1)
   .map ->
-    node = document.querySelector('#landing input')
-    node.value = decodeURIComponent it.1
-    update-text node
+    maketext.editor.input decodeURIComponent it.1
     scrollto \#top

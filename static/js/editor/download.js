@@ -77,7 +77,7 @@ window.convert = {
     });
   },
   download: function(option){
-    var that, blob, url, x$;
+    var that, blob, url, x$, ref$;
     option == null && (option = {});
     $('#download').modal('show');
     if (that = option.blob) {
@@ -95,7 +95,9 @@ window.convert = {
     x$ = document.querySelector('#download .btn');
     x$.setAttribute('href', url);
     x$.setAttribute('download', (option.name || 'output') + "." + (option.postfix || 'png'));
-    return x$;
+    return maketext.editor.fire('image.ready', (ref$ = {
+      url: url
+    }, ref$.name = option.name, ref$.blob = option.blob, ref$.type = option.type, ref$));
   },
   svg: function(){
     var this$ = this;
@@ -137,7 +139,8 @@ window.convert = {
         height: box.height,
         blob: it,
         name: textValue,
-        postfix: 'png'
+        postfix: 'png',
+        type: 'image/png'
       });
     });
   }

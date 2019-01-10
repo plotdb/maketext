@@ -85,6 +85,7 @@ window.convert = do
     document.querySelector('#download .btn')
       ..setAttribute \href, url
       ..setAttribute \download, "#{option.name or 'output'}.#{option.postfix or 'png'}"
+    maketext.editor.fire \image.ready, {url} <<< option{name, blob, type}
 
   svg: ->
     @prepare!
@@ -99,4 +100,5 @@ window.convert = do
         smiltool.svg-to-dataurl svg.outerHTML
       .then -> smiltool.url-to-dataurl it, box.width, box.height
       .then -> smiltool.dataurl-to-blob it
-      .then ~> @download {width: box.width, height: box.height, blob: it, name: text-value, postfix: \png}
+      .then ~>
+        @download {width: box.width, height: box.height, blob: it, name: text-value, postfix: \png, type: 'image/png'}
