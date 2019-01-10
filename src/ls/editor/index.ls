@@ -211,4 +211,4 @@ window.maketext = maketext = editor: do
   .slice(0,1)
   .map ->
     maketext.editor.input decodeURIComponent it.1
-    scrollto \#top
+    setTimeout (-> scrollto \#top), 500

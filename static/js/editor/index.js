@@ -333,6 +333,8 @@ $(document).ready(function(){
     return it[0] === 't';
   }).slice(0, 1).map(function(it){
     maketext.editor.input(decodeURIComponent(it[1]));
-    return scrollto('#top');
+    return setTimeout(function(){
+      return scrollto('#top');
+    }, 500);
   });
 });
