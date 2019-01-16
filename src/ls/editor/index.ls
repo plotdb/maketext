@@ -67,7 +67,9 @@ for i from 0 til list.length by 2 =>
 
 
 init-slider = (node, key, value) ->
-  $(node.querySelector('.irs-input'))
+  n = node.querySelector \.irs-input
+  n.setAttribute 'data-name', key
+  $(n)
     ..val value.default or 0
     ..ionRangeSlider do
       min: value.min or 0
@@ -157,12 +159,6 @@ document.addEventListener \scroll, (e) ->
       #Array.from(d.querySelectorAll 'svg').map ->
       #  it.setAttribute \viewBox, [-delta - 10, -delta - 10, 520 + delta * 2, 170 + delta * 2].join(' ')
 
-ldColorPicker.init!
-
-Array.from(document.querySelectorAll('#font-size-slider .up.irs-input')).map (d,i) ->
-  $(d).ionRangeSlider do
-    onChange: (data) -> editor.update \fontSize, data.from
-
 window.subscribe = ->
   node = document.querySelector(\#subscribe)
   node.classList.remove 'done', 'fail'
@@ -186,15 +182,22 @@ window.subscribe = ->
  * Export Input
    -  t: [text input]
          auto fill text input and scroll into gallery
+   -  s: [font size]
+         pre-set font size
 
  * Export events:
    - image.ready / fired when use click SVG/PNG button
      - type: ANY(image/png image/svg+xml)
      - name: [name]
-     - blob: [blob-url-to-the-image]
 
  * Eventbus usage example:
    - maketext.editor.on \image.ready, -> console.log it
+
+ DOM that is expected to be used by API user:
+   editor-download-btn
+     .btn[data-type=svg]
+     .btn[data-type=png]
+
 */
 
 window.maketext = maketext = editor: do
@@ -204,14 +207,32 @@ window.maketext = maketext = editor: do
     update-text node
   evt-handler: {}
   on: (n, cb) -> @evt-handler.[][n].push cb
-  fire: (n, ...v) -> for cb in (@evt-handler[n] or []) => cb.apply @, v
+  fire: (n, ...v) ->
+    for cb in (@evt-handler[n] or []) => cb.apply @, v
+    window.postMessage {n, data: v}
 
 
-(window.location.search or "?").substring(1)
+queries = (window.location.search or "?").substring(1)
   .split \&
   .map -> it.split \=
+  .filter -> it.0
+queries
   .filter(-> it.0 == \t)
   .slice(0,1)
   .map ->
     maketext.editor.input decodeURIComponent it.1
     scrollto \#top # this only works if we disable history.scrollRestoration
+
+queries
+  .filter(-> it.0 == \s and !isNaN(+it.1))
+  .slice(0,1)
+  .map -> $('#font-size-slider .up.irs-input').val +it.1
+
+ldColorPicker.init!
+
+Array.from(document.querySelectorAll('#font-size-slider .up.irs-input')).map (d,i) ->
+  editor.update \fontSize, (v = (+d.value or 10))
+  $(d)
+    ..val v
+    ..ionRangeSlider do
+      onChange: (data) -> editor.update \fontSize, data.from

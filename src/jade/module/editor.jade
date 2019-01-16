@@ -41,9 +41,10 @@ include /module/download.jade
     .inline-block.text-left
       label Download As ...
       .block.mr-2(style="display:inline-block;width:300px")
-        .btn-group
-          .btn.btn-outline-dark(onclick="convert.svg()") SVG
-          .btn.btn-outline-dark(onclick="convert.png()") PNG
+        // NOTE: editor-download-btn will be queried with API users
+        #editor-download-btn.btn-group
+          .btn.btn-outline-dark(data-type="svg", onclick="convert.svg()") SVG
+          .btn.btn-outline-dark(data-type="png", onclick="convert.png()") PNG
     .inline-block
       //-.btn.btn-outline-dark.mr-2 Save Config
       .btn.btn-outline-dark.mr-2(onclick="editor.toggle(false)") #[big(style="line-height:1em") &times;] Close

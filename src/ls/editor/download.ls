@@ -85,7 +85,7 @@ window.convert = do
     document.querySelector('#download .btn')
       ..setAttribute \href, url
       ..setAttribute \download, "#{option.name or 'output'}.#{option.postfix or 'png'}"
-    maketext.editor.fire \image.ready, {url} <<< option{name, blob, type}
+    maketext.editor.fire \image.ready, {url} <<< option{name, type}
 
   svg: ->
     @prepare!

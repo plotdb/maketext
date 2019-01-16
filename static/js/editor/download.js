@@ -97,7 +97,7 @@ window.convert = {
     x$.setAttribute('download', (option.name || 'output') + "." + (option.postfix || 'png'));
     return maketext.editor.fire('image.ready', (ref$ = {
       url: url
-    }, ref$.name = option.name, ref$.blob = option.blob, ref$.type = option.type, ref$));
+    }, ref$.name = option.name, ref$.type = option.type, ref$));
   },
   svg: function(){
     var this$ = this;

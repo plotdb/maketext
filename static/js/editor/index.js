@@ -2,7 +2,7 @@
 var slice$ = [].slice;
 history.scrollRestoration = 'manual';
 $(document).ready(function(){
-  var k, ref$, v, ret, editor, updateText, scrollto, list, res$, html, i$, to$, i, code, j$, j, d, initSlider, initColorpicker, clusterize, maketext;
+  var k, ref$, v, ret, editor, updateText, scrollto, list, res$, html, i$, to$, i, code, j$, j, d, initSlider, initColorpicker, clusterize, maketext, queries;
   for (k in ref$ = effects) {
     v = ref$[k];
     ret = null;
@@ -120,8 +120,10 @@ $(document).ready(function(){
     html.push("<div class=\"line\" style=\"visibility:hidden\">" + code + "</div>");
   }
   initSlider = function(node, key, value){
-    var x$;
-    x$ = $(node.querySelector('.irs-input'));
+    var n, x$;
+    n = node.querySelector('.irs-input');
+    n.setAttribute('data-name', key);
+    x$ = $(n);
     x$.val(value['default']) || 0;
     x$.ionRangeSlider({
       min: value.min || 0,
@@ -257,14 +259,6 @@ $(document).ready(function(){
       }
     });
   });
-  ldColorPicker.init();
-  Array.from(document.querySelectorAll('#font-size-slider .up.irs-input')).map(function(d, i){
-    return $(d).ionRangeSlider({
-      onChange: function(data){
-        return editor.update('fontSize', data.from);
-      }
-    });
-  });
   window.subscribe = function(){
     var node, email, ret;
     node = document.querySelector('#subscribe');
@@ -294,15 +288,22 @@ $(document).ready(function(){
    * Export Input
      -  t: [text input]
            auto fill text input and scroll into gallery
+     -  s: [font size]
+           pre-set font size
   
    * Export events:
      - image.ready / fired when use click SVG/PNG button
        - type: ANY(image/png image/svg+xml)
        - name: [name]
-       - blob: [blob-url-to-the-image]
   
    * Eventbus usage example:
      - maketext.editor.on \image.ready, -> console.log it
+  
+   DOM that is expected to be used by API user:
+     editor-download-btn
+       .btn[data-type=svg]
+       .btn[data-type=png]
+  
   */
   window.maketext = maketext = {
     editor: {
@@ -318,22 +319,46 @@ $(document).ready(function(){
         return ((ref$ = this.evtHandler)[n] || (ref$[n] = [])).push(cb);
       },
       fire: function(n){
-        var v, i$, ref$, len$, cb, results$ = [];
+        var v, i$, ref$, len$, cb;
         v = slice$.call(arguments, 1);
         for (i$ = 0, len$ = (ref$ = this.evtHandler[n] || []).length; i$ < len$; ++i$) {
           cb = ref$[i$];
-          results$.push(cb.apply(this, v));
+          cb.apply(this, v);
         }
-        return results$;
+        return window.postMessage({
+          n: n,
+          data: v
+        });
       }
     }
   };
-  return (window.location.search || "?").substring(1).split('&').map(function(it){
+  queries = (window.location.search || "?").substring(1).split('&').map(function(it){
     return it.split('=');
   }).filter(function(it){
+    return it[0];
+  });
+  queries.filter(function(it){
     return it[0] === 't';
   }).slice(0, 1).map(function(it){
     maketext.editor.input(decodeURIComponent(it[1]));
     return scrollto('#top');
+  });
+  queries.filter(function(it){
+    return it[0] === 's' && !isNaN(+it[1]);
+  }).slice(0, 1).map(function(it){
+    return $('#font-size-slider .up.irs-input').val(+it[1]);
+  });
+  ldColorPicker.init();
+  return Array.from(document.querySelectorAll('#font-size-slider .up.irs-input')).map(function(d, i){
+    var v, x$;
+    editor.update('fontSize', v = +d.value || 10);
+    x$ = $(d);
+    x$.val(v);
+    x$.ionRangeSlider({
+      onChange: function(data){
+        return editor.update('fontSize', data.from);
+      }
+    });
+    return x$;
   });
 });
