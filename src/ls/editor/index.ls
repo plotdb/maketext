@@ -231,7 +231,7 @@ queries
 ldColorPicker.init!
 
 Array.from(document.querySelectorAll('#font-size-slider .up.irs-input')).map (d,i) ->
-  editor.update \fontSize, (v = (+d.value or 10))
+  editor.update \fontSize, (v = (+d.value or 64))
   $(d)
     ..val v
     ..ionRangeSlider do

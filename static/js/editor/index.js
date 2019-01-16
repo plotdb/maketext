@@ -351,7 +351,7 @@ $(document).ready(function(){
   ldColorPicker.init();
   return Array.from(document.querySelectorAll('#font-size-slider .up.irs-input')).map(function(d, i){
     var v, x$;
-    editor.update('fontSize', v = +d.value || 10);
+    editor.update('fontSize', v = +d.value || 64);
     x$ = $(d);
     x$.val(v);
     x$.ionRangeSlider({
