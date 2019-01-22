@@ -328,7 +328,7 @@ $(document).ready(function(){
         return window.postMessage({
           n: n,
           data: v
-        });
+        }, '*');
       }
     }
   };

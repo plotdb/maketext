@@ -209,7 +209,7 @@ window.maketext = maketext = editor: do
   on: (n, cb) -> @evt-handler.[][n].push cb
   fire: (n, ...v) ->
     for cb in (@evt-handler[n] or []) => cb.apply @, v
-    window.postMessage {n, data: v}
+    window.postMessage {n, data: v}, \*
 
 
 queries = (window.location.search or "?").substring(1)

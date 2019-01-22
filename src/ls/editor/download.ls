@@ -25,7 +25,7 @@ window.convert = do
     }
     """
     svg.appendChild(style)
-    node = document.querySelector('#svg-work-area') 
+    node = document.querySelector('#svg-work-area')
     if !node =>
       node = document.createElement("div")
       node.setAttribute(\id, 'svg-work-area')
@@ -66,7 +66,8 @@ window.convert = do
     y = path.getBBox!height * 0.5                  + textbox.height * 0.5 + textbox.y
 
     g2.setAttribute("transform", "translate(#x, #y)")
-    svg.setAttribute \viewBox, "0 0 500 150"
+    svg.setAttribute \viewBox, [250 - box.width * 0.5,75 - box.height * 0.5,box.width,box.height].join(' ')
+    svg.setAttribute \preserveAspectRatio, \xMidYMid
     # fit viewBox to size?
     #svg.setAttribute \viewBox, "0 0 #{box.width} #{box.height}"
     svg.setAttribute \width, "#{box.width}px"
@@ -85,20 +86,33 @@ window.convert = do
     document.querySelector('#download .btn')
       ..setAttribute \href, url
       ..setAttribute \download, "#{option.name or 'output'}.#{option.postfix or 'png'}"
-    maketext.editor.fire \image.ready, {url} <<< option{name, type}
+    maketext.editor.fire \image.ready, {url} <<< option{name, type, dataurl}
 
   svg: ->
+    local = {}
     @prepare!
-      .then ({svg, text, width, height}) ~>
-        @download {width, height, content: svg.outerHTML, type: 'image/svg+xml', name: text, postfix: \svg}
+      .then (ret = {}) ~>
+        local <<< ret{svg, text, width, height}
+        smiltool.svg-to-dataurl local.svg.outerHTML
+      .then ~>
+        @download {
+          dataurl: it
+          name: local.text, content: local.svg.outerHTML,
+          type: 'image/svg+xml', postfix: \svg
+        } <<< local{width, height}
   png: ->
-    [text-value, box] = ['', {width: 500, height: 150}]
+    [text-value, box, dataurl] = ['', {width: 500, height: 150}, null]
     @prepare!
       .then ({svg, text, width, height}) ->
         text-value := text
         box <<< {width, height}
         smiltool.svg-to-dataurl svg.outerHTML
       .then -> smiltool.url-to-dataurl it, box.width, box.height
-      .then -> smiltool.dataurl-to-blob it
+      .then ->
+        dataurl := it
+        smiltool.dataurl-to-blob it
       .then ~>
-        @download {width: box.width, height: box.height, blob: it, name: text-value, postfix: \png, type: 'image/png'}
+        @download {
+          dataurl: dataurl
+          width: box.width, height: box.height, blob: it, name: text-value, postfix: \png, type: 'image/png'
+        }

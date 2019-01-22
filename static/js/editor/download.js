@@ -63,7 +63,8 @@ window.convert = {
           x = -path.getBBox().width * 0.5 - path.getBBox().x + textbox.width * 0.5 + textbox.x;
           y = path.getBBox().height * 0.5 + textbox.height * 0.5 + textbox.y;
           g2.setAttribute("transform", "translate(" + x + ", " + y + ")");
-          svg.setAttribute('viewBox', "0 0 500 150");
+          svg.setAttribute('viewBox', [250 - box.width * 0.5, 75 - box.height * 0.5, box.width, box.height].join(' '));
+          svg.setAttribute('preserveAspectRatio', 'xMidYMid');
           svg.setAttribute('width', box.width + "px");
           svg.setAttribute('height', box.height + "px");
           return res({
@@ -97,31 +98,37 @@ window.convert = {
     x$.setAttribute('download', (option.name || 'output') + "." + (option.postfix || 'png'));
     return maketext.editor.fire('image.ready', (ref$ = {
       url: url
-    }, ref$.name = option.name, ref$.type = option.type, ref$));
+    }, ref$.name = option.name, ref$.type = option.type, ref$.dataurl = option.dataurl, ref$));
   },
   svg: function(){
-    var this$ = this;
-    return this.prepare().then(function(arg$){
-      var svg, text, width, height;
-      svg = arg$.svg, text = arg$.text, width = arg$.width, height = arg$.height;
-      return this$.download({
-        width: width,
-        height: height,
-        content: svg.outerHTML,
+    var local, this$ = this;
+    local = {};
+    return this.prepare().then(function(ret){
+      ret == null && (ret = {});
+      local.svg = ret.svg;
+      local.text = ret.text;
+      local.width = ret.width;
+      local.height = ret.height;
+      return smiltool.svgToDataurl(local.svg.outerHTML);
+    }).then(function(it){
+      var ref$;
+      return this$.download((ref$ = {
+        dataurl: it,
+        name: local.text,
+        content: local.svg.outerHTML,
         type: 'image/svg+xml',
-        name: text,
         postfix: 'svg'
-      });
+      }, ref$.width = local.width, ref$.height = local.height, ref$));
     });
   },
   png: function(){
-    var ref$, textValue, box, this$ = this;
+    var ref$, textValue, box, dataurl, this$ = this;
     ref$ = [
       '', {
         width: 500,
         height: 150
-      }
-    ], textValue = ref$[0], box = ref$[1];
+      }, null
+    ], textValue = ref$[0], box = ref$[1], dataurl = ref$[2];
     return this.prepare().then(function(arg$){
       var svg, text, width, height;
       svg = arg$.svg, text = arg$.text, width = arg$.width, height = arg$.height;
@@ -132,9 +139,11 @@ window.convert = {
     }).then(function(it){
       return smiltool.urlToDataurl(it, box.width, box.height);
     }).then(function(it){
+      dataurl = it;
       return smiltool.dataurlToBlob(it);
     }).then(function(it){
       return this$.download({
+        dataurl: dataurl,
         width: box.width,
         height: box.height,
         blob: it,
