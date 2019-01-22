@@ -93,7 +93,7 @@ window.convert = do
     @prepare!
       .then (ret = {}) ~>
         local <<< ret{svg, text, width, height}
-        smiltool.svg-to-dataurl local.svg.outerHTML
+        smiltool.svg-to-dataurl """<?xml version="1.0" encoding="utf-8"?>#{local.svg.outerHTML}"""
       .then ~>
         @download {
           dataurl: it

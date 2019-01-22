@@ -596,7 +596,7 @@ window.convert = {
       local.text = ret.text;
       local.width = ret.width;
       local.height = ret.height;
-      return smiltool.svgToDataurl(local.svg.outerHTML);
+      return smiltool.svgToDataurl("<?xml version=\"1.0\" encoding=\"utf-8\"?>" + local.svg.outerHTML);
     }).then(function(it){
       var ref$;
       return this$.download((ref$ = {
