@@ -1,1 +1,7 @@
 //- module
+- var debug = false;
+.cbad
+  if debug
+    script#_carbonads_js(async,type="text/javascript",src="//cdn.carbonads.com/carbon.js?serve=CK7I453J&placement=carbonads")
+  if !debug
+    script#_carbonads_js(async,type="text/javascript",src="//cdn.carbonads.com/carbon.js?serve=CK7I453J&placement=maketextio")
