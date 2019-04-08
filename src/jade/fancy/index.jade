@@ -42,17 +42,17 @@ block body
   #editor
     .config
       .row(style="max-width:1024px;margin:auto")
-        .col
+        .col-12.col-sm-6
           label Text
           input#text-input.form-control.form-control-sm(value="Fancy Text!")
-        .col
+        .col-12.col-sm-6
           label UpperCase
           .btn-group#text-case
             .btn.btn-sm.btn-outline-dark(data-value="on") On
             .btn.btn-sm.btn-outline-dark.active(data-value="off") Off
 
-  include /module/carbon/index.jade
   #landing.text-center
+    include /module/carbon/index.jade
     .share
       span.mr-2 share with
       a.mr-2(href="https://www.facebook.com/sharer/sharer.php?u=https://maketext.io/fancy/",style="font-size:0.9em;margin-top:-3px",target="_blank") facebook
@@ -67,7 +67,7 @@ block body
         +nbr(2)
         .input-group
           input.form-control.input-lg(type="text", placeholder="for example, 'Fancy Text!'")
-          .input-group-append(style="width:150px")
+          .input-group-append
             .btn.btn-action.btn-block(onclick="scrollto('#top')") Make Fancy Text
         br
         a(href="/") or, style your text into cool text images #[i.fa.fa-arrow-right]
@@ -94,7 +94,8 @@ block body
     p While images are not able to copy / paste in places like Facebook posts, messengers or other chat apps, "text" can. Fancy text generator converts your texts to similar unicode characters with different styles, and all of them are copy/paste-able in any places that support unicode with these characters.
     br
     p The coolest part of fancy text is it actually might be used in cool text image generator:
-    img(src="/assets/img/fancy/fancy.jpg",style="border-radius:3px;box-shadow:0 2px 4px rgba(0,0,0,.3)")
+    img(src="/assets/img/fancy/fancy.jpg",
+    style="border-radius:3px;box-shadow:0 2px 4px rgba(0,0,0,.3);max-width:90%;margin:auto;display:block")
     +nbr(3)
     h2 Contact
     .sep

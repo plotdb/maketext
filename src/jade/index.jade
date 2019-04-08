@@ -20,8 +20,8 @@ block body
           feMergeNode(in="SourceGraphic")
           feMergeNode(in="offset")
 
-  include /module/carbon/index.jade
   #landing.text-center
+    include /module/carbon/index.jade
     .share
       span.mr-2 share with
       a.mr-2(href="https://www.facebook.com/sharer/sharer.php?u=https://maketext.io",style="font-size:0.9em;margin-top:-3px",target="_blank") facebook
@@ -36,7 +36,7 @@ block body
         +nbr(2)
         .input-group
           input.form-control.input-lg(type="text", placeholder="for example, 'Cool Text!'")
-          .input-group-append(style="width:150px")
+          .input-group-append
             .btn.btn-action.btn-block(onclick="scrollto('#top')") Make Text #[span.cool Cooler]
         br
         a(href="/fancy/") or, show me more copyable 𝕗𝕒𝕟𝕔𝕪 𝕥𝕖𝕩𝕥!!
@@ -46,7 +46,10 @@ block body
   +nbr(2)
   #gallery.gallery
   +nbr(2)
-  .text-center: big: a(href="/fancy/") need 𝔉𝔞𝔫𝔠𝔶 𝔗𝔢𝔵𝔱 in plain text? check out the fancy text generator!
+  .text-center: big: a(href="/fancy/")
+    .row(style="padding:0;margin:0;width:100%")
+      .col-sm need 𝔉𝔞𝔫𝔠𝔶 𝔗𝔢𝔵𝔱 in plain text?
+      .col-sm check out the fancy text generator!
   br
   #info: .inner
     .text-center

@@ -19,6 +19,11 @@ body.editing {
   -o-transition: all 0.3s ease-in-out;
   transition: all 0.3s ease-in-out;
 }
+#editor .col-6,
+#editor .col-4,
+#editor .col-12 {
+  margin-bottom: 10px;
+}
 #editor label {
   text-transform: capitalize;
   width: 100%;
@@ -28,7 +33,7 @@ body.editing {
   overflow: hidden;
 }
 #editor .config {
-  padding: 10px 0 20px;
+  padding: 10px 0 0;
   border-bottom: 1px solid #ccc;
   background: rgba(255,255,255,0.6);
 }
@@ -70,6 +75,12 @@ body.editing {
   content: "no custom options";
   display: table-cell;
   vertical-align: middle;
+}
+@media (max-width: 576px) {
+  #editor {
+    top: -140px;
+    height: 140px;
+  }
 }
 #cooltext {
   width: 100%;

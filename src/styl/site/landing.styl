@@ -53,6 +53,8 @@
     width: 420px
     max-width: 90%
     margin: auto
+    .input-group-append
+      width: 150px
   .inner .subtitle, .inner h1
     animation(popup .5s ease-in-out 1)
   .inner .widget
@@ -102,4 +104,28 @@
   .btn:after
     content: "\f00d"
     color: #f00
+
+@media(max-width: 576px)
+  #landing
+    .share
+      top: auto
+      bottom: 20px
+      font-size: 1em
+    h1
+      font-size: 3.5em
+      img
+        width: 120px
+        top: -120px
+        margin-left: -80px
+    .inner .input-group
+      max-width: 300px
+      width: 90%
+      display: block
+      box-shadow: none
+      .input-group-append, input
+        width: 90%
+        border-radius: 5px
+        margin: 0 auto 10px
+      .btn
+        border-radius: 5px
 

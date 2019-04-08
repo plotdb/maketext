@@ -47,6 +47,9 @@ keyframes(popup)
   max-width: 90%;
   margin: auto;
 }
+#landing .input-group .input-group-append {
+  width: 150px;
+}
 #landing .inner .input-group {
   border-radius: 5px;
   box-shadow: 0 7px 12px -2px rgba(144,240,180,0.5);
@@ -86,4 +89,34 @@ keyframes(rotate)
 #subscribe.fail .btn:after {
   content: "\f00d";
   color: #f00;
+}
+@media (max-width: 576px) {
+  #landing .share {
+    top: auto;
+    bottom: 20px;
+    font-size: 1em;
+  }
+  #landing h1 {
+    font-size: 3.5em;
+  }
+  #landing h1 img {
+    width: 120px;
+    top: -120px;
+    margin-left: -80px;
+  }
+  #landing .inner .input-group {
+    max-width: 300px;
+    width: 90%;
+    display: block;
+    box-shadow: none;
+  }
+  #landing .inner .input-group .input-group-append,
+  #landing .inner .input-group input {
+    width: 90%;
+    border-radius: 5px;
+    margin: 0 auto 10px;
+  }
+  #landing .inner .input-group .btn {
+    border-radius: 5px;
+  }
 }

@@ -148,7 +148,7 @@ document.addEventListener \scroll, (e) ->
     box = d.getBoundingClientRect!
     if box.y + box.height < 0 or box.y > height => d.style.visibility = \hidden
     else d.style.visibility = \visible
-    if box.y + box.height < 0 or box.y + box.height > height =>
+    if box.y + box.height < 0 or box.y + (if window.innerWidth >576 => box.height else 0 ) > height =>
       d.style.opacity = 0
       d.style.transform = "scale(0.9)"
     else

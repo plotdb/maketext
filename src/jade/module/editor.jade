@@ -4,36 +4,36 @@ include /module/palette-picker.jade
 include /module/download.jade
 
 #editor-option-sample(style="display:none")
-  #editor-option-sample-color.col-sm
+  #editor-option-sample-color.col-sm.col-4
     label Color
     +color-input('color')
-  #editor-option-sample-number.col-sm
+  #editor-option-sample-number.col-sm.col-4
     label Number
     +slider
 
 #editor
   .config
     .row(style="max-width:1024px;margin:auto")
-      .col
+      .col-6.col-sm-3
         label Text
         input#text-input.form-control.form-control-sm(value="Hello World!")
-      .col-sm
+      .col-6.col-sm-3
         label Font
         .btn.btn-sm.btn-outline-dark.mr-1.block(data-toggle="modal",data-target="#font-picker") Choose ...
-      #font-size-slider.col-sm
+      #font-size-slider.col-4.col-sm-3
         label Font Size
         +slider
-      .col-sm
+      .col-4.col-sm-3
         label Background
         +color-input('background')
-    //-.advanced
-    .row.mt-3(style="max-width:1024px;margin:auto;display:flex")
-      #palette-btn.col-sm-3
+      //-.advanced
+      //-.mt-3(style="max-width:1024px;margin:auto;display:flex")
+      #palette-btn.col-sm-3.col-4.adv
         label Palette
         .palette(data-toggle="modal",data-target="#palette-picker")
           each i in ['#f00','#0f0','#00f','#0ff']
             .color(style="background:#{i}")
-      #editor-custom-options.col-sm-9.row(style="margin-left:0;padding:0")
+      #editor-custom-options.col-12.col-sm-9.row.adv(style="margin-left:0;padding:0")
   //-hr
   br
   #cooltext

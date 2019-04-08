@@ -11,3 +11,11 @@
   width: 90%;
   max-width: 1024px;
 }
+@media (max-width: 576px) {
+  #info > .inner {
+    font-size: 1.2em;
+  }
+  #info > .inner h1 {
+    font-size: 2em;
+  }
+}

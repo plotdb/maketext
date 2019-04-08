@@ -33,9 +33,6 @@
 .gallery .item svg {
   will-change: transform, opacity;
 }
-.gallery .line {
-  height: 130px;
-}
 .gallery .item {
   max-width: 320px;
   width: 320px;
@@ -48,4 +45,9 @@
   max-width: 490px;
   width: 490px;
   height: 160px;
+}
+@media (max-width: 576px) {
+  .gallery .line {
+    height: auto;
+  }
 }

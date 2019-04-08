@@ -3012,6 +3012,27 @@ h6.tag {
 .cbad a.carbon-poweredby {
   float: right;
 }
+@media (max-width: 576px) {
+  .cbad {
+    width: auto;
+    position: relative;
+    height: 100px;
+    background: #fff;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    border-radius: 3px;
+  }
+  .cbad .carbon-img {
+    float: left;
+    margin-right: 10px;
+  }
+  .cbad .carbon-poweredby {
+    bottom: 0;
+    right: 10px;
+    position: absolute;
+    float: none;
+    margin-top: 0;
+  }
+}
  {
   width: 100%;
   width: 100%;
@@ -3302,6 +3323,9 @@ h6.tag {
   max-width: 90%;
   margin: auto;
 }
+#landing .input-group .input-group-append {
+  width: 150px;
+}
 #landing .inner .subtitle,
 #landing .inner h1 {
   -ms-animation: popup 0.5s ease-in-out 1;
@@ -3549,6 +3573,36 @@ h6.tag {
   content: "\f00d";
   color: #f00;
 }
+@media (max-width: 576px) {
+  #landing .share {
+    top: auto;
+    bottom: 20px;
+    font-size: 1em;
+  }
+  #landing h1 {
+    font-size: 3.5em;
+  }
+  #landing h1 img {
+    width: 120px;
+    top: -120px;
+    margin-left: -80px;
+  }
+  #landing .inner .input-group {
+    max-width: 300px;
+    width: 90%;
+    display: block;
+    box-shadow: none;
+  }
+  #landing .inner .input-group .input-group-append,
+  #landing .inner .input-group input {
+    width: 90%;
+    border-radius: 5px;
+    margin: 0 auto 10px;
+  }
+  #landing .inner .input-group .btn {
+    border-radius: 5px;
+  }
+}
 #info {
   background: linear-gradient(315deg, #e3fbfd, #f5fafa, #fff) fixed;
   border-top: 1px solid #ccc;
@@ -3561,6 +3615,14 @@ h6.tag {
   margin: auto;
   width: 90%;
   max-width: 1024px;
+}
+@media (max-width: 576px) {
+  #info > .inner {
+    font-size: 1.2em;
+  }
+  #info > .inner h1 {
+    font-size: 2em;
+  }
 }
 body.editing {
   overflow: hidden;
@@ -3583,6 +3645,11 @@ body.editing {
   -o-transition: all 0.3s ease-in-out;
   transition: all 0.3s ease-in-out;
 }
+#editor .col-6,
+#editor .col-4,
+#editor .col-12 {
+  margin-bottom: 10px;
+}
 #editor label {
   text-transform: capitalize;
   width: 100%;
@@ -3592,7 +3659,7 @@ body.editing {
   overflow: hidden;
 }
 #editor .config {
-  padding: 10px 0 20px;
+  padding: 10px 0 0;
   border-bottom: 1px solid #ccc;
   background: rgba(255,255,255,0.6);
 }
@@ -3634,6 +3701,12 @@ body.editing {
   content: "no custom options";
   display: table-cell;
   vertical-align: middle;
+}
+@media (max-width: 576px) {
+  #editor {
+    top: -140px;
+    height: 140px;
+  }
 }
 #cooltext {
   width: 100%;
@@ -3756,9 +3829,6 @@ body.editing #cooltext {
 .gallery .item svg {
   will-change: transform, opacity;
 }
-.gallery .line {
-  height: 130px;
-}
 .gallery .item {
   max-width: 320px;
   width: 320px;
@@ -3771,6 +3841,11 @@ body.editing #cooltext {
   max-width: 490px;
   width: 490px;
   height: 160px;
+}
+@media (max-width: 576px) {
+  .gallery .line {
+    height: auto;
+  }
 }
 text {
   dominant-baseline: central;
