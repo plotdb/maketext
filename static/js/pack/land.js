@@ -250,7 +250,7 @@ $(document).ready(function(){
       } else {
         d.style.visibility = 'visible';
       }
-      if (box.y + box.height < 0 || box.y + (window.innerWidth > 576 ? box.height : 0) > height) {
+      if (box.y + box.height < 0 || box.y + box.height / 3 > height) {
         d.style.opacity = 0;
         return d.style.transform = "scale(0.9)";
       } else {
