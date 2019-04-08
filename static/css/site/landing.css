@@ -105,7 +105,7 @@ keyframes(rotate)
     margin-left: -80px;
   }
   #landing .inner .input-group {
-    max-width: 300px;
+    max-width: 240px;
     width: 90%;
     display: block;
     box-shadow: none;
