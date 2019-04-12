@@ -1,0 +1,15 @@
+svg(xmlns="http://www.w3.org/2000/svg",viewBox="0 0 500 150")
+  defs
+    linearGradient#gradow-gradient(x1="0",x2="1",y1="0",y2="0",gradientUnits="objectBoundingBox")
+      stop(offset="0",stop-color="#f0f")
+      stop(offset="1",stop-color="#0ff")
+    filter#gradow-filter(x="-100%",y="-100%",width="300%",height="300%")
+      feFlood(flood-color="#fffcd9",result="flood")
+      feComposite(operator="in",in2="SourceAlpha",in="flood",result="shadow")
+      feOffset(dx="-3.5",dy="-3.5",in="SourceGraphic",result="offset-1")
+      feOffset(dx="3.5",dy="3.5",in="shadow",result="offset-2")
+      feMerge
+        feMergeNode(in="offset-2")
+        feMergeNode(in="offset-1")
+
+  text(x="250",y="75",fill="url(#gradow-gradient)",filter="url(#gradow-filter)") Hello World!
