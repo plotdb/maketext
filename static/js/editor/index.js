@@ -230,7 +230,7 @@ $(document).ready(function(){
     rows: html,
     scrollElem: document.querySelector('body'),
     contentElem: document.querySelector('#gallery'),
-    rows_in_block: 50
+    rows_in_block: 10
   });
   document.addEventListener('scroll', function(e){
     var scrolltop, editor, height;
