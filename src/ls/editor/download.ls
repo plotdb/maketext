@@ -1,4 +1,11 @@
 
+load-font = -> new Promise (res, rej) ->
+  (e, tts) <~ text-to-svg.load "/assets/fonts/ttf/#{window.fontname or 'ArialBlack'}-Regular.ttf"
+  if !e => return res tts
+  (e, tts) <~ text-to-svg.load "/assets/fonts/ttf/#{window.fontname or 'ArialBlack'}.ttf"
+  if !e => return res tts
+  return rej e
+
 window.convert = do
   prepare: -> new Promise (res, rej) ->
     svg = document.querySelector '#cooltext svg' .cloneNode true
@@ -32,7 +39,7 @@ window.convert = do
       document.body.appendChild(node)
     node.appendChild(svg)
 
-    (e, tts) <~ text-to-svg.load "/assets/fonts/ttf/#{window.fontname or 'ArialBlack'}-Regular.ttf"
+    (tts) <- load-font!then _
     (text, i) <~ Array.from(svg.querySelectorAll(\text)).map _
     #text = svg.querySelector('text')
 
