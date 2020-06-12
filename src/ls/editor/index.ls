@@ -236,3 +236,4 @@ Array.from(document.querySelectorAll('#font-size-slider .up.irs-input')).map (d,
     ..val v
     ..ionRangeSlider do
       onChange: (data) -> editor.update \fontSize, data.from
+      max: 200

@@ -357,7 +357,8 @@ $(document).ready(function(){
     x$.ionRangeSlider({
       onChange: function(data){
         return editor.update('fontSize', data.from);
-      }
+      },
+      max: 200
     });
     return x$;
   });
