@@ -45,7 +45,7 @@
     "node-minify": "=2.0.4",
     "node-uuid": "^1.4.8",
     "nodemailer": "=2.7.0",
-    "nodemailer-mailgun-transport": "=1.2.2",
+    "nodemailer-mailgun-transport": "=2.1.5",
     "nodemailer-smtp-transport": "=0.1.12",
     "oidc-provider": "^2.9.2",
     "openid-client": "^1.19.0",
