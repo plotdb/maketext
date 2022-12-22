@@ -37,7 +37,7 @@
     "js-sha256": "=0.6.0",
     "js-yaml": "=3.7.0",
     "jsdom": "=10.1.0",
-    "jsonwebtoken": "=8.1.0",
+    "jsonwebtoken": "=9.0.0",
     "markdown": "=0.5.0",
     "marked": "^0.3.19",
     "moment": "=2.19.3",
