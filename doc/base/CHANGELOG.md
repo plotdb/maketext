@@ -9,6 +9,11 @@
    - `@servebase/auth`: password reset and email verification tokens are stored as
      sha256 ( `sha256:<hex>` ) instead of plaintext. Tokens sent before this still work
      until they expire, so nothing breaks on deploy; no migration needed.
+   - demo ( `frontend/base` ): after login, authpanel waited for the cookie consent bar
+     at the bottom of the page, which was easy to miss, so login seemed to hang ( e.g.
+     "login now" after account activation never redirected ). Cookie consent is now a
+     locked cover ( local block `consent-cookie` ), asked only once per user
+     ( recorded via `@servebase/consent` ).
 
  - features:
    - `@servebase/auth`: account activation - admin creates an account for someone

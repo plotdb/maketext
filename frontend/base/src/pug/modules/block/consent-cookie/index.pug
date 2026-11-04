@@ -1,0 +1,26 @@
+div
+  //- 鎖定的 cover ( 不能點背景或 esc 關掉 ), 只能按同意, 確保用戶不會漏看.
+  //- @servebase/consent 的 cookie block 是頁面底部的提示列, 不擋操作, 用戶常沒注意到.
+  .ldcv.autogap.scroll(plug="widget",data-lock="true"): .base.w-480.rwd: .inner
+    .text-center
+      h3(t) title
+      p.my-4(t) desc
+    .d-flex.g-2
+      a.btn.btn-lg.btn-outline-secondary.flex-grow-1.text-nowrap(
+      href="/privacy/",target="_blank",rel="noopener noreferrer",t) Details
+      .btn.btn-lg.btn-primary.flex-grow-1.text-nowrap(data-ldcv-set="true",t) OK
+  script(type="@plotdb/block"): :lsc
+    module.exports =
+      pkg:
+        extend: {name: "@servebase/consent", path: "base"}
+        i18n:
+          en:
+            title: "Cookie Policy"
+            desc: "By continuing to browse, you agree to our use of cookies. For more details please check our privacy policy."
+            Details: "Details"
+            OK: "Agree"
+          "zh-TW":
+            title: "Cookie 使用政策"
+            desc: "繼續使用即表示您同意我們使用 Cookie 的方式，詳情請查閱我們的隱私權政策。"
+            Details: "詳情"
+            OK: "我同意"
