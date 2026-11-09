@@ -2,7 +2,7 @@ require! <[lderror jsonwebtoken @plotdb/express-session passport passport-local]
 require! <[passport-facebook]>
 require! <[passport-google-oauth20]>
 require! <[passport-line-auth]>
-require! <[@servebase/backend/aux ./passwd ./mail ./activate]>
+require! <[@servebase/backend/aux @servebase/backend/throttle ./passwd ./mail ./activate]>
 
 (backend) <- ((f) -> module.exports = -> f.call {}, it) _
 {db,app,config,route,session} = backend
@@ -307,10 +307,11 @@ app.use passport.initialize!
 app.use passport.session!
 
 route.auth
-  ..post \/signup, backend.middleware.captcha, (req, res, next) ~>
+  ..post \/signup, throttle.kit.signup, backend.middleware.captcha, (req, res, next) ~>
     # config skipped here to prevent var shadowing of the global config object
     {username,displayname,password,invite-token} = req.body{username,displayname,password,invite-token}
     if !username or !displayname or password.length < 8 => return next(lderror 400)
+    if "#displayname".length > 64 => return next(lderror 400)
     # users.config 不收用戶自己傳的 ( req.body.config ), 新帳號一律從空的開始
     db.user-store.create {username, password, invite-token} <<< {
       method: \local, detail: {displayname}, config: {}
@@ -328,10 +329,11 @@ route.auth
         req.login user, (err) !-> if err => next(err) else res.send {}
       .catch (e) !->
         # 1052: 管理員代建、還沒啟用的帳號. 前端提示用戶去收啟用信 ( 或重寄 )
-        if lderror.id(e) in [1004 1014 1040 1043 1052] => return next(e)
+        # 1015: email 格式不對或太長
+        if lderror.id(e) in [1004 1014 1015 1040 1043 1052] => return next(e)
         console.error e
         next(lderror 403)
-  ..post \/login, backend.middleware.captcha, (req, res, next) ->
+  ..post \/login, throttle.kit.login, backend.middleware.captcha, (req, res, next) ->
     ((err,user,info) <- passport.authenticate \local, _
     if err or !user => return next(err or lderror(1000))
     # with 2FA enabled, reply `{mfa: {methods}}` without logging in. see ./mfa

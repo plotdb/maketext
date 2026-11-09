@@ -77,12 +77,12 @@
             div
               .form-group
                 span(t) email
-                input.form-control(ld="username input",name="username",t
+                input.form-control(ld="username input",name="username",maxlength="100",t
                 t-placeholder="input.email.hint",autocomplete="username")
                 .invalid-feedback(style="margin-bottom:-.75em",t) input.email.invalid
               .form-group(ld="displayname")
                 span(t) displayname
-                input.form-control(name="displayname",ld="input",t,
+                input.form-control(name="displayname",ld="input",maxlength="64",t,
                 t-placeholder="input.displayname.hint",autocomplete="displayname")
                 .invalid-feedback(t) required
               .form-group

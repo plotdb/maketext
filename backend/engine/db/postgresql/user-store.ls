@@ -108,13 +108,16 @@ user-store.prototype = Object.create(Object.prototype) <<< do
 
     username = username.toLowerCase!
     if !config => config = {}
-    if !is-email(username) => return lderror.reject 1015
+    # 長度上限同 users_username_len ( config/base/db/init.sql ); 要在 hashing 前擋掉
+    if username.length > 100 or !is-email(username) => return lderror.reject 1015
     if !!internal != /\.invalid$/.test(username) => return lderror.reject 1015
     Promise.resolve!
       .then ~> if method == \local and !pending => @hashing(password) else password
       .then (password) ~>
         displayname = if detail => detail.displayname or detail.username
         if !displayname => displayname = username.replace(/@[^@]+$/, "")
+        # 第三方登入的名字可能超過 users_displayname_length, 不該因此建不了帳號
+        displayname = "#displayname".substring 0, 64
         verified = if internal => {date: Date.now!}
         else if method == \local or !(policy and policy.oauth-default-verified) => null
         else {date: Date.now!}

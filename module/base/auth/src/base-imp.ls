@@ -180,7 +180,8 @@ base-imp =
             return core.ldcvmgr.get {name: "@servebase/auth", path: "activate-required"}, {username: body.username}
           # if we want to hint user the account existed.
           # we can handle error id 1014 here (apply existed resource)
-          if id == 1004 => return @info "login-exceeded"
+          # 1004 / 1024: 試太多次 ( 1024 來自 throttle )
+          if id in [1004 1024] => return @info "login-exceeded"
           # 1014: apply for a resource that already exists = account exists
           # id == 1012 = permission denied: usually for password incorrect
           # id == 1030 => password mismatched

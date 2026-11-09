@@ -1,6 +1,14 @@
 ## master
 
  - fixes:
+   - `@servebase/auth`: signing up with an email over 100 characters reached the
+     `users_username_len` db constraint after hashing the password, and was logged as
+     a database error. It's now rejected first with lderror `1015`; a display name over
+     64 characters gets 400 ( 3rd party login names are cut to 64 instead ). The form
+     inputs have matching `maxlength`.
+   - `@servebase/auth`: `POST /signup` and `/login` now use `throttle.kit.signup` /
+     `throttle.kit.login` ( per ip ), since each attempt runs argon2. authpanel shows
+     the login-exceeded message when throttled ( lderror `1024` ).
    - `@servebase/auth`: posting a new password ( `POST /api/auth/passwd/reset/:token` )
      now checks if the token expired - before, only clicking the link did, so an unused
      token from an old mail could reset the password at any time by posting directly.

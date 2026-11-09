@@ -396,7 +396,7 @@ baseImp = {
               username: body.username
             });
           }
-          if (id === 1004) {
+          if (id === 1004 || id === 1024) {
             return this$.info("login-exceeded");
           }
           this$._failedHintText = id === 1014
