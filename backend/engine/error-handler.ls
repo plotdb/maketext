@@ -2,6 +2,10 @@ require! <[lderror @plotdb/suuid ./aux]>
 
 (backend) <- (->module.exports = it)  _
 
+# client errors from body-parser / raw-body, other than the 400 ones handled in `handler`.
+# `type` is set by these packages, so other 4xx / 5xx errors in our code won't match.
+body-parser-errors = <[encoding.unsupported charset.unsupported entity.too.large parameters.too.many]>
+
 # for serving a friendly error page if it's not an API and prevent looping error
 route490 = (req, res, err) ->
   if !/^\/api/.exec(req.originalUrl) and !/^\/err\/490/.exec(req.originalUrl) =>
@@ -38,6 +42,11 @@ handler = (err, req, res, next) ->
     # however since the source has set status to 400 explicitly,
     # we can consider all these kind of error as 400 and use lderror to handle them.
     if err.status == 400 => err = lderror 400
+    # body-parser is a global middleware and runs before routing, so scanners with arbitrary
+    # content-encoding reach here too. It's a bad request instead of a bug: send its status without logging as error.
+    if err.type in body-parser-errors =>
+      req.log.info "body-parser rejected request [URL: #{req.originalUrl}] : #{err.message} (#{err.type})"
+      return res.status err.status .send {name: \lderror, id: err.status, message: err.message}
     # SESSION corrupted, usually caused by a duplicated session id
     # this is generated in @servebase/auth by a middleware
     # which checks for duplicated session id

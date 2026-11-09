@@ -1,6 +1,10 @@
 ## master
 
  - fixes:
+   - error handler: client errors from `body-parser` ( unsupported content encoding /
+     charset, body too large, too many parameters ) were logged as unhandled exceptions
+     and sent as 500. They now get their own status ( `413` / `415` ) and are logged
+     at info level.
    - `@servebase/auth`: signing up with an email over 100 characters reached the
      `users_username_len` db constraint after hashing the password, and was logged as
      a database error. It's now rejected first with lderror `1015`; a display name over
