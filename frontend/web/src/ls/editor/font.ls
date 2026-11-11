@@ -37,7 +37,10 @@ window.choose-font = ->
     # 取消時 font 為 null
     chooser.xfc.on \choose, (font) ->
       hide!
-      if font => apply-font font
+      if !font => return
+      apply-font font
+      # 預設字型之外的字型: gallery 縮圖 ( 以預設字型 render ) 失效, 改為即時 render
+      editor.gallery.set \font, font.cssName
   chooser.overlay.classList.remove \d-none
   if !chooser.rendered => chooser.rendered = chooser.xfc.init!then -> chooser.xfc.render!
 

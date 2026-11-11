@@ -1,0 +1,8 @@
+{
+  "name": "@maketext/tool",
+  "private": true,
+  "description": "maketext build tools ( effects packing, thumbnail prerender )",
+  "dependencies": {
+    "puppeteer": "^25.17.0"
+  }
+}

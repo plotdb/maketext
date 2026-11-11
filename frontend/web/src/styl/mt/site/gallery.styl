@@ -29,6 +29,19 @@
       height: 100%
     svg
       will-change: transform, opacity
+    // 預設顯示縮圖, .live 時才顯示即時 render 的 svg ( src/ls/editor/index.ls 的 gallery )
+    .thumb
+      display: block
+      width: 100%
+      height: 100%
+      object-fit: contain
+    svg
+      display: none
+    &.live
+      .thumb
+        display: none
+      svg
+        display: block
   .line
     height: 180px
     justify-content: center

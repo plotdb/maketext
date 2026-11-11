@@ -1,6 +1,6 @@
 history.scrollRestoration = 'manual';
 $(document).ready(function(){
-  var k, ref$, v, ret, editor, gallery, updateText, scrollto, list, res$, html, i$, to$, i, code, j$, j, d, initSlider, initColorpicker, clusterize, maketext, queries;
+  var k, ref$, v, ret, editor, gallery, updateText, scrollto, list, res$, html, i$, to$, i, code, j$, j, d, bk, thumb, initSlider, initColorpicker, clusterize, maketext, queries;
   for (k in ref$ = effects) {
     v = ref$[k];
     ret = null;
@@ -30,7 +30,10 @@ $(document).ready(function(){
     }
   };
   gallery = {
-    state: {},
+    state: {
+      fontSize: 64,
+      font: 'Sansita One'
+    },
     ver: 0,
     queue: [],
     timer: null,
@@ -41,6 +44,7 @@ $(document).ready(function(){
   };
   gallery.sync = function(item){
     var ref$, text, fontSize, background, svg;
+    item.classList.add('live');
     ref$ = this.state, text = ref$.text, fontSize = ref$.fontSize, background = ref$.background;
     if (text != null) {
       Array.from(item.querySelectorAll('text')).map(function(it){
@@ -86,6 +90,9 @@ $(document).ready(function(){
   };
   gallery.set = function(k, v){
     var this$ = this;
+    if (this.state[k] === v) {
+      return;
+    }
     this.state[k] = v;
     this.ver++;
     clearTimeout(this.timer);
@@ -97,6 +104,7 @@ $(document).ready(function(){
       });
     }, 120);
   };
+  editor.gallery = gallery;
   updateText = function(node){
     var textInput, value;
     node = node || document.querySelector('#text-input');
@@ -161,7 +169,9 @@ $(document).ready(function(){
       }
       d[1].html = d[1].html.replace("<svg", "<svg width='100%' height='100%'");
       d[1].html = d[1].html.replace("0 0 500 150", "0 0 500 150");
-      code += "<div class=\"item\" data-type=\"" + d[0] + "\"><div class=\"inner\">" + d[1].html + "</div></div>";
+      bk = (/^<svg[^>]*style="background:\s*([^;"]+)/.exec(d[1].html) || [])[1] || '';
+      thumb = "<img class=\"thumb\" src=\"/assets/thumb/" + d[0] + ".webp\" loading=\"lazy\" alt=\"" + d[0] + "\"\nonerror=\"this.closest('.item').classList.add('live')\">";
+      code += "<div class=\"item\" data-type=\"" + d[0] + "\"><div class=\"inner\" style=\"background:" + bk + "\">" + thumb + d[1].html + "</div></div>";
     }
     html.push("<div class=\"line\" style=\"visibility:hidden\">" + code + "</div>");
   }

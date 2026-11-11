@@ -23,9 +23,12 @@ window.editor = editor = do
 # 改成: 改動只記在 gallery.state 並遞增版本, debounce 後只更新畫面內的項目, 每個 frame 一個;
 # 畫面外的等捲進畫面時 ( scroll handler ) 再補. 項目以 data-v 記錄已套用的版本,
 # 因此被 clusterize 用原始 html 重建的項目也會被視為過期而補上.
-gallery = state: {}, ver: 0, queue: [], timer: null, running: false
+# 一開始顯示的是預先 render 的縮圖 ( 固定文字 / 預設字型 ), 第一次真正的改動才把項目切成即時 render.
+# state 的初始值對應縮圖的狀態, set 相同的值 ( 例: 載入時的字級 64 ) 不會讓縮圖失效.
+gallery = state: {fontSize: 64, font: 'Sansita One'}, ver: 0, queue: [], timer: null, running: false
 gallery.stale = (item) -> +(item.dataset.v or 0) != @ver
 gallery.sync = (item) ->
+  item.classList.add \live
   {text, font-size, background} = @state
   if text? => Array.from(item.querySelectorAll \text).map -> it.textContent = text
   if font-size? => Array.from(item.querySelectorAll \text).map -> it.style.fontSize = "#{font-size}px"
@@ -44,6 +47,7 @@ gallery.run = ->
     requestAnimationFrame step
   requestAnimationFrame step
 gallery.set = (k, v) ->
+  if @state[k] == v => return
   @state[k] = v
   @ver++
   clearTimeout @timer
@@ -52,6 +56,9 @@ gallery.set = (k, v) ->
       .filter -> it.style.visibility == \visible
       .map ~> @enqueue it
   ), 120
+
+# 字型 ( font.ls ) 也要透過它讓縮圖失效
+editor.gallery = gallery
 
 update-text = (node) ->
   node = node or document.querySelector('#text-input')
@@ -91,7 +98,13 @@ for i from 0 til list.length by 2 =>
     d.1.html = d.1.html.replace "<svg", "<svg width='100%' height='100%'"
     #d.1.html = d.1.html.replace "0 0 500 150", "-10 -10 520 170"
     d.1.html = d.1.html.replace "0 0 500 150", "0 0 500 150"
-    code += """<div class="item" data-type="#{d.0}"><div class="inner">#{d.1.html}</div></div>"""
+    # 預設顯示預先 render 的縮圖 ( tool/maketext/build-thumbs.ls ), 改過文字 / 字級 / 背景 / 字型後
+    # 才切成即時 render 的 svg ( .live, 見 gallery.sync ). 縮圖缺漏時直接用 svg.
+    # 容器的背景色取自效果 svg 的背景, 讓縮圖 object-fit: contain 多出來的邊同色.
+    bk = (/^<svg[^>]*style="background:\s*([^;"]+)/.exec(d.1.html) or [])[1] or ''
+    thumb = """<img class="thumb" src="/assets/thumb/#{d.0}.webp" loading="lazy" alt="#{d.0}"
+    onerror="this.closest('.item').classList.add('live')">"""
+    code += """<div class="item" data-type="#{d.0}"><div class="inner" style="background:#{bk}">#thumb#{d.1.html}</div></div>"""
   html.push """<div class="line" style="visibility:hidden">#code</div>"""
 
 

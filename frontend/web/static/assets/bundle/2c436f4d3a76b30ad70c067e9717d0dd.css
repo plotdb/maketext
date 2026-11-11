@@ -17579,6 +17579,21 @@ body.editing #cooltext {
 .gallery .item svg {
   will-change: transform, opacity;
 }
+.gallery .item .thumb {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+.gallery .item svg {
+  display: none;
+}
+.gallery .item.live .thumb {
+  display: none;
+}
+.gallery .item.live svg {
+  display: block;
+}
 .gallery .line {
   height: 180px;
   justify-content: center;

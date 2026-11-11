@@ -45,6 +45,16 @@ servebase 移植 ( `model/v2` ) 完成後，逐項討論。
 剩下 ~100ms 的 frame 是 vintage2、liquid 這類重效果單獨重畫一次的成本，分段無法再降，需要點陣快取。
 換字型仍是一次全部重畫 ( 以 css rule 套用 )，尚未處理。
 
+### 預先 render 的縮圖 ( 2026-11-12，已實作 )
+
+gallery 一開始顯示 build 時以固定文字、預設字型 render 的 webp 縮圖 ( tool/maketext/build-thumbs.ls，36 張共 1.1MB，lazy load )，
+使用者改了文字 / 字級 / 背景 / 字型後，畫面內的項目才逐一切成即時 render 的 svg ( `.live` )。
+
+ - 捲動 ( 縮圖狀態 )：p95 32 → 17.5ms、max 83 → 17.7ms
+ - 首屏不需要 render 任何 filter，也不需要載入效果字型。#3 讓每個效果有自己的字型時，首屏成本不變
+ - 瀏覽器內無法直接把 svg 快取成圖：svg 當成 img 時讀不到網頁的字型，要先把文字轉成 path。build 時預先 render 可避開這個問題
+ - 縮圖以預設字型 render；#3 實作後，build-thumbs 要改用各效果的預設字型
+
 
 ## 2. 效果的維護方式
 

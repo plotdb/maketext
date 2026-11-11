@@ -54,9 +54,11 @@ window.chooseFont = function(){
     };
     chooser.xfc.on('choose', function(font){
       hide();
-      if (font) {
-        return applyFont(font);
+      if (!font) {
+        return;
       }
+      applyFont(font);
+      return editor.gallery.set('font', font.cssName);
     });
   }
   chooser.overlay.classList.remove('d-none');
