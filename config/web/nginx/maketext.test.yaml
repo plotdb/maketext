@@ -1,0 +1,9 @@
+name: maketext
+ip: 127.0.0.1
+port: 9101
+hostname: maketext.test
+root: /Users/tkirby/workspace/maketext/server/frontend/web/static/
+cert:
+  crt: /Users/tkirby/workspace/devsuite/cert/maketext.test/server.crt
+  key: /Users/tkirby/workspace/devsuite/cert/maketext.test/server.key
+nginxCfgDir: /opt/homebrew/etc/nginx
