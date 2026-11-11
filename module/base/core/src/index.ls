@@ -111,8 +111,64 @@ servebase =
         zmgr: @zmgr
       )
 
+    # last resort when errors keep coming ( see melt down below ). a plain DOM splash
+    # instead of `alert`, which blocks the whole page ( and browser automation ) once per error.
+    # not relying on `ldcvmgr.fatal` since ldcvmgr version is decided by downstream projects.
+    # the splash is built once and reused - re-attached if it's gone ( e.g. body wiped out ).
+    # always returns a never-resolved Promise so callers stop right here.
+    # customizable via corecfg `fatal`: a function ( called once ), or {message, action}.
+    fatal = node: null, called: false
+    @fatal = (e) ~>
+      ret = new Promise (res, rej) ->
+      cfg = @_cfg.fatal or {}
+      if typeof(cfg) == \function =>
+        if fatal.called => return ret
+        fatal.called = true
+        try
+          cfg.call @, e
+        catch e2
+          console.error e2
+        return ret
+      if fatal.node =>
+        if !document.body.contains(fatal.node) => document.body.appendChild fatal.node
+        return ret
+      zh = /^zh/.exec((@i18n and @i18n.language) or navigator.language or '')
+      node = document.createElement \div
+      node.className = \servebase-fatal
+      node.setAttribute \style, [
+        "position:fixed", "top:0", "left:0", "width:100%", "height:100%"
+        "z-index:2147483647", "display:flex", "align-items:center"
+        "justify-content:center", "background:rgba(0,0,0,0.5)"
+        "font-family:sans-serif", "color:#333"
+      ].join(';')
+      box = document.createElement \div
+      box.setAttribute \style, [
+        "max-width:20rem", "margin:1rem", "padding:1.5rem", "border-radius:0.5rem"
+        "background:white", "box-shadow:0 0.5rem 2rem rgba(0,0,0,0.3)", "text-align:center"
+      ].join(';')
+      msg = document.createElement \div
+      msg.setAttribute \style, "margin-bottom:1.5rem;line-height:1.5"
+      msg.textContent = cfg.message or if zh => "發生錯誤，請重新載入頁面後再試一次。"
+      else "Something is wrong. Please reload and try again."
+      btn = document.createElement \button
+      btn.setAttribute \type, \button
+      btn.setAttribute \style, [
+        "padding:0.5rem 1.5rem", "border:none", "border-radius:0.25rem"
+        "background:#333", "color:white", "cursor:pointer", "font-size:1rem"
+      ].join(';')
+      btn.textContent = cfg.action or if zh => "重新載入" else "Reload"
+      btn.addEventListener \click, -> location.reload!
+      box.appendChild msg
+      box.appendChild btn
+      node.appendChild box
+      fatal.node = node
+      document.body.appendChild node
+      ret
+
     ethr = t: 0, c: 0
     err = new lderror.handler handler: (n, e) ~>
+      # once melted down, stay there: no more error covers under the splash.
+      if fatal.node or fatal.called => return @fatal e
       /*
       melt down mechanism - prevent infinite errors. errors limited to 4 in 500ms / 11 in 2s
       any unhandled error/rejection may trigger this handler again, which causes infinite errors
@@ -123,9 +179,9 @@ servebase =
       */
       t = Date.now!
       if ethr.t < t - 2000 => ethr <<< t: t, c: 0
-      else if !ethr.t => ethr << t: t, c: 0
+      else if !ethr.t => ethr <<< t: t, c: 0
       else if ethr.t > t - 2000 and ethr.c > 10 or ethr.t > t - 500 and ethr.c > 3 =>
-        return alert "something is wrong; please reload and try again"
+        return @fatal e
       ethr.c = (ethr.c or 0) + 1
       @ldcvmgr.get {ns: \local, name: \error, path: "#n.html"}, e
     @error = (e) -> err e

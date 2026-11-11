@@ -1,6 +1,13 @@
 ## master
 
  - fixes:
+   - `@servebase/core`: when errors keep coming ( melt down in the error handler ), it called
+     `alert` for every following error, which blocked the page ( and browser automation ),
+     e.g. user code throwing in an animation loop. It now shows a plain DOM reload splash
+     ( built once and reused; new `core.fatal(e)` ), and later errors stay on it instead of
+     opening error covers. Customizable with corecfg `fatal`. Not relying on
+     `ldcvmgr.fatal`, so it works with any ldcvmgr version. Also fixed a typo ( `<<` for
+     `<<<` ) in the melt down counter reset.
    - block bundling: the jsdom window for `@plotdb/block` ( `backend/base/manager.ls` and
      the fallback in `backend/engine/index.ls` ) had no url, so it was an opaque origin
      and bundling a block that touches `localStorage` failed with `SecurityError`
