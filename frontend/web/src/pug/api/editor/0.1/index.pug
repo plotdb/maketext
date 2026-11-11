@@ -1,0 +1,18 @@
+//- 嵌入用的 editor, 仍有外部用戶使用, 網址需維持 /api/editor/0.1/
+extends /modules/mt/base.pug
+block vars
+  - url = "https://maketext.io/editor/0.1/"
+block body
+  - var isApi = true
+  include /modules/mt/landing.pug
+  - var disqusUrl = "https://maketext.io/"
+  include /modules/mt/disqus.pug
+  +nbr(5)
+  include /modules/mt/footer.pug
+block script
+  +script([
+    "/js/editor/index.js",
+    "/js/editor/palette.js",
+    "/js/editor/font.js",
+    "/js/editor/download.js"
+  ], {pack: true})

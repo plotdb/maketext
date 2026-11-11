@@ -1,0 +1,69 @@
+//- module
+//- maketext 頁面的 layout. 舊 editor 依賴 jquery 版 bootstrap ( $().modal ) 與 jquery plugin ( ionRangeSlider ),
+//- 不能跟 /base.pug 的 bootstrap.native 並存 ( 兩者都會綁 data-toggle ), 因此獨立一份.
+doctype html
+- var debug = false
+- var thumbnail = "https://maketext.io/assets/img/thumbnail.png"
+- var favicon = "/assets/img/favicon.png"
+- var title = "Cool Texts Generator in SVG / PNG with 30+ Effects x 800+ Fonts · maketext.io"
+- var description = "style your words and logos with tons of fonts and customizable effects within seconds."
+- var url = "https://maketext.io/"
+html(lang="en")
+  include @/@loadingio/bootstrap.ext/index.pug
+  include /modules/mt/mixins.pug
+  block vars
+  head(prefix="og: http://ogp.me/ns#")
+    if !debug
+      include /modules/mt/ga.pug
+    meta(charset="utf-8")
+    meta(name="viewport", content="width=device-width, initial-scale=1.0, maximum-scale=1.0")
+    title= title
+    meta(name="description", content=description)
+    meta(property="og:locale", content="en_US")
+    meta(property="og:image", content=thumbnail)
+    meta(property="og:image:type", content="image/png")
+    meta(property="og:image:width", content="1200")
+    meta(property="og:image:height", content="630")
+    meta(property="og:type", content="website")
+    meta(property="og:url", content=url)
+    meta(property="og:title", content=title)
+    meta(property="og:description", content=description)
+    meta(name="twitter:card", content="summary")
+    meta(name="twitter:title", content=title)
+    meta(name="twitter:description", content=description)
+    meta(name="twitter:image", content=thumbnail)
+    link(rel="icon", type="image/x-icon", href=favicon)
+    link(rel="preconnect", href="https://xlfont.maketext.io")
+    +css([
+      "/assets/vendor/bootstrap/4.0.0/css/bootstrap.min.css",
+      "/assets/vendor/fontawesome/4.7.0/css/font-awesome.min.css",
+      "/assets/vendor/ldcolorpicker/0.1.4/ldcp.css",
+      "/assets/vendor/clusterize/0.18.1/clusterize.css",
+      "/assets/vendor/ion-rangeslider/2.1.7/css/ion.rangeSlider.css",
+      "/assets/vendor/ion-rangeslider/2.1.7/css/ion.rangeSlider.skinFlat.css",
+      {name: "@xlfont/choose", path: "index.min.css"},
+      "/css/mt/index.css"
+    ], {pack: true})
+    block head
+  body
+    +script([
+      "/assets/vendor/jquery/1.10.2/jquery.min.js",
+      "/assets/vendor/popper/1.12.5/index.js",
+      "/assets/vendor/bootstrap/4.0.0/js/bootstrap.min.js",
+      "/assets/vendor/ldcolorpicker/0.1.4/ldcp.js",
+      "/assets/vendor/clusterize/0.18.1/clusterize.min.js",
+      "/assets/vendor/ion-rangeslider/2.1.7/js/ion.rangeSlider.min.js",
+      "/assets/vendor/smiltool/latest/index.js",
+      "/assets/vendor/d3/d3-color/1.2.3/d3-color.min.js",
+      "/assets/vendor/palettes.js",
+      {name: "proxise"},
+      {name: "ldview"},
+      {name: "ldloader"},
+      {name: "@loadingio/vscroll"},
+      {name: "@plotdb/opentype.js", path: "dist/opentype.min.js"},
+      {name: "@xlfont/load"},
+      {name: "@xlfont/choose"},
+      "/js/effects.js"
+    ], {pack: true})
+    block body
+    block script

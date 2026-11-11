@@ -1,0 +1,13 @@
+//- module
+//- nbr 由 @loadingio/bootstrap.ext 提供
+mixin slider(size)
+  - if(!size) size = "sm"
+  .up.irs-input: input.form-control(class="form-control-" + size, default-switch="false")
+
+mixin color-input(name,size)
+  - if(!size) size = "sm"
+  .color
+    input.form-control(class="form-control-" + size,
+    name=name,value="#f0f0f0",data-cpclass="no-button compact-palette flat",
+    data-toggle="colorpicker",data-context="random",data-exclusive="true")
+    .inner

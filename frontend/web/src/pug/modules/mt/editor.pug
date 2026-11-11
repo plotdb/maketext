@@ -1,0 +1,62 @@
+//- module
+include @/@xlfont/choose/index.pug
+
+//- 字型選擇器的標記, 第一次打開時複製進遮罩 ( src/ls/editor/font.ls )
+template#mt-xfc-tpl: .mt-xfc-panel: +xfc
+
+#palette-picker.full-picker.fade.fade-alt.modal
+  .modal-dialog: .modal-content
+    .closebtn.lg(data-toggle="modal",data-target="#palette-picker")
+    .clusterize-scroll: .clusterize-content
+
+#download.modal
+  .card
+    .card-body
+      h4 Generated Image
+      small.gray click the download button to download
+      .result: img
+      hr
+      a.btn.btn-lg.btn-outline-success.mr-2(href="#",download="") Download
+      .btn.btn-lg.btn-outline-secondary(onclick="$('#download').modal('hide')") Close
+
+#editor-option-sample(style="display:none")
+  #editor-option-sample-color.col-sm.col-4
+    label Color
+    +color-input('color')
+  #editor-option-sample-number.col-sm.col-4
+    label Number
+    +slider
+
+#editor
+  .config
+    .row(style="max-width:1024px;margin:auto")
+      .col-6.col-sm-3
+        label Text
+        input#text-input.form-control.form-control-sm(value="Hello World!")
+      .col-6.col-sm-3
+        label Font
+        .btn.btn-sm.btn-outline-dark.mr-1.block(onclick="chooseFont()") Choose ...
+      #font-size-slider.col-4.col-sm-3
+        label Font Size
+        +slider
+      .col-4.col-sm-3
+        label Background
+        +color-input('background')
+      #palette-btn.col-sm-3.col-4.adv
+        label Palette
+        .palette(data-toggle="modal",data-target="#palette-picker")
+          each i in ['#f00','#0f0','#00f','#0ff']
+            .color(style="background:" + i)
+      #editor-custom-options.col-12.col-sm-9.row.adv(style="margin-left:0;padding:0")
+  br
+  #cooltext
+  .footer.text-center
+    .inline-block.text-left
+      label Download As ...
+      .block.mr-2(style="display:inline-block;width:300px")
+        // NOTE: editor-download-btn will be queried with API users
+        #editor-download-btn.btn-group
+          .btn.btn-outline-dark(data-type="svg", onclick="convert.svg()") SVG
+          .btn.btn-outline-dark(data-type="png", onclick="convert.png()") PNG
+    .inline-block
+      .btn.btn-outline-dark.mr-2(onclick="editor.toggle(false)") #[big(style="line-height:1em") &times;] Close

@@ -51,3 +51,7 @@ context/shared
 # lockfile is what keeps the two in step - build against an `npm ci` tree and
 # what is deployed matches what it was compiled against. `.@root/` is excluded
 # above and stays runtime state.
+!package-lock.json
+!frontend/web/
+frontend/web/static/assets/lib
+context/cached

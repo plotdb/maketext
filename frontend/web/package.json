@@ -1,0 +1,159 @@
+{
+  "name": "@maketext/frontend",
+  "version": "0.0.1",
+  "description": "maketext.io frontend",
+  "author": "zbryikt",
+  "license": "private",
+  "scripts": {
+    "postinstall": "./node_modules/.bin/fedep",
+    "start": "./node_modules/.bin/server -r . -o true"
+  },
+  "workspaces": [
+    "../../module/base/version",
+    "../../module/base/auth",
+    "../../module/base/captcha",
+    "../../module/base/consent",
+    "../../module/base/erratum",
+    "../../module/base/core",
+    "../../module/base/navtop",
+    "../../module/base/refresh",
+    "../../module/base/pugutil",
+    "../../module/base/discuss",
+    "../../module/base/mail",
+    "../../module/base/connector"
+  ],
+  "dependencies": {
+    "@loadingio/bootstrap.ext": "^0.0.9",
+    "@loadingio/debounce.js": "^1.0.1",
+    "@loadingio/ldc": "^0.0.4",
+    "@loadingio/ldquery": "^3.0.7",
+    "@loadingio/loading.css": "^3.1.0",
+    "@loadingio/transition.css": "^3.0.0",
+    "@loadingio/vscroll": "^0.0.11",
+    "@plotdb/block": "^5.0.7",
+    "@plotdb/csscope": "^5.0.2",
+    "@plotdb/datahub": "^0.7.5",
+    "@plotdb/ews": "^0.2.3",
+    "@plotdb/httputil": "^0.0.5",
+    "@plotdb/json0": "^0.0.5",
+    "@plotdb/opentype.js": "^1.3.5",
+    "@plotdb/rescope": "^5.0.11",
+    "@plotdb/semver": "^0.0.3",
+    "@sentry/tracing": "^6.19.7",
+    "@xlfont/choose": "^0.0.32",
+    "@xlfont/load": "^2.1.6",
+    "@zbryikt/template": "^2.3.38",
+    "bootstrap": "^4.6.1",
+    "bootstrap.native": "^3.0.10",
+    "curegex": "^0.0.4",
+    "dompurify": "^3.0.5",
+    "fedep": "^1.7.6",
+    "i18next": "^22.4.7",
+    "i18next-browser-languagedetector": "^6.1.4",
+    "ldbutton": "^2.0.1",
+    "ldcover": "^3.5.3",
+    "ldcvmgr": "^0.0.15",
+    "lderror": "^2.4.2",
+    "ldfile": "^2.0.0",
+    "ldfolder": "^0.0.9",
+    "ldform": "^0.1.2",
+    "ldiconfont": "^0.2.3",
+    "ldloader": "^3.0.1",
+    "ldnotify": "^0.0.6",
+    "ldtab": "^1.0.0",
+    "ldview": "^1.2.1",
+    "marked": "^7.0.0",
+    "proxise": "^1.0.1",
+    "zmgr": "^2.2.3"
+  },
+  "frontendDependencies": {
+    "root": "static/assets/lib",
+    "modules": [
+      "bootstrap",
+      "@loadingio/bootstrap.ext",
+      "bootstrap.native",
+      "@loadingio/ldquery",
+      "@loadingio/debounce.js",
+      "@loadingio/loading.css",
+      "@loadingio/transition.css",
+      "@loadingio/ldc",
+      "@plotdb/httputil",
+      "@plotdb/rescope",
+      "@plotdb/csscope",
+      "@plotdb/semver",
+      "@plotdb/block",
+      "@plotdb/json0",
+      "@plotdb/ews",
+      "@plotdb/datahub",
+      {
+        "name": "@servebase/auth",
+        "dir": "dist"
+      },
+      {
+        "name": "@servebase/captcha",
+        "dir": "dist"
+      },
+      {
+        "name": "@servebase/consent",
+        "dir": "dist"
+      },
+      {
+        "name": "@servebase/connector",
+        "dir": "dist"
+      },
+      {
+        "name": "@servebase/erratum",
+        "dir": "dist"
+      },
+      {
+        "name": "@servebase/core",
+        "dir": "dist"
+      },
+      {
+        "name": "@servebase/discuss",
+        "dir": "dist"
+      },
+      {
+        "name": "@servebase/mail",
+        "dir": "dist"
+      },
+      {
+        "name": "@servebase/refresh",
+        "dir": "dist"
+      },
+      {
+        "name": "@servebase/navtop",
+        "dir": "dist"
+      },
+      "curegex",
+      "proxise",
+      "ldiconfont",
+      "ldcvmgr",
+      "ldcover",
+      "lderror",
+      "ldloader",
+      "ldform",
+      "ldfile",
+      "ldnotify",
+      "ldtab",
+      "ldfolder",
+      "ldbutton",
+      "ldview",
+      "ldnotify",
+      "@loadingio/ldc",
+      "zmgr",
+      "i18next",
+      "i18next-browser-languagedetector",
+      "ldbutton",
+      "@sentry/tracing",
+      "marked",
+      "dompurify",
+      "curegex",
+      "@plotdb/opentype.js",
+      "@xlfont/load",
+      "@xlfont/choose",
+      "@loadingio/vscroll"
+    ]
+  },
+  "private": true
+}
