@@ -1,6 +1,9 @@
 ## master
 
  - fixes:
+   - deps: `nodemailer` ^9 -> ^10.5.0 for security advisories ( address parsing DoS, SMTP
+     credential disclosure across transports ). 10.x requires Node.js 20+, so `engines.node` is
+     now `>=20.0.0`; nothing changes in how `mail-queue` uses it.
    - `@servebase/core`: when errors keep coming ( melt down in the error handler ), it called
      `alert` for every following error, which blocked the page ( and browser automation ),
      e.g. user code throwing in an animation loop. It now shows a plain DOM reload splash
