@@ -1,0 +1,16 @@
+svg(xmlns="http://www.w3.org/2000/svg",viewBox="0 0 500 150",style="background:#fbf8f2")
+  defs
+    //- 兩層以雜訊扭曲並模糊的色塊, 錯開疊印
+    filter#watercolor(x="-20%",y="-50%",width="140%",height="200%")
+      feTurbulence(type="fractalNoise",baseFrequency="0.035",numOctaves="4",seed="11",result="noise")
+      feDisplacementMap(in="SourceAlpha",in2="noise",scale="6",xChannelSelector="R",yChannelSelector="G",result="wobble1")
+      feGaussianBlur(in="wobble1",stdDeviation="1",result="soft1")
+      feFlood(flood-color="#3a86ff",flood-opacity="0.75",result="color1")
+      feComposite(operator="in",in="color1",in2="soft1",result="wash1")
+      feDisplacementMap(in="SourceAlpha",in2="noise",scale="12",xChannelSelector="G",yChannelSelector="B",result="wobble2")
+      feGaussianBlur(in="wobble2",stdDeviation="2",result="soft2")
+      feOffset(in="soft2",dx="4",dy="3",result="soft2-offset")
+      feFlood(flood-color="#ff006e",flood-opacity="0.55",result="color2")
+      feComposite(operator="in",in="color2",in2="soft2-offset",result="wash2")
+      feBlend(mode="multiply",in="wash1",in2="wash2")
+  text(x="250",y="72",fill="#000",filter="url(#watercolor)") Hello World!

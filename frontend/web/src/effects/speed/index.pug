@@ -1,0 +1,17 @@
+svg(xmlns="http://www.w3.org/2000/svg",viewBox="0 0 500 150",style="background:#1d1d1d")
+  defs
+    //- 水平拉長的模糊往左拖成殘影, 再以橫向細紋切出流線
+    filter#speed(x="-40%",y="-30%",width="160%",height="160%")
+      feGaussianBlur(in="SourceAlpha",stdDeviation="20 0",result="hblur")
+      feOffset(in="hblur",dx="-26",result="trail-shape")
+      feTurbulence(type="fractalNoise",baseFrequency="0.002 0.35",numOctaves="1",seed="6",result="noise")
+      feColorMatrix(in="noise",type="matrix",values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  4 0 0 0 -1.6",result="lines")
+      feComposite(operator="in",in="trail-shape",in2="lines",result="streaks")
+      feComponentTransfer(in="streaks",result="streaks-solid")
+        feFuncA(type="linear",slope="2.5")
+      feFlood(flood-color="#ff4d00",result="trail-color")
+      feComposite(operator="in",in="trail-color",in2="streaks-solid",result="trail")
+      feMerge
+        feMergeNode(in="trail")
+        feMergeNode(in="SourceGraphic")
+  text(x="262",y="75",fill="#ffd60a",filter="url(#speed)") Hello World!

@@ -1,0 +1,14 @@
+svg(xmlns="http://www.w3.org/2000/svg",viewBox="0 0 500 150")
+  defs
+    pattern#candy-stripe-fill(width="16",height="16",patternUnits="userSpaceOnUse",patternTransform="rotate(45)")
+      rect(width="16",height="16",fill="#ffffff")
+      rect(width="8",height="16",fill="#e63946")
+    filter#candy-stripe(x="-20%",y="-50%",width="140%",height="200%")
+      feGaussianBlur(in="SourceAlpha",stdDeviation="2",result="blur")
+      feOffset(in="blur",dy="4",result="offset")
+      feFlood(flood-color="#000000",flood-opacity="0.3",result="shadow-color")
+      feComposite(operator="in",in="shadow-color",in2="offset",result="shadow")
+      feMerge
+        feMergeNode(in="shadow")
+        feMergeNode(in="SourceGraphic")
+  text(x="250",y="75",fill="url(#candy-stripe-fill)",stroke="#7a1020",stroke-width="3",stroke-linejoin="round",paint-order="stroke",filter="url(#candy-stripe)") Hello World!

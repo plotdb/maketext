@@ -1,0 +1,16 @@
+# 效果描述 ( 名稱 / 排序 / 參數等 ), 欄位說明見 tool/maketext/build-effects.ls
+order: 480
+font: Shrikhand
+edit:
+  fill:
+    name: fill
+    type: color
+    default: '#ff5e5b'
+  middle:
+    name: middle
+    type: color
+    default: '#ffd23f'
+  back:
+    name: back
+    type: color
+    default: '#3b3561'

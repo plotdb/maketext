@@ -1,0 +1,14 @@
+svg(xmlns="http://www.w3.org/2000/svg",viewBox="0 0 500 150",style="background:#fff4e0")
+  defs
+    filter#pop-stack(x="-20%",y="-50%",width="140%",height="200%")
+      feOffset(in="SourceAlpha",dx="4",dy="4",result="o1")
+      feFlood(flood-color="#ffd23f",result="c1")
+      feComposite(operator="in",in="c1",in2="o1",result="layer1")
+      feOffset(in="SourceAlpha",dx="8",dy="8",result="o2")
+      feFlood(flood-color="#3b3561",result="c2")
+      feComposite(operator="in",in="c2",in2="o2",result="layer2")
+      feMerge
+        feMergeNode(in="layer2")
+        feMergeNode(in="layer1")
+        feMergeNode(in="SourceGraphic")
+  text(x="246",y="70",fill="#ff5e5b",filter="url(#pop-stack)") Hello World!

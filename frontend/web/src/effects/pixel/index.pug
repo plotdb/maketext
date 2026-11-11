@@ -1,0 +1,20 @@
+svg(xmlns="http://www.w3.org/2000/svg",viewBox="0 0 500 150",style="background:#1b1b2f")
+  defs
+    //- 像素化: 每 4px 取一點, 再擴張成 4px 方塊.
+    //- 取樣點的座標以 filter 區域為準, 因此區域固定從 ( 0, 0 ) 蓋滿整個畫面
+    filter#pixel(filterUnits="userSpaceOnUse",x="0",y="0",width="500",height="150")
+      feFlood(x="2",y="2",width="1",height="1",flood-color="#000",result="dot")
+      feComposite(width="4",height="4",in="dot",result="cell")
+      feTile(in="cell",result="grid")
+      feComposite(operator="in",in="SourceGraphic",in2="grid",result="sample")
+      //- 取到反鋸齒邊緣的點會是半透明, 二值化成實心或全透明
+      feComponentTransfer(in="sample",result="solid")
+        feFuncA(type="discrete",tableValues="0 1")
+      feMorphology(operator="dilate",radius="2",in="solid",result="pixels")
+      feOffset(in="pixels",dx="4",dy="4",result="shadow-shape")
+      feFlood(flood-color="#e03c31",result="shadow-color")
+      feComposite(operator="in",in="shadow-color",in2="shadow-shape",result="shadow")
+      feMerge
+        feMergeNode(in="shadow")
+        feMergeNode(in="pixels")
+  text(x="246",y="72",fill="#ffcc00",filter="url(#pixel)") Hello World!

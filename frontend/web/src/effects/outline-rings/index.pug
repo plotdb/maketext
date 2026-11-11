@@ -1,0 +1,19 @@
+svg(xmlns="http://www.w3.org/2000/svg",viewBox="0 0 500 150")
+  defs
+    //- 兩圈外框, 圈與圈之間鏤空 ( 擴張後挖掉較小的擴張 )
+    filter#outline-rings(x="-20%",y="-50%",width="140%",height="200%")
+      feMorphology(operator="dilate",radius="2",in="SourceAlpha",result="d2")
+      feMorphology(operator="dilate",radius="4",in="SourceAlpha",result="d4")
+      feMorphology(operator="dilate",radius="6",in="SourceAlpha",result="d6")
+      feMorphology(operator="dilate",radius="8",in="SourceAlpha",result="d8")
+      feComposite(operator="out",in="d4",in2="d2",result="ring1-shape")
+      feFlood(flood-color="#8338ec",result="ring1-color")
+      feComposite(operator="in",in="ring1-color",in2="ring1-shape",result="ring1")
+      feComposite(operator="out",in="d8",in2="d6",result="ring2-shape")
+      feFlood(flood-color="#3a86ff",result="ring2-color")
+      feComposite(operator="in",in="ring2-color",in2="ring2-shape",result="ring2")
+      feMerge
+        feMergeNode(in="ring2")
+        feMergeNode(in="ring1")
+        feMergeNode(in="SourceGraphic")
+  text(x="250",y="75",fill="#ff006e",filter="url(#outline-rings)") Hello World!

@@ -1,0 +1,12 @@
+# 效果描述 ( 名稱 / 排序 / 參數等 ), 欄位說明見 tool/maketext/build-effects.ls
+order: 520
+font: VT323
+edit:
+  fill:
+    name: fill
+    type: color
+    default: '#ffcc00'
+  shadow:
+    name: shadow
+    type: color
+    default: '#e03c31'

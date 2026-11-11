@@ -1,0 +1,19 @@
+svg(xmlns="http://www.w3.org/2000/svg",viewBox="0 0 500 150",style="background:#e9e4d8")
+  defs
+    //- 凹陷: 字內左上的內陰影 + 字外右下的亮邊
+    filter#letterpress(x="-10%",y="-30%",width="120%",height="160%")
+      feOffset(in="SourceAlpha",dx="2",dy="2",result="off")
+      feComposite(operator="out",in="SourceAlpha",in2="off",result="inner-edge")
+      feGaussianBlur(in="inner-edge",stdDeviation="1",result="inner-blur")
+      feFlood(flood-color="#000000",flood-opacity="0.45",result="shade")
+      feComposite(operator="in",in="shade",in2="inner-blur",result="inner-shade")
+      feComposite(operator="in",in="inner-shade",in2="SourceAlpha",result="inner-shadow")
+      feOffset(in="SourceAlpha",dx="1",dy="1",result="off2")
+      feComposite(operator="out",in="off2",in2="SourceAlpha",result="outer-edge")
+      feFlood(flood-color="#ffffff",flood-opacity="0.85",result="light")
+      feComposite(operator="in",in="light",in2="outer-edge",result="highlight")
+      feMerge
+        feMergeNode(in="highlight")
+        feMergeNode(in="SourceGraphic")
+        feMergeNode(in="inner-shadow")
+  text(x="250",y="75",fill="#c4bba8",filter="url(#letterpress)") Hello World!
