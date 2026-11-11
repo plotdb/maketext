@@ -1,6 +1,11 @@
 ## master
 
  - fixes:
+   - block bundling: the jsdom window for `@plotdb/block` ( `backend/base/manager.ls` and
+     the fallback in `backend/engine/index.ls` ) had no url, so it was an opaque origin
+     and bundling a block that touches `localStorage` failed with `SecurityError`
+     ( e.g. the `block.auth` bundle via `@servebase/consent` ). It now uses
+     `http://localhost/`.
    - error handler: client errors from `body-parser` ( unsupported content encoding /
      charset, body too large, too many parameters ) were logged as unhandled exceptions
      and sent as 500. They now get their own status ( `413` / `415` ) and are logged

@@ -184,9 +184,11 @@ backend.prototype = Object.create(Object.prototype) <<< do
     else
       # for @plotdb/block in node context. jsdom is required in this branch only:
       # a project that names its own block manager above never needs a fake DOM.
+      # `url` gives the window a real origin, otherwise localStorage throws SecurityError
+      # when a bundled block uses it ( e.g. @servebase/consent in the auth block ).
       block = require "@plotdb/block"
       jsdom = require "jsdom"
-      dom = new jsdom.JSDOM "<DOCTYPE html><html><body></body></html>"
+      dom = new jsdom.JSDOM "<!DOCTYPE html><html><body></body></html>", {url: "http://localhost/"}
       win = dom.window
       block.env win
       mgr = ({base}) ->
