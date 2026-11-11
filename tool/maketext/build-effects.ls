@@ -11,13 +11,15 @@
 #    - desc, tags: 說明與標籤 ( 選用 )
 #    - order: 排序, 小的在前. 以 10 為間隔, 方便插入
 #    - debug: true 時不打包
+#    - font: 預設字型, xlfont.maketext.io 上的字型名稱 ( 使用 normal / 400 ), 或 `<名稱>/<style>/<weight>.ttf`
+#      沒寫則用 DEFAULT-FONT. 使用者以字型選擇器選的字型會蓋過它, 可一鍵還原 ( src/ls/editor/font.ls )
 #    - edit: 可調參數, { <key>: {name, type: color | number, default, min, max, step} }
 #  - index.pug: 效果的 svg ( viewBox 0 0 500 150 ), 可 include 同目錄的檔案
 #  - main.ls: `module.exports = watch: (n, o, node) -> ...`, 參數變化時更新 svg
 #
 # 輸出到 frontend/web/static/js/effects/:
 #
-#  - index.js: 效果清單 `effects` ( 依 order 排序, 含背景色與版本 hash ) 與載入器 `mteffect`.
+#  - index.js: 效果清單 `effects` ( 依 order 排序, 含字型 / 背景色 / 版本 hash ) 與載入器 `mteffect`.
 #    清單很小, 隨頁面載入; gallery 一開始只顯示縮圖 ( build-thumbs.ls ), 不需要效果本體
 #  - <name>.js: 效果本體 ( svg 與 watch ), 第一次需要即時 render 時才以 mteffect.load(name) 載入
 require! <[fs path crypto pug livescript js-yaml chokidar]>
@@ -25,6 +27,7 @@ require! <[fs path crypto pug livescript js-yaml chokidar]>
 root = path.resolve __dirname, '../../frontend/web'
 src = path.join root, 'src/effects'
 des = path.join root, 'static/js/effects'
+DEFAULT-FONT = 'Sansita One'
 
 # 載入器: 效果本體以 script 載入, 檔案內呼叫 mteffect.register 把 html / edit / watch 掛回 effects[name]
 loader = '''
@@ -71,7 +74,7 @@ build = ->
     fs.write-file-sync path.join(des, "#name.js"), body
     # 背景色: 縮圖 object-fit: contain 時容器補同色 ( src/ls/editor/index.ls )
     bk = (/^<svg[^>]*style="background:\s*([^;"]+)/.exec(html) or [])[1] or ''
-    index[name] = {bk, v: crypto.create-hash(\md5).update(body).digest(\hex).slice(0, 8)}
+    index[name] = {bk, font: meta.font or DEFAULT-FONT, v: crypto.create-hash(\md5).update(body).digest(\hex).slice(0, 8)}
     for k in <[name tags]> => if meta[k] => index[name][k] = meta[k]
   # 清掉已移除或改為 debug 的效果
   for f in fs.readdir-sync(des) => if f != 'index.js' and !index[f.replace(/\.js$/, '')] => fs.unlink-sync path.join(des, f)

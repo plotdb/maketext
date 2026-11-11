@@ -1,9 +1,10 @@
 
-# 字型由 font.ls 載入 ( xlfont 物件 ). 文字轉成 path 時用它的 opentype 字形外框,
+# 正在編輯的效果實際使用的字型 ( font.ls: 使用者選的字型, 或效果自己的預設字型 ).
+# 文字轉成 path 時用它的 opentype 字形外框,
 # 介面同舊版用的 text-to-svg: getD(text, {fontSize}) 以 (0, 0) 為 baseline 起點
 load-font = ->
-  if !window.fontobj => return Promise.reject new Error("font not loaded")
-  window.fontobj.getotf!then (otf) ->
+  mt-font.of(editor.effects.type).then (f) -> f.getotf!
+  .then (otf) ->
     getD: (text, {fontSize}) -> otf.getPath(text, 0, 0, fontSize).toPathData!
 
 window.convert = do

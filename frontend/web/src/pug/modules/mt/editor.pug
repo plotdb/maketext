@@ -34,7 +34,10 @@ include @/ldpalettepicker/ldpp.pug
         input#text-input.form-control.form-control-sm(value="Hello World!")
       .col-6.col-sm-3
         label Font
-        .btn.btn-sm.btn-outline-dark.mr-1.block(onclick="chooseFont()") Choose ...
+        //- 選的字型套用到所有效果; 還原: 回到各效果自己的預設字型 ( src/ls/editor/font.ls )
+        .d-flex
+          .btn.btn-sm.btn-outline-dark.text-truncate(onclick="chooseFont()",style="flex:1 1 auto;min-width:0"): span#font-name Choose ...
+          .btn.btn-sm.btn-outline-dark.ml-1.d-none#font-reset(onclick="resetFont()",title="use each effect's own font") &#x21ba;
       #font-size-slider.col-4.col-sm-3
         label Font Size
         +slider

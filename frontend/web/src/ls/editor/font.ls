@@ -1,26 +1,45 @@
 # 字型: 由 @xlfont/load 從 xlfont.maketext.io 載入, 以 @xlfont/choose 選字型.
+#
+# 每個效果有自己的預設字型 ( effect.yaml 的 font, 見 tool/maketext/build-effects.ls ).
+# 使用者以字型選擇器選的字型 ( override ) 套用到所有效果, 按「還原」回到各效果自己的字型.
+# 字型在效果需要即時 render 時才載入 ( gallery 一開始顯示的是以各自字型預先 render 的縮圖 ).
 # 選字型的面板在第一次打開時才建立 ( xfc 需要可見的容器才能算預覽的尺寸 ).
 XFL-BASE = 'https://xlfont.maketext.io'
 FONT-LINKS = "#XFL-BASE/links"
-DEFAULT-FONT = 'Sansita One'
 
-font-style = null
-apply-font = (font) ->
-  window.fontobj = font
-  family = "\"#{font.cssName}\""
-  # 用 css rule 而不是繼承: 要蓋過 effect 寫在 text 上的 font-family 屬性 ( 例: halftone )
-  if !font-style =>
-    font-style := document.createElement \style
-    document.body.appendChild font-style
-  font-style.textContent = "svg text { font-family: #family; }"
-  for sel in <[#cooltext .gallery]> => document.querySelector(sel).style.fontFamily = family
-  font
+# effect.yaml 的 font: 名稱 ( 用 normal / 400 ) 或 `<名稱>/<style>/<weight>.ttf`
+font-path = (name) -> if '/' in name => name else "#name/normal/400.ttf"
 
-# 以名稱載入 xlfont 上的 normal / 400 字型
-window.use-font = use-font = (name) ->
-  xfl.load {path: "#FONT-LINKS/#{encodeURIComponent name}/normal/400.ttf", name}
-    .then apply-font
-    .catch (e) -> console.warn "[maketext] failed to load font #name:", e
+loaded = {}
+load = (name) ->
+  if loaded[name] => return that
+  # 等字型檔真的載入再回傳, 避免 filter 先以替代字型畫一次, 字型到了再重畫
+  loaded[name] = xfl.load {path: "#FONT-LINKS/#{encodeURI font-path(name)}", name}
+    .then (f) -> document.fonts.load("64px \"#{f.cssName}\"").then -> f
+    .catch (e) ->
+      delete loaded[name]
+      Promise.reject e
+
+window.mt-font = mt-font = do
+  override: null
+  load: load
+  # 效果實際使用的字型
+  of: (type) ->
+    if !(f = @override) => return load(effects[type].font)
+    document.fonts.load("64px \"#{f.cssName}\"").then -> f
+  # 套到容器內 svg 的文字. 用 inline style: 要蓋過效果寫在 text 上的 font-family 屬性 ( 例: halftone )
+  apply: (node, font) ->
+    Array.from(node.querySelectorAll 'svg text').map -> it.style.fontFamily = "\"#{font.cssName}\""
+  set-override: (font) ->
+    @override = font
+    document.querySelector(\#font-name).textContent = if font => font.cssName else 'Choose ...'
+    document.querySelector(\#font-reset).classList.toggle \d-none, !font
+    # gallery 依版本逐一以新字型重新 render; 還原時已切成即時 render 的項目也要改回各自的字型
+    editor.gallery.set \font, (if font => font.cssName else null)
+    if document.body.classList.contains(\editing) =>
+      @of(editor.effects.type).then (f) -> mt-font.apply document.querySelector(\#cooltext), f
+
+window.reset-font = -> mt-font.set-override null
 
 chooser = null
 window.choose-font = ->
@@ -37,12 +56,6 @@ window.choose-font = ->
     # 取消時 font 為 null
     chooser.xfc.on \choose, (font) ->
       hide!
-      if !font => return
-      apply-font font
-      # 預設字型之外的字型: gallery 縮圖 ( 以預設字型 render ) 失效, 改為即時 render
-      editor.gallery.set \font, font.cssName
+      if font => mt-font.set-override font
   chooser.overlay.classList.remove \d-none
   if !chooser.rendered => chooser.rendered = chooser.xfc.init!then -> chooser.xfc.render!
-
-<- $ document .ready
-use-font DEFAULT-FONT

@@ -24,14 +24,17 @@ window.editor = editor = do
 # 因此被 clusterize 用原始 html 重建的項目也會被視為過期而補上.
 # 一開始顯示的是預先 render 的縮圖 ( 固定文字 / 預設字型 ), 第一次真正的改動才把項目切成即時 render.
 # state 的初始值對應縮圖的狀態, set 相同的值 ( 例: 載入時的字級 64 ) 不會讓縮圖失效.
-gallery = state: {fontSize: 64, font: 'Sansita One'}, ver: 0, queue: [], timer: null, running: false
+gallery = state: {fontSize: 64, font: null}, ver: 0, queue: [], timer: null, running: false
 gallery.stale = (item) -> +(item.dataset.v or 0) != @ver
 gallery.sync = (item) ->
   ver = @ver
-  mteffect.load item.dataset.type
-    .then (e) ~>
+  type = item.dataset.type
+  # 效果本體與字型都載入後才切成即時 render; 字型載入失敗時以替代字型顯示
+  Promise.all [mteffect.load(type), mt-font.of(type).catch(-> null)]
+    .then ([e, font]) ~>
       inner = item.querySelector \.inner
       if !inner.querySelector(\svg) => inner.insertAdjacentHTML \beforeend, svg-html(e)
+      if font => mt-font.apply item, font
       item.classList.add \live
       {text, font-size, background} = @state
       if text? => Array.from(item.querySelectorAll \text).map -> it.textContent = text
@@ -66,7 +69,7 @@ gallery.set = (k, v) ->
       .map ~> @enqueue it
   ), 120
 
-# 字型 ( font.ls ) 也要透過它讓縮圖失效
+# 字型 ( font.ls ) 也透過它讓 gallery 以新字型重新 render
 editor.gallery = gallery
 
 update-text = (node) ->
@@ -149,6 +152,9 @@ open-effect = (type, e) ->
   html = html.replace /url\(#([^)]+)\)/g, 'url(#editing-$1)'
   document.querySelector \#cooltext .innerHTML = html
   svg = document.querySelector '#cooltext svg'
+  mt-font.of type
+    .then (f) -> mt-font.apply document.querySelector(\#cooltext), f
+    .catch (e) -> console.warn "[maketext] font:", e
   bkcolor = (getComputedStyle(svg).backgroundColor) or '#fff'
   Array.from(svg.querySelectorAll \feImage).map (d,i) ->
     href = d.getAttributeNS(\http://www.w3.org/1999/xlink, \href) or d.getAttribute(\href)

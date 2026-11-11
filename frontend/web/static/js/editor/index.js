@@ -27,7 +27,7 @@ $(document).ready(function(){
   gallery = {
     state: {
       fontSize: 64,
-      font: 'Sansita One'
+      font: null
     },
     ver: 0,
     queue: [],
@@ -38,13 +38,22 @@ $(document).ready(function(){
     return +(item.dataset.v || 0) !== this.ver;
   };
   gallery.sync = function(item){
-    var ver, this$ = this;
+    var ver, type, this$ = this;
     ver = this.ver;
-    return mteffect.load(item.dataset.type).then(function(e){
-      var inner, ref$, text, fontSize, background;
+    type = item.dataset.type;
+    return Promise.all([
+      mteffect.load(type), mtFont.of(type)['catch'](function(){
+        return null;
+      })
+    ]).then(function(arg$){
+      var e, font, inner, ref$, text, fontSize, background;
+      e = arg$[0], font = arg$[1];
       inner = item.querySelector('.inner');
       if (!inner.querySelector('svg')) {
         inner.insertAdjacentHTML('beforeend', svgHtml(e));
+      }
+      if (font) {
+        mtFont.apply(item, font);
       }
       item.classList.add('live');
       ref$ = this$.state, text = ref$.text, fontSize = ref$.fontSize, background = ref$.background;
@@ -233,6 +242,11 @@ $(document).ready(function(){
     html = html.replace(/url\(#([^)]+)\)/g, 'url(#editing-$1)');
     document.querySelector('#cooltext').innerHTML = html;
     svg = document.querySelector('#cooltext svg');
+    mtFont.of(type).then(function(f){
+      return mtFont.apply(document.querySelector('#cooltext'), f);
+    })['catch'](function(e){
+      return console.warn("[maketext] font:", e);
+    });
     bkcolor = getComputedStyle(svg).backgroundColor || '#fff';
     Array.from(svg.querySelectorAll('feImage')).map(function(d, i){
       var href, ref$, w, h;

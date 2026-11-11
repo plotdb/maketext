@@ -83,3 +83,14 @@ gallery 一開始顯示 build 時以固定文字、預設字型 render 的 webp 
  - 每組效果可以有自己的預設字型
  - 用戶快選字型時，先替換掉預設字型
  - 要能一鍵還原回各效果的預設字型
+
+### 實作 ( 2026-11-12 )
+
+ - `effect.yaml` 的 `font`：xlfont 上的字型名稱 ( normal / 400 ) 或 `<名稱>/<style>/<weight>.ttf`，沒寫用 build-effects.ls 的 DEFAULT-FONT ( Sansita One )。
+   目前所有效果都還沒設定，維持原本的 Sansita One
+ - 縮圖以各效果自己的字型 render，首屏不載入任何效果字型
+ - 效果切成即時 render 或打開 editor 時才載入它的字型，等字型檔載入完才切換，避免 filter 以替代字型多畫一次
+ - 字型選擇器選的字型套到所有效果 ( gallery 依版本逐一重畫 )，「↺」還原回各效果的字型；下載時用該效果實際使用的字型轉 path
+ - 原本以全域 css rule `svg text { font-family }` 套字型，改為對各容器內的 text 設 inline style ( 同樣能蓋過效果寫在屬性上的字型 )
+
+待決定：各效果要配什麼字型。

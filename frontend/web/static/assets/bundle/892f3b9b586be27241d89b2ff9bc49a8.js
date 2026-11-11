@@ -27,7 +27,7 @@ $(document).ready(function(){
   gallery = {
     state: {
       fontSize: 64,
-      font: 'Sansita One'
+      font: null
     },
     ver: 0,
     queue: [],
@@ -38,13 +38,22 @@ $(document).ready(function(){
     return +(item.dataset.v || 0) !== this.ver;
   };
   gallery.sync = function(item){
-    var ver, this$ = this;
+    var ver, type, this$ = this;
     ver = this.ver;
-    return mteffect.load(item.dataset.type).then(function(e){
-      var inner, ref$, text, fontSize, background;
+    type = item.dataset.type;
+    return Promise.all([
+      mteffect.load(type), mtFont.of(type)['catch'](function(){
+        return null;
+      })
+    ]).then(function(arg$){
+      var e, font, inner, ref$, text, fontSize, background;
+      e = arg$[0], font = arg$[1];
       inner = item.querySelector('.inner');
       if (!inner.querySelector('svg')) {
         inner.insertAdjacentHTML('beforeend', svgHtml(e));
+      }
+      if (font) {
+        mtFont.apply(item, font);
       }
       item.classList.add('live');
       ref$ = this$.state, text = ref$.text, fontSize = ref$.fontSize, background = ref$.background;
@@ -233,6 +242,11 @@ $(document).ready(function(){
     html = html.replace(/url\(#([^)]+)\)/g, 'url(#editing-$1)');
     document.querySelector('#cooltext').innerHTML = html;
     svg = document.querySelector('#cooltext svg');
+    mtFont.of(type).then(function(f){
+      return mtFont.apply(document.querySelector('#cooltext'), f);
+    })['catch'](function(e){
+      return console.warn("[maketext] font:", e);
+    });
     bkcolor = getComputedStyle(svg).backgroundColor || '#fff';
     Array.from(svg.querySelectorAll('feImage')).map(function(d, i){
       var href, ref$, w, h;
@@ -492,33 +506,65 @@ $(document).ready(function(){
     });
   });
 });
-var XFLBASE, FONTLINKS, DEFAULTFONT, fontStyle, applyFont, useFont, chooser;
+var XFLBASE, FONTLINKS, fontPath, loaded, load, mtFont, chooser;
 XFLBASE = 'https://xlfont.maketext.io';
 FONTLINKS = XFLBASE + "/links";
-DEFAULTFONT = 'Sansita One';
-fontStyle = null;
-applyFont = function(font){
-  var family, i$, ref$, len$, sel;
-  window.fontobj = font;
-  family = "\"" + font.cssName + "\"";
-  if (!fontStyle) {
-    fontStyle = document.createElement('style');
-    document.body.appendChild(fontStyle);
+fontPath = function(name){
+  if (in$('/', name)) {
+    return name;
+  } else {
+    return name + "/normal/400.ttf";
   }
-  fontStyle.textContent = "svg text { font-family: " + family + "; }";
-  for (i$ = 0, len$ = (ref$ = ['#cooltext', '.gallery']).length; i$ < len$; ++i$) {
-    sel = ref$[i$];
-    document.querySelector(sel).style.fontFamily = family;
-  }
-  return font;
 };
-window.useFont = useFont = function(name){
-  return xfl.load({
-    path: FONTLINKS + "/" + encodeURIComponent(name) + "/normal/400.ttf",
+loaded = {};
+load = function(name){
+  var that;
+  if (that = loaded[name]) {
+    return that;
+  }
+  return loaded[name] = xfl.load({
+    path: FONTLINKS + "/" + encodeURI(fontPath(name)),
     name: name
-  }).then(applyFont)['catch'](function(e){
-    return console.warn("[maketext] failed to load font " + name + ":", e);
+  }).then(function(f){
+    return document.fonts.load("64px \"" + f.cssName + "\"").then(function(){
+      return f;
+    });
+  })['catch'](function(e){
+    delete loaded[name];
+    return Promise.reject(e);
   });
+};
+window.mtFont = mtFont = {
+  override: null,
+  load: load,
+  of: function(type){
+    var f;
+    if (!(f = this.override)) {
+      return load(effects[type].font);
+    }
+    return document.fonts.load("64px \"" + f.cssName + "\"").then(function(){
+      return f;
+    });
+  },
+  apply: function(node, font){
+    return Array.from(node.querySelectorAll('svg text')).map(function(it){
+      return it.style.fontFamily = "\"" + font.cssName + "\"";
+    });
+  },
+  setOverride: function(font){
+    this.override = font;
+    document.querySelector('#font-name').textContent = font ? font.cssName : 'Choose ...';
+    document.querySelector('#font-reset').classList.toggle('d-none', !font);
+    editor.gallery.set('font', font ? font.cssName : null);
+    if (document.body.classList.contains('editing')) {
+      return this.of(editor.effects.type).then(function(f){
+        return mtFont.apply(document.querySelector('#cooltext'), f);
+      });
+    }
+  }
+};
+window.resetFont = function(){
+  return mtFont.setOverride(null);
 };
 chooser = null;
 window.chooseFont = function(){
@@ -548,11 +594,9 @@ window.chooseFont = function(){
     };
     chooser.xfc.on('choose', function(font){
       hide();
-      if (!font) {
-        return;
+      if (font) {
+        return mtFont.setOverride(font);
       }
-      applyFont(font);
-      return editor.gallery.set('font', font.cssName);
     });
   }
   chooser.overlay.classList.remove('d-none');
@@ -562,15 +606,16 @@ window.chooseFont = function(){
     });
   }
 };
-$(document).ready(function(){
-  return useFont(DEFAULTFONT);
-});
+function in$(x, xs){
+  var i = -1, l = xs.length >>> 0;
+  while (++i < l) if (x === xs[i]) return true;
+  return false;
+}
 var loadFont;
 loadFont = function(){
-  if (!window.fontobj) {
-    return Promise.reject(new Error("font not loaded"));
-  }
-  return window.fontobj.getotf().then(function(otf){
+  return mtFont.of(editor.effects.type).then(function(f){
+    return f.getotf();
+  }).then(function(otf){
     return {
       getD: function(text, arg$){
         var fontSize;

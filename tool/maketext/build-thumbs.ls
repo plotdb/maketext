@@ -1,5 +1,6 @@
 #!/usr/bin/env lsc
-# 以固定文字預先 render 每個效果的 gallery 縮圖, 輸出到 frontend/web/static/assets/thumb/<name>.webp
+# 以固定文字與各效果的預設字型 ( effect.yaml 的 font ) 預先 render 每個效果的 gallery 縮圖,
+# 輸出到 frontend/web/static/assets/thumb/<name>.webp
 #
 #   lsc tool/maketext/build-thumbs.ls [name ...]   # 不給名稱就全部重產
 #
@@ -13,8 +14,7 @@ require! <[fs path http puppeteer]>
 root = path.resolve __dirname, '../../frontend/web/static'
 des = path.join root, 'assets/thumb'
 [W, H, SCALE] = [490, 160, 2]
-# 與 src/ls/editor/font.ls 的 DEFAULT-FONT 一致
-FONT = name: 'Sansita One', url: 'https://xlfont.maketext.io/links/Sansita%20One/normal/400.ttf'
+FONT-LINKS = 'https://xlfont.maketext.io/links'
 
 mime = '.js': 'text/javascript', '.css': 'text/css', '.svg': 'image/svg+xml', '.png': 'image/png', '.jpg': 'image/jpeg', '.gif': 'image/gif'
 serve = -> new Promise (res) ->
@@ -29,8 +29,6 @@ page-html = (url) -> """
 <!doctype html><html><head><meta charset="utf-8">
 <link rel="stylesheet" href="#url/css/mt/index.css">
 <style>
-@font-face { font-family: "#{FONT.name}"; src: url("#{FONT.url}"); }
-svg text { font-family: "#{FONT.name}"; }
 html, body { margin: 0; background: transparent; }
 \#box { width: #{W}px; height: #{H}px; }
 \#box svg { display: block; }
@@ -52,14 +50,21 @@ main = ->>
     # 以 goto 取得同源, 讓 feImage 等相對網址可以載入
     await page.goto "#url/"
     await page.set-content page-html(url), {wait-until: \networkidle0}
-    await page.evaluate ((f) -> document.fonts.load "64px \"#{f}\""), FONT.name
     list = await page.evaluate -> Object.keys(effects)
     if names.length => list = list.filter -> it in names
     for name in list =>
-      render = (name) ->
-        mteffect.load(name).then (e) ->
-          document.querySelector('#box').innerHTML = e.html.replace '<svg', "<svg width='100%' height='100%'"
-      await page.evaluate render, name
+      # 在頁面內執行 ( 會被序列化 ): 不可用到 LiveScript 的輔助函式 ( 例: `in` ), 字型路徑規則同 src/ls/editor/font.ls
+      render = (name, links) ->
+        font = effects[name].font
+        fpath = if font.indexOf('/') >= 0 => font else "#font/normal/400.ttf"
+        face = new FontFace(font, "url(\"#links/#{encodeURI fpath}\")")
+        Promise.all [mteffect.load(name), face.load!]
+          .then ([e]) ->
+            document.fonts.add face
+            box = document.querySelector('#box')
+            box.innerHTML = e.html.replace '<svg', "<svg width='100%' height='100%'"
+            Array.from(box.querySelectorAll 'svg text').map -> it.style.fontFamily = "\"#font\""
+      await page.evaluate render, name, FONT-LINKS
       # 等 feImage 等資源載入與 filter render
       await page.wait-for-network-idle {idle-time: 100}
       await new Promise -> set-timeout it, 100

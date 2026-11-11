@@ -5,7 +5,7 @@
  - 站台：`frontend/web`
  - 頁面：`/` ( 首頁兼 editor )、`/fancy/`、`/api/editor/0.1/` ( 嵌入用 editor，仍有外部用戶，網址需維持 )
  - maketext 自己的 pug 模組在 `frontend/web/src/pug/modules/mt/`，有獨立 layout，不用 `/base.pug` ( 原因見其檔頭 )
- - 字型：`@xlfont/load` + `@xlfont/choose`，來源 `https://xlfont.maketext.io`
+ - 字型：`@xlfont/load` + `@xlfont/choose`，來源 `https://xlfont.maketext.io`。每個效果可在 `effect.yaml` 指定預設字型，使用者選的字型套用到全部、可還原 ( `src/ls/editor/font.ls` )
  - 效果：`frontend/web/src/effects/<name>/`，以 `lsc tool/maketext/build-effects.ls [-w]` 打包成 `static/js/effects/` ( 清單 `index.js` + 各效果本體 `<name>.js`，需要時才載入 )；格式見該檔開頭的說明
  - gallery 縮圖：`lsc tool/maketext/build-thumbs.ls [name ...]` 以 headless Chrome 預先 render 到 `static/assets/thumb/<name>.webp`，改了效果後要重產。依賴在 `tool/maketext/package.json`，先在該目錄 `npm install`
 

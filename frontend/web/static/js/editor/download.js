@@ -1,9 +1,8 @@
 var loadFont;
 loadFont = function(){
-  if (!window.fontobj) {
-    return Promise.reject(new Error("font not loaded"));
-  }
-  return window.fontobj.getotf().then(function(otf){
+  return mtFont.of(editor.effects.type).then(function(f){
+    return f.getotf();
+  }).then(function(otf){
     return {
       getD: function(text, arg$){
         var fontSize;
