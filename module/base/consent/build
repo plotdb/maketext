@@ -1,0 +1,23 @@
+#!/usr/bin/env bash
+
+echo "prepare..."
+rm -rf dist
+mkdir -p dist/base dist/cookie dist/tos
+
+bin=../../../node_modules/.bin
+echo "building consent.ls -> index.js ..."
+$bin/lsc -cp --no-header src/consent.ls > dist/index.js
+echo "minify index.js -> index.min.js ..."
+$bin/uglifyjs dist/index.js -m -c > dist/index.min.js
+
+echo "build consent base ..."
+$bin/srcbuild-pug src/block/base/index.pug > dist/base/index.html
+
+echo "build cookie consent  ..."
+$bin/srcbuild-pug src/block/cookie/index.pug > dist/cookie/index.html
+
+echo "build tos consent  ..."
+$bin/srcbuild-pug src/block/tos/index.pug > dist/tos/index.html
+
+echo "build server files ..."
+$bin/lsc -co dist/lib lib

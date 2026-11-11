@@ -1,0 +1,62 @@
+mixin register-locals(name = "exports")
+  if locals
+    script(type="module").
+      ldc.register("viewlocals", [], function() {
+        return !{escjson(locals[name] || null)}
+      });
+
+//- embed auth's global payload ( user / csrfToken / frontend config ) into the html,
+//- so a server rendered page can hand it to the client without an /api/auth/info call.
+//- the payload comes from @servebase/auth, which puts it on res.locals.servebase.
+//-
+//- NOT WIRED UP YET: nothing on the frontend reads window.servebase.global ( see
+//- auth.fetch in @servebase/auth for why ). calling this mixin today marks the page
+//- uncacheable - which is correct, since it now carries user data - without anything
+//- taking advantage of it. it is here so the plumbing is ready and reviewed.
+//-
+//- note this is a plain script, not `type="module"` like register-locals above.
+//- the bundle is loaded with `defer`, and module scripts are deferred too - so a
+//- module here would run in document order relative to the bundle, and would come
+//- too late whenever the layout places this after the bundle's script tag. a plain
+//- script runs during parsing, so it always wins regardless of placement.
+//- note also that @servebase/core merges rather than replaces window.servebase, so
+//- what we set here survives the bundle loading afterwards.
+mixin register-global()
+  - var g = locals.servebase && locals.servebase.global && locals.servebase.global()
+  if g
+    script.
+      window.servebase = window.servebase || {};
+      window.servebase.global = !{escjson(g)};
+mixin meta(meta)
+  -
+    if(!meta) { meta = {} }
+  meta(charset="utf-8")
+  //- maximum-scale < 5.0 will be complained by lighthouse. dont use it for now.
+  meta(name='viewport', content='width=device-width, initial-scale=1.0')
+  title= meta.title || ""
+  meta(name="description", content=meta.description || "")
+  if(meta.url)
+    meta(property="og:url", content=meta.url)
+  meta(property="og:title", content=meta.title || "")
+  meta(property="og:description", content=meta.description || "")
+  meta(property="og:locale",content=meta.locale || "zh_TW")
+  meta(property="og:type", content=meta.type || "website")
+  if(meta.thumb)
+    meta(property="og:image",content=meta.thumb.url)
+    meta(property="og:image:type",content=meta.thumb.type || "image/jpeg")
+    meta(property="og:image:width",content=meta.thumb.width || "1200")
+    meta(property="og:image:height",content=meta.thumb.height || "630")
+  link(rel="icon",type="image/x-icon",href=meta.favicon || "/favicon.ico")
+  if(meta.themecolor)
+    meta(name="theme-color",content=meta.themecolor)
+  if(meta.touchicon)
+    link(rel="apple-touch-icon",href=meta.touchicon)
+  if(meta.manifest)
+    link(rel="manifest",href=meta.manifest)
+-
+  var ldui = {};
+  ldui.ellipsis = function(str, len) {
+    return ((str || '').substring(0, len || 200) + (((str || '').length > (len || 200)) ? '...' : ''));
+  };
+mixin i()
+  i(aria-hidden="true")&attributes(attributes)

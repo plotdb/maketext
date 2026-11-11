@@ -1,0 +1,31 @@
+#!/usr/bin/env bash
+
+# config structure are still under dev.
+# this might subject to change at any time.
+
+ENV=$1
+if [ -z $ENV ]; then
+  echo "usage: ./build <env-name> <cfg-name> <out-name>"
+  echo
+  echo "following files will be used:"
+  echo " - <env-name> ( use 'nginx/config.yaml' for demonstration config ) "
+  echo " - <cfg-name> ( default config.ngx )"
+  echo " - output to config/gen/nginx/<out-name> ( default 'config.ngx' )"
+  echo
+  echo "with proper config, a nginx config file will be generated at config/gen/nginx/<out-name>"
+  echo
+  exit
+fi
+
+CFG=$2
+if [ -z $CFG ]; then
+  CFG=config
+fi
+OUT=$3
+if [ -z $OUT ]; then
+  OUT=config.ngx
+fi
+
+mkdir -p ../gen/nginx
+npx tt -c $ENV -o ../gen/nginx/$OUT $CFG
+echo "<root>/config/gen/nginx/$OUT generated"

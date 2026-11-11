@@ -1,0 +1,16 @@
+.w-640.rwd.m-auto
+  script(type="@plotdb/block"): include:lsc index.ls
+  .text-center
+    .mb-4: h1.mb-0(t) title
+    p.my-4 #[a.clickable(ld="login",t) letstry] #[span(t) desc]
+    p
+      div(t) still
+      div
+        a(href="/auth/reset/",t) tryagain
+        span.mx-1(t) or
+        a.clickable(onclick="lda.ldcvmgr.toggle('contact')",t) contact
+  .ldcv.ldcvmgr.autogap.scroll(data-name="logged-in",data-lock="true"): .base.w-640.rwd: .inner.text-center
+    h1(t) logged
+    p.mb-2(t) redirect
+    br
+    .ld.ldld.bare.running.em-1.m-auto

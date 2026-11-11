@@ -1,0 +1,28 @@
+{
+  "author": "zbryikt",
+  "name": "@servebase/consent",
+  "license": "MIT",
+  "description": "consent sample",
+  "version": "0.0.1",
+  "files": [
+    "dist/**/*"
+  ],
+  "main": "dist/lib/index.js",
+  "browser": "dist/index.min.js",
+  "homepage": "https://github.com/plotdb/consent",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/plotdb/consent"
+  },
+  "engines": {
+    "node": ">=10.14.1",
+    "npm": ">=6.4.1"
+  },
+  "scripts": {
+    "start": "npx server -r web -o true"
+  },
+  "devDependencies": {
+    "@plotdb/srcbuild": "^0.1.4",
+    "@zbryikt/template": "^2.4.3"
+  }
+}

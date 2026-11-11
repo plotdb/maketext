@@ -1,0 +1,248 @@
+require! <[crypto bcrypt argon2 lderror re2js curegex @loadingio/debounce.js]>
+
+re-email = curegex.tw.get('email', re2js.RE2JS)
+is-email = -> return re-email.exec(it)
+
+user-store = (opt = {}) ->
+  @config = opt.config or {}
+  @policy =
+    login: (@config.policy or {}).login or {}
+    password: pw = (@config.policy or {}).password or {}
+  pw.renew = if !pw.renew or isNaN(pw.renew) => 0 else (+pw.renew >?= 1)
+  if typeof(pw.track) == \object =>
+    pw.track.day = if !pw.track.day or isNaN(pw.track.day) => 0 else (+pw.track.day >?= 1)
+    pw.track.count = if !pw.track.count or isNaN(pw.track.count) => 0 else (+pw.track.count >?= 1)
+  else
+    pw.track = {day: if !pw.track or isNaN(pw.track) => 0 else (+pw.track >?= 1)}
+  # validate and cache pepper at init time so misconfiguration fails fast on startup
+  @pepper = (@config?auth?pepper or {}){keys or {}, current or null}
+  if @pepper.current and !@pepper.keys[@pepper.current]
+    throw new Error "pepper key '#{ @pepper.current }' not found in config.auth.pepper.keys"
+  @db = opt.db
+  @
+
+user-store.prototype = Object.create(Object.prototype) <<< do
+  # store whole object ( no serialization )
+  serialize: (u = {}) -> Promise.resolve u
+  deserialize: (v = {}) -> Promise.resolve v
+
+  hashing: (password) ->
+    pw = "#password".substring(0, 1024)
+    opts = type: argon2.argon2id, memoryCost: 65536, timeCost: 3, parallelism: 4, hashLength: 32
+    if @pepper.current and (p = @pepper.keys[@pepper.current]) => opts.secret = Buffer.from p
+    (hash) <~ argon2.hash pw, opts .then _
+    if @pepper.current => "#{ @pepper.current }:#hash" else hash
+
+  compare: (password='', hash) ->
+    m = /^([^:]+):(\$argon2id\$.+)$/.exec hash
+    if m
+      [_, name, argon-hash] = m
+      if !@pepper.keys[name] => return Promise.reject new Error "pepper key '#name' not found in config"
+      opts = {secret: Buffer.from @pepper.keys[name]}
+      current = @pepper.current
+      (ok) <- argon2.verify argon-hash, password, opts .then _
+      if ok => {legacy: name != current}
+      else Promise.reject new lderror 1012
+    else if hash and hash.indexOf(\$argon2id$) == 0
+      # no pepper argon2id → legacy
+      (ok) <- argon2.verify hash, password, {} .then _
+      if ok => {legacy: true} else Promise.reject new lderror 1012
+    else
+      # legacy scheme: MD5 + bcrypt
+      md5 = crypto.createHash(\md5).update(password).digest(\hex)
+      (res, rej) <- new Promise _
+      (e, ret) <- bcrypt.compare md5, hash, _
+      if ret => res {legacy: true} else rej new lderror 1012
+
+  get: ({username, password, method, detail, create, invite-token}) ->
+    username = username.toLowerCase!
+    if !(is-email username) => return Promise.reject new lderror(1015)
+    @db.query "select * from users where username = $1", [username]
+      .then (ret = {}) ~>
+        if !(user = ret.[]rows.0) and !create => return lderror.reject 1034
+        if !user => return @create {username, password, method, detail, invite-token}
+        # 管理員代建、還沒啟用的帳號沒有密碼, 第三方登入也不能用 ( 不能信任第三方的 email 驗證 ).
+        # 要先用信裡的連結設密碼 ( see @servebase/auth activate )
+        if user.{}system.pending => return lderror.reject 1052
+        if !(method == \local or user.method == \local) =>
+          delete user.password
+          return user
+        @compare password, user.password .then ({legacy}) ~>
+          if legacy =>
+            (new-hash) <~ @hashing password .then _
+            # update user with latest hash algorithm. silently fail in case of service interruption
+            @db.query "update users set password = $2 where key = $1", [user.key, new-hash] .catch -> void
+          user
+      .then (user) ~>
+        if user.{}config.{}consent.cookie => return user
+        user.config.consent.cookie = new Date!getTime!
+        @db.query "update users set config = $2 where key = $1", [user.key, user.config] .then -> user
+      .then (user) ->
+        delete user.password
+        return user
+
+  # `pending`: 管理員代建的帳戶, 由用戶點啟用信的連結設定密碼後才能使用 ( see `activate` ).
+  #  - 給 `{by}` ( 建立者的 user key ), 存成 `system.pending = {by, at}`.
+  #  - 沒有密碼, method 是 local, 不受 accept-signup / invite-token 限制.
+  # `internal`: 系統內部功能建的帳戶 ( 如匿名帳戶 <uuid>@anonymous.invalid ).
+  #  - username 必須是 `*.invalid`; 反過來 `*.invalid` 也只能由 internal 建立, 不開放一般註冊.
+  #  - 不受 accept-signup / invite-token 限制, verified 預設有值.
+  #  - method / username / displayname 有預設值 ( 匿名帳戶 ), 可自行指定.
+  #  - 將來轉成一般帳戶時, 要清掉 verified 並重寄驗證信.
+  create: ({username, password, method, detail, config, system, invite-token, force, internal, pending}) ->
+    policy = @policy.login
+    system = system or {}
+    if pending =>
+      force = true
+      method = \local
+      password = null
+      system.pending = {by: pending.by or null, at: Date.now!}
+    if internal =>
+      force = true
+      method = method or \anonymous
+      username = username or "#{crypto.randomUUID!}@#{method}.invalid"
+      name = "#{method.charAt(0).toUpperCase!}#{method.slice 1}"
+      detail = {displayname: "#name #{crypto.randomBytes(3).toString \hex}"} <<< (detail or {})
+    if !force and policy.accept-signup? and (!policy.accept-signup or policy.accept-signup == \no) =>
+      return lderror.reject 1040
+
+    username = username.toLowerCase!
+    if !config => config = {}
+    # 長度上限同 users_username_len ( config/base/db/init.sql ); 要在 hashing 前擋掉
+    if username.length > 100 or !is-email(username) => return lderror.reject 1015
+    if !!internal != /\.invalid$/.test(username) => return lderror.reject 1015
+    Promise.resolve!
+      .then ~> if method == \local and !pending => @hashing(password) else password
+      .then (password) ~>
+        displayname = if detail => detail.displayname or detail.username
+        if !displayname => displayname = username.replace(/@[^@]+$/, "")
+        # 第三方登入的名字可能超過 users_displayname_length, 不該因此建不了帳號
+        displayname = "#displayname".substring 0, 64
+        verified = if internal => {date: Date.now!}
+        else if method == \local or !(policy and policy.oauth-default-verified) => null
+        else {date: Date.now!}
+        config.{}consent.cookie = new Date!getTime!
+        user = { username, password, method, displayname, detail, config, createdtime: new Date! }
+        if verified => user <<< {verified}
+        @db.query "select key,system from users where username = $1", [username]
+          .then (r={}) ~>
+            # 已經有管理員代建、還沒啟用的帳號: 要走啟用流程, 不是註冊
+            if (u = r.[]rows.0) => return lderror.reject(if u.{}system.pending => 1052 else 1014)
+            p = if force or policy.accept-signup != \invite => Promise.resolve null
+            else @db.query """select * from invitetoken where token = $1 and deleted is not true""", [invite-token]
+          .then (r) ~>
+            if r and !(token = r.[]rows.0) => return lderror.reject 1043 # token required
+            if !token => return
+            if token.ttl and (isNaN(ttl = new Date(token.ttl).getTime!) or ttl <= Date.now!) =>
+              return lderror.reject 1043 # token expired. consider it as no token so token required
+            detail = token.detail or {}
+            if !detail.count => return
+            if (detail.used or 0) >= detail.count => return lderror.reject 1004
+            token.detail.used = token.detail.used + 1
+            config.{}invite-token[invite-token] = {createdtime: Date.now!}
+            @db.query "update invitetoken set detail = $2 where key = $1", [token.key, token.detail]
+          .then ~>
+            @db.query """
+            insert into users (username,password,method,displayname,createdtime,detail,config,verified,system)
+            values ($1,$2,$3,$4,$5,$6,$7,$8,$9)
+            returning key
+            """, [
+              username, password, method, displayname,
+              new Date!toUTCString!, detail, config, verified,
+              if Object.keys(system).length => system else null
+            ]
+          .then (r={}) ~>
+            if !(r = r.[]rows.0) => return Promise.reject 500
+            user <<< r{key}
+            if Object.keys(system).length => user <<< {system}
+            @password-track {user, hash: password}
+          .then -> user
+
+  # 啟用 pending 帳戶: 清掉 system.pending, 作廢還沒用的啟用 token.
+  #  - `hash`: 有給就設成密碼 ( method 改為 local ).
+  #  - `verified`: 是否同時標記 email 已驗證. 用戶點啟用信設密碼才算; 管理員直接設密碼不算.
+  # 帳號不是 pending ( 已經啟用過 ) 時回傳 null, 否則回傳更新後的 user ( 不含密碼 ).
+  activate: ({key, hash, verified = true}) ->
+    @db.query """
+    update users set
+      system = system - 'pending',
+      verified = case when $2::boolean then coalesce(verified, $3::jsonb) else verified end,
+      password = coalesce($4::text, password),
+      method = case when $4::text is null then method else 'local' end
+    where key = $1 and system ? 'pending' and deleted is not true
+    returning *
+    """, [key, !!verified, JSON.stringify({date: Date.now!}), hash or null]
+      .then (r={}) ~>
+        if !(user = r.[]rows.0) => return null
+        delete user.password
+        @db.query "update activatetoken set deleted = true where owner = $1 and used is null", [key]
+          .then -> user
+
+  password-track: ({user, password, hash}) ->
+    policy = @policy.password
+    if !(policy.track.day or policy.track.count or policy.renew)
+    or !(hash or password) => return Promise.resolve!
+    # debounce password track to control tracking frequency
+    debounce 1000
+      .then -> if hash => that else @hashing(password)
+      .then (hash) ~> @db.query "insert into password (owner, hash) values ($1, $2)", [user.key, hash]
+      .then ~>
+        # it's possible that we are here even if track is not configured.
+        # in this case, we track for a minimal amount. (count = 1, day = 1)
+        count = policy.track.count >? 1
+        (r={}) <~ @db.query """
+        select key from password
+        where owner = $1
+        order by key desc limit $2
+        """, [user.key, count] .then _
+        if !(p = r.[]rows[* - 1]) => return
+        @db.query "delete from password where owner = $1 and key < $2", [user.key, p.key]
+      .then ~>
+        day = policy.track.day >? 1
+        @db.query """
+        delete from password
+        where owner = $1 and createdtime < now() - make_interval(0,0,$2)
+        """, [user.key, day]
+
+  password-due: ({user}) ->
+    policy = @policy.password
+    # always not due ( within 180 days ) if renew is not enabled.
+    if !policy.renew => return Promise.resolve(-180 * 86400 * 1000)
+    @db.query """
+    select * from password
+    where owner = $1
+    order by createdtime desc limit 1
+    """, [user.key]
+      .then (r={}) ~>
+        freq = policy.renew * (86400 * 1000)
+        now = Date.now!
+        checktime = if (entry = r.[]rows.0) =>
+          # use max so we can use a future snooze to delay renewal reuqest
+          Math.max(
+            new Date(entry.snooze or 0).getTime!,
+            new Date(entry.createdtime).getTime! + freq
+          )
+        else new Date(user.createdtime).getTime! + freq
+        return now - checktime
+  ensure-password-unused: ({user, password}) ->
+    track = @policy.password.track
+    if !(track.day or track.count) =>
+      qs = "select * from password where owner = $1 order by key desc limit 1"
+    else
+      qs = "select * from password where owner = $1"
+      if track.day => qs += " and createdtime >= now() - make_interval(0,0,0,$2)"
+      qs += " order by key desc"
+      if track.count => qs += " limit $#{if track.day => 3 else 2}"
+    params = (
+      [user.key] ++
+      (if track.day => [track.day >? 1] else []) ++
+      (if track.count => [track.count >? 1] else [])
+    )
+    @db.query qs, params
+      .then (r={}) ~>
+        ps = r.[]rows.map (p) ~> @compare(password, p.hash).then(->1).catch(->0)
+        Promise.all ps
+      .then (r=[]) ->
+        if r.filter(->it).length => return lderror.reject 1036
+
+module.exports = user-store

@@ -1,0 +1,104 @@
+#<-(->it.apply root) _
+({core}) <- ldc.register \admin, <[core]>, _
+<- core.init!then _
+<-(->it.apply core) _
+
+@admin = {}
+@view.admin = new ldview do
+  root: @view.panel.get('admin')
+  handler:
+    nouser: ({node}) ~> node.classList.toggle \d-none, (@admin.users or []).length
+    user:
+      list: ~> @admin.users or []
+      view:
+        text:
+          username: ({ctx}) -> ctx.username
+          displayname: ({ctx}) -> ctx.displayname
+        handler: dropdown: ({node}) -> new BSN.Dropdown node
+        action: click:
+          "force-logout": ({ctx}) ->
+            ld$.fetch "/api/admin/user/#{ctx.key}/logout", {method: \POST}
+              .then -> alert \done.
+          su: ({ctx}) ->
+            ld$.fetch "/api/admin/su/#{ctx.key}", {method: \PUT}
+              .then -> alert \done.
+          "change-email": ({ctx}) ->
+            email = prompt!
+            ld$.fetch "/api/admin/user/#{ctx.key}/email", {method: \POST}, {json: {email}}
+              .then -> alert "email changed to #email"
+          "change-password": ({ctx}) ->
+            password = prompt!
+            ld$.fetch "/api/admin/user/#{ctx.key}/password", {method: \POST}, {json: {password}}
+              .then -> alert "password changed to #password"
+          "random-password": ({ctx}) ->
+            password = Math.random!toString(36).substring(2)
+            ld$.fetch "/api/admin/user/#{ctx.key}/password", {method: \POST}, {json: {password}}
+              .then -> alert "password changed to #password"
+          "resend-activation": ({ctx}) ->
+            ld$.fetch "/api/admin/user/#{ctx.key}/activate", {method: \POST}
+              .then -> alert "activation mail sent"
+              .catch (e) -> alert(if lderror.id(e) == 1011 => "account already activated" else "failed: #{lderror.id e}")
+          "delete-user": ({ctx}) ->
+            ld$.fetch "/api/admin/user/#{ctx.key}", {method: \DELETE}
+              .then -> alert \delete.
+
+  action: click:
+    "throttle-reset": ~>
+      ld$.fetch "/api/admin/throttle/reset/", {method: \GET} .then -> alert 'throttle reset.'
+    "local-storage-reset": ->
+      window.localStorage.clear!
+      alert 'local storage cleared.'
+    "refresh-cachestamp": ->
+      ld$.fetch "/api/admin/cachestamp", {method: \POST}, {type: \json}
+        .then (r) -> alert r
+    "get-cachestamp": ->
+      ld$.fetch "/api/admin/cachestamp", {method: \GET}, {type: \json}
+        .then (r) -> alert r
+    adduser: ~>
+      username = @view.admin.get('adduser.username').value
+      displayname = @view.admin.get('adduser.displayname').value
+      password = @view.admin.get('adduser.password').value
+      if !(username and displayname) => return
+      if !password => password = Math.random!toString(36).substring(2)
+      ld$.fetch "/api/admin/user/", {method: \POST}, {type: \json, json: {username, displayname, password}}
+        .then -> alert "user created ( key: #{it.key} )"
+        .then ~>
+          <[username displayname password]>.map ~> @view.admin.get("adduser.#{it}").value = ''
+    # 不給密碼: 建立 pending 帳號並寄出啟用信, 由用戶自己設定密碼
+    inviteuser: ~>
+      username = @view.admin.get('adduser.username').value
+      displayname = @view.admin.get('adduser.displayname').value
+      if !(username and displayname) => return
+      ld$.fetch "/api/admin/user/", {method: \POST}, {type: \json, json: {username, displayname}}
+        .then -> alert "user invited ( key: #{it.key} ), activation mail sent"
+        .then ~> <[username displayname password]>.map ~> @view.admin.get("adduser.#{it}").value = ''
+        .catch (e) ->
+          id = lderror.id e
+          alert(
+            if id == 1014 => "account exists"
+            else if id == 1052 => "already invited and not activated yet. use `Resend Activation` in user search"
+            else "failed: #id"
+          )
+    deluser: ~>
+      username = @view.admin.get('deluser.username').value
+      if !username => return
+      ld$.fetch "/api/admin/user/delete", {method: \POST}, {type: \json, json: {username}}
+        .then -> alert "user `#username` deleted"
+        .then ~> @view.admin.get('deluser.username').value = ''
+    verifyuser: ({node}) ~>
+      key = username = @view.admin.get('verifyuser.username').value
+      toggle = node.dataset.toggle
+      if !username => return
+      verified = (toggle == \yes)
+      ld$.fetch "/api/auth/verify", {method: \POST}, {json: {key,username,verified}}
+        .then -> alert "user `#username` verified state changed"
+        .then ~> @view.admin.get('deluser.username').value = ''
+
+    search: ({node}) ~>
+      keyword = @view.admin.get('keyword').value or ''
+      if !keyword => return
+      ld$.fetch "/api/admin/users", {method: "POST"}, {type: \json, json: {keyword}}
+        .then ~>
+          @admin.users = it
+          @view.admin.render!
+

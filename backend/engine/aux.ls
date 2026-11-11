@@ -1,0 +1,118 @@
+require! <[proxy-addr]>
+ipaddr = require \ipaddr.js
+
+# 只信任本機轉進來的 X-Forwarded-For ( nginx 與 node 在同一台 ). engine 也用它設定 express 的 `trust proxy`,
+# `client-ip` 則直接拿來算 - ws 握手的 req 不經過 express, 沒有 `req.ip` 可用.
+trust-proxy = '127.0.0.1'
+trust = proxy-addr.compile trust-proxy
+
+base = do
+  hostname: (req) -> req.hostname
+  trust-proxy: trust-proxy
+  # 可信的 client ip, 給存取控制 ( `ipguard` ) 用. 算一次存在 `req.client-ip`.
+  #  - 只看 socket 與受信任 proxy 加上的 X-Forwarded-For, 不看 `cf-connecting-ip` 等 header:
+  #    這些 header 任何人都能自己帶, 直連源站就能偽造.
+  #  - 在 Cloudflare 後面時, 要靠 nginx realip ( `set_real_ip_from` + `real_ip_header` ) 把
+  #    `$remote_addr` 換成訪客 ip, 這裡才會正確; 沒設的話拿到的是 CF 節點 ip.
+  #    see config/base/nginx/cloudflare-notice.md
+  #  - IPv4-mapped IPv6 ( `::ffff:1.2.3.4` ) 轉回 IPv4, IPv6 轉成標準寫法.
+  client-ip: (req) ->
+    if req.client-ip => return that
+    ip = try proxy-addr(req, trust) catch e => null
+    return req.client-ip = if ip => base.normalize-ip(ip) else 'unknown-ip'
+  normalize-ip: (ip) -> try ipaddr.process(ip).toString! catch e => ip
+  # 盡量取得 client ip, 給 log / throttle 用. 會相信 `cf-connecting-ip` 等 header, 可被偽造,
+  # 不要拿來做存取控制 - 那要用 `client-ip`.
+  ip: (req) ->
+    # `req.headers` is kinda case-sensitive. use `req.header()` to get rid of this problem.
+    return (
+      # set by cloudflare thus we have to use it first if we are behind cloudflare
+      # https://support.cloudflare.com/hc/en-us/articles/200170986-How-does-Cloudflare-handle-HTTP-Request-headers-
+      # cloudflare suggests you to use this since it's normalized to have only one ip, not like x-fowarded-for
+      req.header('cf-connecting-ip') or
+
+      # x-real-ip: set by nginx (configured by us). Earliest usage seems to from nginx, but not de-facto.
+      # we probably will want to use this since if it exists, it means that we set it manually
+      req.header('x-real-ip') or
+
+      # req.ip: set by express, actually derived from x-fowarded-for when trust-proxy is not false.
+      # http://expressjs.com/en/api.html#req.ip
+      req.ip or
+
+      # de-facto standard for proxy and load balancer
+      # https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/X-Forwarded-For
+      (req.header('x-forwarded-for') or '').split(',').pop!.trim! or
+
+      # should use req.socket after v13:
+      # https://nodejs.org/api/net.html#socketremoteaddress
+      req.socket.remoteAddress or
+
+      # req.connection is deprecated after node v13:
+      # https://nodejs.org/dist/latest/docs/api/http.html#http_request_connection
+      req.connection.remoteAddress or
+
+      # last resort. should we use something that looks like an IP?
+      'unknown-ip'
+    )
+
+  # autocatch / routecatch
+  #  - serve for automatically catching rejections to prevent server crashed.
+  #  - deprecate when express 5 releases.
+  # autocatch: for wrapping functions
+  # try using routecatch instead of autocatch for easier migration to express 5 in the future.
+  #  - todo: will it be better to keep consistency by removing silence param?
+  autocatch: (handler, silence = false) -> (req, res, next) ->
+    ret = handler req, res, next
+    if !(ret instanceof Promise) =>
+      if silence => return
+      next new Error('autocatch is used yet return value of callback is not a Promise.')
+    else ret.catch -> next it
+  # routecatch: for wrapping routers.
+  routecatch: (route) ->
+    <[get post put delete]>.for-each (n) ->
+      route["_#n"] = route[n]
+      route[n] = (...args) ->
+        args = args.map (d,i) -> if d instanceof Function and (i == args.length - 1) => base.autocatch(d,true) else d
+        @["_#n"].apply @, args
+    return route
+
+  signedin: (req, res, next) ->
+    if req.user and req.user.key and req.user.username => return next!
+    next(new Error! <<< {name: 'lderror', id: 1000, redirect: "/auth/?nexturl=#{req.originalUrl}"})
+
+  verified: (req, res, next) ->
+    if req.user and req.user.key and req.user.username and
+    req.user.verified and req.user.verified.date => return if next => next! else Promise.resolve!
+    e = (new Error! <<< {name: 'lderror', id: 1021})
+    return if next => next(e) else Promise.reject(e)
+
+  # 匿名帳戶 ( internal 帳戶的一種, see user-store.create ): 有一列 users, 但沒有可用的 email 與密碼.
+  is-anonymous: (user) -> !!(user and user.method == \anonymous)
+
+  # deprecated. use lderror.reject instead.
+  reject: (code=403,msg="") ->
+    e = new Error(if typeof(msg) == typeof({}) => JSON.stringify(msg) else msg)
+    Promise.reject(e <<< {id: code, code, name: 'lderror'})
+
+  is-admin: (req, res, next) ->
+    return if req.user and req.user.staff == 1 => next!
+    else next(new Error! <<< {name: 'lderror', id: 404})
+
+  validate-key: (req, res, next) ->
+    if ((val = req.params.key) and !isNaN(val) and val > 0) => return next!
+    next(new Error! <<< {name: 'lderror', id: 400})
+
+  clear-cookie: (req, res) ->
+    domain = "#{req.hostname}".split('.').filter(->it)
+    for i from 0 til domain.length - 1 =>
+      d = domain.slice i .join('.')
+      res.clearCookie \connect.sid, {path:'/', domain: d }
+      res.clearCookie \global, {path:'/', domain: d}
+      res.clearCookie \connect.sid, {path:'/', domain: ".#d" }
+      res.clearCookie \global, {path:'/', domain: ".#d" }
+      res.clearCookie \connect.sid, {path:'/', domain: "www.#d" }
+      res.clearCookie \global, {path:'/', domain: "www.#d" }
+    res.clearCookie \connect.sid, {path:'/'}
+    res.clearCookie \global, {path:'/'}
+
+module.exports = base

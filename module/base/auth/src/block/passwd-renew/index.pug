@@ -1,0 +1,42 @@
+.ldcv.d-flex.align-items-center.justify-content-center.scroll.autogap: .base.w-480.rwd: .inner
+  include @/ldview/index.pug
+  script(type="@plotdb/block"): include:lsc index.ls
+  .d-none(ld="type", data-type="force")
+    h3.text-center(t="force.title")
+    p(t="force.desc")
+  .d-none(ld="type", data-type="suggest")
+    h3.text-center(t="suggest.title")
+    p(t="suggest.desc")
+  form.form.text-left.m-auto
+    .form-group
+      label(t) enter.old
+      //- https://goo.gl/9p2vKq Chrome complains if no type text username field provided.
+      input.d-none(name="username",type="text",autocomplete="username")
+      input.form-control(name="oldpasswd",type="password",autocomplete="current-password")
+      .invalid-feedback(t) enter.nomatch
+    .row
+      .col-md
+        .from-group.mb-3
+          label(t) enter.new
+          input.form-control(name="newpasswd1",type="password",t,t-placeholder="enter.min",autocomplete="new-password")
+          .invalid-feedback(t) enter.weak
+      .col-md
+        .from-group.mb-3
+          label(t) enter.again
+          input.form-control(name="newpasswd2",type="password",autocomplete="new-password")
+          .invalid-feedback(t) enter.mismatch
+    .form-group.mb-3.d-flex.g-3.align-items-center(data-node="passwd-bar1")
+      label.text-capitalize.mb-0(t="strength") &nbsp;
+      .flex-grow-1.progress(style="height:18px"): .progress-bar.progress-bar-striped(style="width:0%")
+    .d-flex.g-2.my-4
+      .btn.btn-lg.btn-outline-secondary.flex-grow-1.text-nowrap(
+      ld="type",data-type="suggest",t="skip",data-ldcv-set="")
+      .btn.btn-lg.btn-success.disabled.ld-ext-right.flex-grow-1.text-nowrap(ld="submit")
+        span(t="setup")
+        .ld.ldld.bare.em-1
+    .text-muted(style="line-height:1.2em"): small
+      span(t) hint.0
+      span(t) hint.1.0
+      a.mx-1(href="https://en.wikipedia.org/wiki/Password_strength",
+      target="_blank",rel="noopener noreferrer",t) hint.1.1
+      span(t) hint.1.2

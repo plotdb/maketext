@@ -1,0 +1,201 @@
+base-imp =
+  init: ({ctx, root, data, t}) ->
+    {ldview, ldnotify, curegex, ldform} = ctx
+    ({core}) <~ servebase.corectx _
+    <-(~>it.apply @mod = @mod({core, t} <<< ctx)) _
+    @_auth = data.auth
+    (g) <~ @_auth.get!then _
+    @global = g
+    @ldcv = ldcv = {}
+    ldcv.authpanel = new ldcover do
+      root: root
+      zmgr: core.zmgr
+      # /* we should consider if `data.zmgr` is a good approach */ zmgr: data.zmgr
+      # /* we should unify base-z */ base-z: (if data.zmgr => \modal else 3000)
+    ldcv.authpanel.on \toggle.on, ->
+      # dont know why we need 100ms delay to make this work. 
+      # but indeed modal may still change style due to transition, after toggle.on.
+      setTimeout (-> view.get('username').focus! ), 100
+    @ <<< {_tab: 'login', _info: \default}
+    @view = view = new ldview do
+      root: root
+      action:
+        keyup: input: ({node, evt}) ~> if evt.keyCode == 13 => @submit!
+        click:
+          oauth: ({node}) ~>
+            p = if g.{}policy.{}login.accept-signup != \invite => Promise.resolve!
+            else
+              core.ldcvmgr.get {name: "@servebase/auth", path: "invite-token"}
+                .then (r) -> return if r => r else lderror.reject 999
+            p
+              .then (r = {}) ~>
+                @_auth.oauth {name: node.getAttribute(\data-name), invite-token: r.invite-token}
+              .then (g) ~>
+                debounce 350, ~> @info \default
+                @form.reset!
+                @ldcv.authpanel.set g
+                ldnotify.send "success", t("login successfully")
+              .catch (e) ->
+                if lderror.id(e) == 999 => return
+                return Promise.reject(e)
+          submit: ({node}) ~> @submit!
+          switch: ({node}) ~>
+            @tab node.getAttribute \data-name
+      init:
+        submit: ({node}) ~>
+          @ldld = new ldloader root: node
+
+      handler:
+        # 只看面板上有按鈕的 provider, 沒有可用的按鈕就整塊 ( 含「或使用下列登入」 ) 隱藏
+        oauths: ({node}) ~>
+          btns = Array.from(node.querySelectorAll '[ld~=oauth]')
+          node.classList.toggle \d-none, !btns.filter(~> (@global.{}oauth[it.getAttribute \data-name] or {}).enabled).length
+        oauth: ({node}) ~>
+          node.classList.toggle \d-none, !(@global.{}oauth[node.getAttribute \data-name] or {}).enabled
+        "signin-failed-hint": ({node}) ~> node.classList.toggle \d-none, !@_failed-hint
+        "signin-failed-hint-text": ({node}) ~> node.innerText = @_failed-hint-text or ''
+        submit: ({node}) ~>
+          node.classList.toggle \disabled, !(@ready)
+        "submit-text": ({node}) ~>
+          node.innerText = t(if @_tab == \login => \login else 'signup')
+        displayname: ({node}) ~> node.classList.toggle \d-none, @_tab == \login
+        info: ({node}) ~>
+          hide = (node.getAttribute(\data-name) != @_info)
+          if node.classList.contains(\d-none) or hide => return node.classList.toggle \d-none, hide
+          node.classList.toggle \d-none, true
+          setTimeout (-> node.classList.toggle \d-none, hide), 0
+        switch: ({node}) ~>
+          name = node.getAttribute \data-name
+          node.classList.toggle \btn-light, (@_tab != name)
+          node.classList.toggle \border, (@_tab != name)
+          node.classList.toggle \btn-primary, (@_tab == name)
+    @form = form = new ldform do
+      names: -> <[username password displayname]>
+      after-check: (s, f) ~>
+        if s.username != 1 and !@is-valid.username(f.username.value, @_tab) => s.username = 2
+        if s.password != 1 =>
+          s.password = if !f.password.value => 1 else if !@is-valid.password(f.password.value) => 2 else 0
+        if @_tab == \login => s.displayname = 0
+        else s.displayname = if !f.displayname.value => 1 else if !!f.displayname.value => 0 else 2
+      root: root
+    @form.on \readystatechange, ~> @ready = it; @view.render \submit
+
+  interface: -> (toggle = true, opt = {}) ~>
+    if opt.tab => @mod.tab opt.tab
+    if opt.lock => @mod.ldcv.authpanel.lock!
+    if toggle => @mod.ldcv.authpanel.get!
+    else @mod.auth.fetch!then (g) -> @mod.ldcv.authpanel.set g
+
+  mod: (ctx) ->
+    {core, ldview, ldnotify, curegex, t} = ctx
+    # 系統管理者管理的帳號: 登入時打 `name@scope` ( 網域沒有 `.` ), 送出前補成 `name@scope.invalid`.
+    # 只用於登入; signup 照舊要求完整 email ( `*.invalid` 後端只讓 internal 建立 ).
+    scoped = (u) -> /^[^@\s]+@[a-z0-9-]+$/i.exec("#{u or ''}".trim!)
+    tab: (tab) ->
+      if /failed/.exec(@_info) => @_info = \default
+      @_tab = tab
+      # scoped 帳號只能登入, 切到 signup 要重新檢查
+      if @form?fields.username.value => @form.check {n: \username, now: true}
+      @view.render!
+    is-valid:
+      username: (u, tab) -> curegex.get('email').exec(u) or (tab == \login and scoped u)
+      password: (p) -> p and p.length >= 8
+
+    info: ->
+      @_info = it
+      @view.render \info
+
+    submit: ->
+      if !@form.ready! => return
+      if @_submitting => return
+      @_submitting = true
+      @_failed-hint = false
+      @view.render \signin-failed-hint
+      val = @form.values!
+      body = {} <<< val{username, password, displayname}
+      if @_tab == \login and scoped(body.username) => body.username = "#{body.username.trim!}.invalid"
+      @ldld.on!
+        .then -> debounce 1000
+        .then ~>
+          g = @global
+          p = if g.{}policy.{}login.accept-signup != \invite or @_tab != \signup => Promise.resolve!
+          else core.ldcvmgr.get {name: "@servebase/auth", path: "invite-token"}
+        .then (r = {}) ~>
+          _ = (o = {}) ~>
+            core.captcha
+              .guard cb: (captcha) ~>
+                body <<< {captcha} <<< (if o.invite-token => o{invite-token} else {})
+                <~ debounce 250 .then _
+                ld$.fetch "#{@_auth.api-root!}#{@_tab}", {method: \POST}, {json: body, type: \json}
+              .catch (e) ~>
+                # 1043 token required
+                if lderror.id(e) != 1043 => return Promise.reject e
+                <~ debounce 1000 .then _
+                (r) <~ core.ldcvmgr.get {name: "@servebase/auth", path: "invite-token"} .then _
+                if !(r and r.invite-token) => return Promise.reject e
+                _ r{invite-token}
+          _(if r.invite-token => r else {} )
+        .catch (e) ~>
+          if lderror.id(e) != 1005 => return Promise.reject e
+          # 1005 csrftoken mismatch - try recoverying directly by reset session
+          ld$.fetch "#{@_auth.api-root!}reset", {method: \POST}
+            .then ~>
+              # now we have our session cleared. fetch global data again.
+              @_auth.fetch {renew: true}
+            .then ~>
+              # try logging in again. if it still fails, fallback to normal error handling process
+              ld$.fetch "#{@_auth.api-root!}#{@_tab}", {method: \POST}, {json: body, type: \json}
+        .then (ret = {}) ~>
+          # 2FA: 帳密通過但還沒登入, 要再驗第二因素. see block `mfa-verify`
+          if !ret.mfa => return ret
+          (r) <~ core.ldcvmgr.get {name: "@servebase/auth", path: "mfa-verify"}, ret.mfa .then _
+          # 取消, 或是無法再試 ( mfa-verify 已經告訴使用者原因 ): 都當成取消, 回到登入畫面
+          if !r or r.error => return lderror.reject 999
+          return r
+        .then (ret = {}) ~>
+          (g) <~ @_auth.fetch!then _
+          if !(type = ret.password-should-renew) => return g
+          <~ core.ldcvmgr.get {name: "@servebase/auth", path: "passwd-renew"}, {type} .then _
+          return g
+        .finally ~> @ldld.off!; @_submitting = false
+        .then (g) ~>
+          debounce 350, ~> @info \default
+          @_failed-hint = false
+          @view.render!
+          @form.reset!
+          @ldcv.authpanel.set g
+          ldnotify.send "success", t("login successfully")
+          return g
+        .catch (e) ~>
+          console.log e
+          id = lderror.id e
+          # 999: 2FA canceled, or ended by mfa-verify
+          if id == 999 => return
+          if id >= 500 and id < 599 => return lderror.reject 1007
+          # session data corrupted
+          if id == 1029 => return Promise.reject e
+          # 1052: 管理員代建、還沒啟用的帳號 ( 登入或註冊都會遇到 ). 提示去收啟用信
+          if id == 1052 =>
+            @info "default"
+            return core.ldcvmgr.get {name: "@servebase/auth", path: "activate-required"}, {username: body.username}
+          # if we want to hint user the account existed.
+          # we can handle error id 1014 here (apply existed resource)
+          # 1004 / 1024: 試太多次 ( 1024 來自 throttle )
+          if id in [1004 1024] => return @info "login-exceeded"
+          # 1014: apply for a resource that already exists = account exists
+          # id == 1012 = permission denied: usually for password incorrect
+          # id == 1030 => password mismatched
+          @_failed-hint-text = if id == 1014 => t("Account exists. try login")
+          else if id in [1012 1030] => t("Password mismatched")
+          else if id in [1009 1010] => t("Captcha failed")
+          else if id == 1041 => t("Resource issue")
+          # 2FA: pending login expired, too many attempts, or too many failures on this account
+          else t("#{@_tab} failed")
+          @info "#{@_tab}-failed"
+          @_failed-hint = true
+          @view.render!
+          @form.fields.password.value = null
+          @form.check {n: \password, now: true}
+          # 1009, 1010: bot or captcha issue
+          # 1041: resource possibly blocked by client (e.g., adblock blocks captcha)
+          if !id or (id in [1009 1010 1041]) => throw e

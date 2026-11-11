@@ -1,0 +1,148 @@
+({core}) <- ldc.register <[admin core navtop]>, _
+<- core.init!then _
+ldld = core.loader
+<-(->it.apply core) _
+@ldcv = {}
+@bd = {}
+@view = {}
+@view.panel = new ldview do
+  root: document.body
+  action: click: do
+    pay: ({node, evt}) ->
+      payment.request do
+        gateway: node.getAttribute(\data-name)
+        payload:
+          scope: \demo
+          name: "Generic Goods"
+          amount: "13"
+    "toggle-block": ~> core.ldcvmgr.get JSON.parse(@view.panel.get('block-code').value)
+    "toggle-error": ~> core.error(lderror +(@view.panel.get('error-code').value or 0) )
+    "toggle-cover": ~> core.ldcvmgr.get @view.panel.get('cover-name').value
+    error: ~> @error((new lderror 1023) <<< uuid: Math.random!toString(36)substring(2))
+    "unhandled-rejection": ~> Promise.reject(lderror 1023)
+    # we need an approch to control authpanel. should be done via auth.
+    signup: ~> @auth.prompt {tab: \signup} .then -> update!
+    login: ~> @auth.prompt {tab: \login} .then -> update!
+    logout: ~> @auth.logout!then -> update!
+    "toggle-ldcv": ({node}) ~>
+      name = node.getAttribute \data-name
+      inner = ld$.find(@ldcv[name].root!, '.inner', 0)
+      Promise.resolve!
+        .then ~>
+          if @bd[name] => return
+          core.manager.from {name: "@servebase/auth", path: "#name/index.html"}, {root: inner}
+            .then (o) ~> @bd[name] = o
+        .then ~> @ldcv[name].get!
+    wipe: ~>
+      core.captcha
+        .guard cb: ->
+          ld$.fetch "/api/auth/clear", {method: \POST}
+        .then -> window.location.href = \/
+    "mail-verify": ->
+      core.loader.on!
+      core.captcha
+        .guard cb: (captcha) ->
+          ld$.fetch \/api/auth/mail/verify, {method: \POST}, {json: {captcha}, type: \json}
+        .then (ret = {}) -> debounce 1000 .then -> ret
+        .finally -> core.loader.off!
+        .then (ret = {}) ->
+          switch ret.result
+          | \verified => ldnotify.send \warning, 'mail already verified.'
+          | \skipped => ldnotify.send \warning, 'mail skipped: address blacklisted.'
+          | otherwise => ldnotify.send \success, 'verification mail sent.'
+        .catch -> core.ldcvmgr.toggle \error
+
+    reauth: ~> @auth.logout!then ~> update! .then ~> @auth.prompt true, {tab: \login} .then -> update!
+    notify: ~> ldnotify.send <[success warning danger dark light]>[Math.floor(Math.random! * 5)], "some test text"
+    "password-reset": ~>
+      if !(email = @view.panel.get('password-reset-email').value) => return
+      ldld.on!
+      Promise.resolve!
+        .then ~>
+          @captcha.guard cb: (captcha) ~>
+            ld$.fetch "/api/auth/passwd/reset", {method: \POST}, {json: {email, captcha}}
+        .finally -> ldld.off!
+        .catch ->
+          console.log it
+          return lderror.reject it
+    "post-test": ->
+      ld$.fetch "/api/demo/post-test/", {method: \POST}, {type: \text}
+        .then -> console.log it
+    "create-invite-token": ~>
+      token = @view.panel.get(\invite-token).value or null
+      count = +(@view.panel.get(\invite-token-count).value or 1)
+      if isNaN(count) => count = 1
+      ld$.fetch "/api/admin/invite-token", {method: \POST}, {json: {token, count}, type: \json}
+        .then (r={}) -> ldnotify.send \success, "token `#{r.token}` created."
+    "hcaptcha-done": ~>
+      console.log "done..."
+      #@capobj.get!then -> console.log ">", it
+    "audit-test": ({node}) ~>
+      random-token = Math.random!toString 36 .substring 2
+      url = "/demo/audit-test?param=1&random-token=#random-token"
+      ld$.fetch url, {method: \GET} .then -> ldnotify.send \success, "Audit Test OK"
+    captcha: ({node}) ~>
+      type = node.getAttribute(\data-type)
+      console.log "test captcha.guard /api/demo/post ..."
+      @auth.get!
+        .then (g) ~> @captcha.init g.captcha
+        .then ~>
+          @captcha.guard do
+            cb: (data) ->
+              console.log "from captcha we got token obj: ", data
+              # if we just somehow test captcha.guard:
+              # lderror.reject 1010
+              ld$.fetch "/api/demo/post", {method: \POST}, {json: captcha: data}
+                .then ->
+                  console.log "api response: ", it
+                  console.log "accessing /api/demo/post successfully"
+                  # if we want to test all captcha verifier...
+                  if type == \all =>
+                    console.log "intentionally reject to test all captcha verifier ..."
+                    return lderror.reject 1010
+                .catch ->
+                  console.error "accessing /api/demo/post with captcha failed: ", it
+                  Promise.reject it
+        .catch (e) ->
+          if lderror.id(e) in [1041] => return Promise.reject(e)
+          alert "captcha verification failed with id #{lderror.id(e)}"
+    "captcha-once": ~>
+      console.log "test captcha.once /api/demo/post-once ..."
+      @captcha
+        .once cb: (captcha) ->
+          console.log "captcha.once cb with: ", captcha
+          ld$.fetch "/api/demo/post-once", {method: \POST}, {json: {captcha}, type: \text}
+        .then -> ldnotify.send \success, "captcha once: #it"
+        .catch (e) ->
+          console.error "captcha once failed: ", e
+          ldnotify.send \danger, "captcha once failed with id #{lderror.id(e)}"
+  init:
+    ldcv: ({node}) ~>
+      name = node.getAttribute \data-name
+      @ldcv[name] = new ldcover root: node, resident: true
+      inner = ld$.find(node, '.inner', 0)
+
+    discuss: ({node}) ~>
+      data =
+        host: avatar: -> "/assets/img/avatar/#{Math.ceil(Math.random! * 4)}.png"
+        slug: \test
+      @manager.from {name: \@servebase/discuss}, {root: node, data} .then ->
+
+  text: do
+    username: ~> @user.username or 'n/a'
+    userid: ~> @user.key or 'n/a'
+  handler: do
+    signed: ({node}) ~> node.classList.toggle \d-none, !@user.username
+    "not-signed": ({node}) ~> node.classList.toggle \d-none, !!@user.username
+    status: ({node}) ~>
+      node.innerText = if @user.username => 'Signed in' else 'Not login'
+      node.classList.toggle \text-danger, !@user.username
+
+update = ~>
+  @auth.get!then (g) ~>
+    @global = g
+    @user = g.user
+    @view.panel.render!
+
+@auth.on \update, update
+

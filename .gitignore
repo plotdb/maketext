@@ -1,0 +1,53 @@
+node_modules
+.backend
+*.log
+.server.pid
+secret.*
+secret
+.*.swp
+.swp
+.worktree
+config/gen
+config/**/private
+config/dev
+module/**/node_modules
+module/**/web/static/assets/lib/
+frontend/*
+!frontend/base
+!frontend/README.md
+frontend/base/static
+frontend/base/.view
+!frontend/auth
+frontend/auth/static
+frontend/auth/.view
+# srcbuild compiles a pug file that lives outside `src/pug` into `.view/.@root/`,
+# at a path mirroring the source's own location under the project root. Templates
+# deployed at runtime land there too ( `.@root/user/template/...` ), so this
+# subtree holds user data, and it is the one part of `.view/` that genuinely has
+# to be generated at request time. Never committed, unlike the rest of `.view/`
+# in an app that commits its build artifacts - see the note at the bottom.
+**/.view/.@root/
+package-lock.json
+.version
+module/version/index.pug
+config/**/local.*
+dev/srcbuild/static/
+.bundle-dep
+context/shared
+
+# --- app-level overrides (downstream leaf apps) ---
+# Append-only, so everything above stays byte-identical across the base and every
+# app built on it and merges cleanly. servebase (the base) ignores package-lock.json;
+# a deployable leaf app should re-include and commit its lockfiles here for
+# reproducible `npm ci` installs by adding:  !package-lock.json
+# (node_modules/**/package-lock.json stays ignored: its parent dir is excluded.)
+#
+# An app that re-includes its own frontend (e.g. !frontend/web) thereby commits
+# that frontend's `static/`, `manifest.json` AND `.view/`, and for `.view/` that
+# is deliberate rather than an oversight: precompiled templates inline whatever
+# they `include`, `@/...` ones out of node_modules included, while the view
+# engine's staleness check only compares that one .pug's own mtime and never
+# notices an include changing underneath it. Committing `.view/` alongside the
+# lockfile is what keeps the two in step - build against an `npm ci` tree and
+# what is deployed matches what it was compiled against. `.@root/` is excluded
+# above and stays runtime state.

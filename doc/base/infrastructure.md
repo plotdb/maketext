@@ -1,0 +1,484 @@
+# Infrastructure
+
+## Daemon
+
+Node server should run as a Daemon with auto-restart mechanism. This can be done via:
+
+ - managed by Container - default option
+ - as a service - outside container
+   - use `sysvinit` or `systemd`:
+     - systemd: https://nodesource.com/blog/running-your-node-js-app-with-systemd-part-1
+   - with systemd, run `./start --noloop` so restart is handled by systemd
+     ( `Restart=always` ) instead of the inner bash loop. example unit:
+
+         [Unit]
+         Description=<project-name> server
+         After=network.target
+
+         [Service]
+         Type=simple
+         WorkingDirectory=/path/to/project
+         Environment=NODE_ENV=production
+         ExecStart=/path/to/project/start --noloop
+         ExecStop=/path/to/project/tool/base/stop
+         TimeoutStopSec=60
+         Restart=always
+         RestartSec=1
+
+         [Install]
+         WantedBy=multi-user.target
+
+     stdout goes to journald; follow it live with `journalctl -u <unit> -f`,
+     or use `npm run log` ( pretty view over server.log, with tail / filter /
+     date-range options - see `doc/base/index.md` -> Log ).
+ - as a process, through `screen` - not reboot-proof but it's acceptable.
+   - auto restart when process crashed with bash while loop.
+   - identify process by `ps` ( argv carries `start:<dirname>` / `--home <pwd>` );
+     stop with `npm stop` ( see Stopping below ).
+
+
+### Source Only
+
+The backend runs from the livescript sources under `backend/`, in production as
+much as in development. Compiling all of them takes about a quarter of a second,
+which is nothing beside requiring the npm tree and reaching db and redis, and it
+means production runs what everyone actually develops against rather than a
+second code path of its own - one that could quietly serve last month's code
+after a forgotten rebuild.
+
+There used to be such a path: `npm run prebuild` compiled `backend/` into plain
+js under `.backend`, which production ran instead. Both are gone. A `.backend`
+still lying around is not run, only reported on every start:
+
+    warning: .backend/ is no longer used; running the backend/ sources.
+             remove it ( rm -rf .backend ) to silence this warning.
+
+`.backend` is in `.gitignore`, so one made by hand does not get committed.
+
+
+### Giving Up
+
+A server that crashes after running is worth restarting; one that never starts
+is not. The bash loop counts starts that die within `SB_CRASH_FAST` seconds
+( 10 ), backs off further each time, and after `SB_CRASH_MAX` of them in a row
+( 5 ) stops instead of spinning. Without this, a permanent error - a port
+already taken, a syntax error, a config that no longer parses - is retried
+forever; with the real server usually still running next to it, nothing looks
+broken and the only symptom is a hot machine and a log growing by the hour.
+
+Giving up leaves behind:
+
+ - a nonzero exit, for `systemd` ( `OnFailure=` ) or whatever supervises it.
+ - `.server.crash` in the project directory: when, how many times, why, and the
+   tail of `server.log`. `npm run ping` reads it whenever the project has no
+   server running, so asking "why is this down" answers it without anyone
+   having had to watch at the time. A server that starts and runs deletes it.
+ - `SB_CRASH_HOOK`, if set: a shell command, with `SB_CRASH_PROJECT`,
+   `SB_CRASH_COUNT`, `SB_CRASH_LOG` and `SB_CRASH_FILE` in its environment - a
+   mail or chat call in production, a desktop notification in development.
+
+The hook is best effort, and deliberately the last of the three. Whatever keeps
+a server from starting - no network, no DNS, an unreadable config - is often
+what a call to the outside world needs too, so it runs with a timeout
+( `SB_CRASH_HOOK_TIMEOUT`, 30s ) and is killed if it overruns. Reporting must
+not become the new way this hangs.
+
+Set it where the server is deployed. Single quotes, so the variables expand when
+the hook runs rather than when it is set:
+
+    # production: mail the whole report out
+    SB_CRASH_HOOK='mail -s "$(basename $SB_CRASH_PROJECT) failed to start" ops@example.com < "$SB_CRASH_FILE"'
+
+    # or a webhook
+    SB_CRASH_HOOK='curl -sS --max-time 20 -X POST "$MY_WEBHOOK" --data-binary @"$SB_CRASH_FILE"'
+
+    # development: a desktop notification, which is all it takes to not lose a night
+    SB_CRASH_HOOK='osascript -e "display notification \"$SB_CRASH_COUNT failed starts\" with title \"$(basename $SB_CRASH_PROJECT)\""'
+
+Note what the hook is not: it is not wired to `config/private`, even though the
+mail settings sitting there would make a default hook look easy. Four reasons,
+and the last is the one that matters.
+
+ - the config is `.ls`; reading it from bash means starting a node process, and
+   node failing to start is one of the things being reported.
+ - the code that sends mail ( `backend/engine/mail-queue.ls` ) lives in the
+   engine, and the engine is what just died. Using it means loading the config,
+   `nodemailer` and its transport again - betting on the same startup path that
+   just failed, at the moment it is known to be failing.
+ - it is a secret file. Reading it in bash and passing it down through a child
+   process environment widens where those secrets go, in exchange for a notice.
+ - a server that will not start often will not start because its config broke or
+   could not be read. A reporting path built on that same config is one that
+   fails exactly when it is needed.
+
+This is the same call as the timeout above: this layer can guarantee a local
+file and an exit code, and nothing else. Anything that needs something else to
+still be alive belongs outside it.
+
+
+### Stopping
+
+`npm stop` ( `tool/base/stop` ) stops gently: the server gets SIGTERM, takes no
+new connections and answers the requests in flight before exiting - a card
+charged but not yet recorded is what dying at once could leave. It returns once
+everything is gone, so a `start` right after it finds the port free.
+
+ - the server waits `config.shutdown-timeout` seconds ( 10 ); `npm stop` waits
+   20 ( `--wait <s>` ), then kills what is left.
+ - only the server is signalled; `tee` / `pino-pretty` end with its output, so
+   its last lines still reach `server.log`. ctrl-c still stops at once.
+ - systemd: set `ExecStop=` as above, or the log pipeline is killed with it.
+ - websocket ( and SSE ) connections never end by themselves, so each one holds
+   the stop until the timeout. close them in `backend.on-stop`, which runs on
+   SIGTERM; `@servebase/connector` reconnects to the new server by itself:
+
+       backend.on-stop -> wss.clients.forEach -> it.close 1001, \restarting
+
+   ( `backend/base/sharedb.ls` does this for the `/editing/` demo. )
+ - non-request work ( a job queue ) is the project's to wind down before `npm stop`.
+
+## Note
+
+ - Load Balancing
+   - https://blog.gcp.expert/gcp-http-load-balancer-console/
+   - https://blog.gcp.expert/gcp-instance-autoscaling/
+   - for ShareDB - use Redis Pub/Sub across instances
+     - https://github.com/share/sharedb/issues/110
+     - https://github.com/share/sharedb/issues/295
+     - https://stackoverfow.com/questions/20375338/
+     - https://github.com/share/sharedb-redis-pubsub
+   - nginx can help: https://www.digitalocean.com/community/tutorials/understanding-nginx-http-proxying-load-balancing-buffering-and-caching
+ - Stateless Web Server
+   - OpenAPI
+     - https://github.com/OAI/OpenAPI-Specification/blob/master/versions/3.1.0.md
+     - https://github.com/wesleytodd/express-openapi/
+   - Run script continuously: Forever ( https://github.com/foreversd/forever )
+ - Nginx Configuration
+   - can use tools like nginx-confgen to help.
+ - SQL Server / Shading
+ - Docker / Kubernete
+   - write file to host - https://stackoverflow.com/questions/31448821
+ - static files should be served in a standalone way?
+
+ - Kubernetes, Cloud Run
+   - 初看下就是 Cloud Run 幫你省掉一些設定功
+   - 不太確定如何使用 cloud run + dockerhub, 但至少使用 google registry 是可以的. 如下例:
+     - gcloud builds submit --tag gcr.io/playground-290605/test
+
+
+## Asset Cache Policy
+
+Off by default. Turn it on per project with `config.build.hash`:
+
+    build:
+      enabled: true
+      hash:
+        enabled: true       # off unless set
+        mode: 'filename'    # or 'query'
+        keep: 3             # filename mode: generations kept
+        keepDays: 0         # filename mode: also keep anything younger than this
+
+It is opt-in because it changes the url of every generated asset in every page, and it
+buys nothing until the edge serves the addressed form with a long `max-age`. Turn it on
+once the rules below are in the config that actually runs.
+
+Whatever the mode, the plain name is always written and always holds the latest build.
+That is what already-deployed html points at, what a page rendered before the first
+build falls back to, and what the nginx fallback lands on.
+
+`mode: 'filename'` writes a second copy under a content-addressed name:
+
+    /js/site.min.js                     mutable  - same name, different bytes each build
+    /js/site.4b6ac41e1bea.min.js        immutable - this name only ever means these bytes
+    /assets/bundle/vendor.min.js        mutable
+    /assets/bundle/vendor.70d9624.min.js  immutable
+
+Pages embed the hashed name. A url then names exactly one byte sequence, so it can be
+served `immutable` - but old copies have to be expired eventually, and html older than
+the retention window would 404 without the `try_files` fallback below.
+
+`mode: 'query'` leaves one file and points at `/js/site.min.js?v=4b6ac41e1bea` instead.
+Nothing accumulates and nothing 404s. The cost is that html older than the last build
+silently gets whatever the file holds now, and some CDNs ignore the query string when
+caching. Pick this if you would rather handle version drift with a "site updated, please
+reload" prompt than keep artefacts around - a client holding old js across a deploy is
+already exposed to backend api drift, so that prompt is worth having either way.
+
+The edge has to distinguish them, because the whole point of the hash is to allow a long
+`max-age` that would be wrong for the plain name:
+
+    /assets/lib/<name>/<exact version>/...   public, max-age=31536000, immutable
+    /assets/lib/<name>/main|local/...        no-cache   ( fedep symlinks, contents change )
+    <anything>.<12 hex>[.min].<ext>          public, max-age=31536000, immutable
+                                             ( with try_files back to the plain name )
+    /js /css /assets/bundle /modules with ?v=<hash>   public, max-age=31536000, immutable
+    /js /css /assets/bundle /modules bare    no-cache
+    images / fonts                           expires 1d
+
+`no-cache` does not mean "do not store" - the response is stored and revalidated, and
+nginx answers 304 from the ETag. On this project's index that is 40 conditional requests
+returning 146 bytes in total. Content addressing removes even those; it is a performance
+optimisation on top of a policy that is already correct.
+
+The `?v=` row needs a `map`, because `location` matching ignores the query string and a
+`?v=` url is otherwise indistinguishable from its bare form:
+
+    map $arg_v $<name>_asset_cc {
+      ""      "no-cache";
+      default "public, max-age=31536000, immutable";
+    }
+
+    location ~ ^/(?:js|css|assets/bundle|modules)/ {
+      add_header Cache-Control $<name>_asset_cc always;
+      # ... and the server-level security headers, repeated
+    }
+
+It deliberately does not cover `/assets/lib/*/main|local/`: the `?v=` there is
+`libLoader._v`, a build-wide token, and fedep can swap the symlink without it changing.
+`if` is not used for this - `add_header` inside `if` in a location behaves surprisingly.
+
+Both modes work under the same ruleset; nothing has to change when you switch.
+
+Three traps, all silent:
+
+ - nginx `add_header` does not inherit. A `location` that sets any `add_header` loses the
+   whole server-level set, so every new location has to repeat the security headers.
+ - regex `location` blocks match in source order, first match wins. An extension rule
+   like `location ~ \.(?:css|js|...)$` placed early will swallow `/assets/lib` and
+   `/assets/bundle` before their own rules are reached. The same goes for a rule that only
+   adds a fallback: `/modules/error/` ( project dialogs, then @servebase/erratum's builtin
+   ones ) has to sit before the plain `/modules/` rule, or every builtin dialog 404s.
+ - `location` never sees the query string. `mode: 'query'` without the `map` above gets
+   `no-cache` on every asset and buys nothing at all - and looks like it is working,
+   because the urls do carry the hash.
+
+`config/base/nginx/config.ngx` is a sample. The configuration that actually runs is the
+project's own ( `config/web/nginx/` in a derived project ), so copying the sample is not
+enough - the rules above have to be present in whatever config is deployed.
+
+Nothing fails loudly when this is wrong. The page keeps working and keeps running stale
+code, which is why the checker exists:
+
+    npm run cachecheck -- https://your-origin      # point at nginx, not the express port
+    npm run cachecheck -- -j <origin>              # json, for CI
+    npm run cachecheck -- -s <origin>              # warnings ( missing security headers ) fail too
+
+It reads the pairs to test out of the build's own manifest
+( `<feroot>/.bundle-dep/manifest.json` ), so it checks the files the project actually
+ships. Exit code 0 means no failures.
+
+
+## Generated and Hand-Written Files
+
+    <feroot>/src/ls, src/styl, src/pug   compiled into static/
+    <feroot>/src/raw                     copied into static/ verbatim
+    <feroot>/static/                     output
+
+Every site has files nobody generates: `favicon.ico`, `robots.txt`, images, fonts, a
+`site.webmanifest`. They used to be placed straight into `static/`, beside the build's
+output. That makes `static/` the only copy of some of its contents and a derived
+artifact for the rest, and nothing downstream can tell which is which - not git, not a
+deploy script, not the next person to wonder whether the directory is safe to delete.
+
+`src/raw` ( srcbuild >= 0.1.4 ) is where they belong instead. It is copied into the
+document root unchanged, with no extension whitelist:
+
+    src/raw/favicon.ico            ->  static/favicon.ico
+    src/raw/robots.txt             ->  static/robots.txt
+    src/raw/assets/img/logo.png    ->  static/assets/img/logo.png
+    src/raw/assets/custom/x.svg    ->  static/assets/custom/x.svg
+
+Junk is excluded ( `.DS_Store`, `Thumbs.db`, `*.swp`, `*~`, `.git` ). Deleting a source
+deletes its copy - but only while the watcher is running, so a file removed with the
+server down leaves an orphan behind. That is what makes the guarantee below worth
+having: on a migrated project `rm -rf static` costs one rebuild and fixes it.
+
+This is a build-time union, not a lookup order: `static/` stays the single document
+root, so nginx, `express.static`, the manifest, the hash store and `cachecheck` all
+keep their one-root assumption and none of them has to agree on a search order. It also
+means the same builder runs in development and in a deploy build - a serve-time search
+path would be two implementations of one rule, one in express and one in nginx, with
+nothing keeping them in step.
+
+The older whitelist copier is untouched and still runs. In servebase it is pointed at
+`src/pug`, so images can sit beside the pug that uses them:
+
+    src/pug/**.{png,gif,jpg,svg,json}  ->  static/**
+
+Both work. Migrate at your own pace.
+
+### Migrating a project
+
+For every file in `static/` that no build produces, move it to `src/raw/<same path>`.
+`git status` cannot find them - `static/` is ignored - so let the build find them.
+
+Check first whether anything under `static/` is written at runtime ( uploads, generated
+user content ). This moves the whole directory aside, and a running server would then
+write into a fresh one; stop the server, and take a copy of that data before starting,
+not just the `mv` below.
+
+    mv <feroot>/static <feroot>/static.old
+    npm run dev                                  # let it build, then stop it
+    diff -rq <feroot>/static.old <feroot>/static
+
+Everything reported as `Only in static.old` falls into one of four groups, and only the
+last one moves to `src/raw`:
+
+ - **output of a builder that did not run** in that pass. Build again before concluding
+   anything.
+ - **installed by a tool**, not by srcbuild: `static/assets/lib/**` comes from
+   `npx fedep`, `bootstrap.custom` from `npm run bootstrap`. Regenerable, leave alone.
+ - **runtime data** - user uploads, anything the server writes. `static/s` is reserved
+   for this ( see `doc/base/repo-structure/main.md` ), and it should be a symlink or an
+   nginx location rather than a real directory under the document root. It is the one
+   category that is genuinely irreplaceable, so check for it first.
+ - **hand-written and shipped as-is.** These move.
+
+### Only then
+
+Once a project has finished that migration, and not before, `static/` is entirely
+derived, and three things follow:
+
+ - `rm -rf <feroot>/static` loses nothing that cannot be made again. Making it again
+   is not the build alone, though: on servebase's own `frontend/base`, a build into an
+   empty `static/` restores 49 of 1937 files, because 1852 of them are fedep'd libraries
+   and the bundles that concatenate them come out empty without those. Restoring the
+   directory is `fedep`, then `npm run bootstrap`, then the build.
+ - the directory does not need to be in version control.
+ - deploying can be a build rather than a merge of hand-placed and generated files.
+
+**Do not assume the migration has happened.** A derived project that merges servebase
+gets this document before it gets the move, and acting on the three points above with
+hand-written files still sitting in `static/` deletes them. Confirm with the `diff`
+above first; the sections below still describe both worlds for that reason.
+
+
+## Build Artifacts
+
+The frontend build produces three things. Whether each one belongs in version control is
+not a matter of taste - it follows from whether the running server needs it, so decide
+per artifact rather than per project.
+
+    <feroot>/static/                    the document root. runtime needs it.
+    <feroot>/.bundle-dep/manifest.json  url -> content-addressed url. runtime needs it.
+    <feroot>/.bundle-dep/<type>/*.dep   bundle specs. only the builder needs it.
+    <feroot>/.view/                     precompiled pug. a deploy artifact.
+    <feroot>/.view/.@root/              pug compiled from outside src/pug. runtime state.
+
+**`static/`** is what nginx has as its `root`, and what express serves as a fallback
+when there is no nginx in front. Two kinds of thing live in it, and both are needed:
+the assets ( js, css, bundles, fedep'd libs ), which exist only as files, and the
+prerendered html. The html matters more than it looks: nginx's fallback location is
+`try_files /$1 /$1/index.html @apiserver`, so a page whose html is missing only survives
+if the app has a route that renders it. Removing `static/dev/refresh/index.html` makes
+that page fail, while `/` keeps working because a route renders it.
+
+Whether it is safe to *lose* `static/` is a different question, and it depends on
+whether the project has moved its hand-written files into `src/raw` - see Generated and
+Hand-Written Files above. Until it has, `static/` holds the only copy of some of them,
+and every option below that treats the directory as regenerable is unsafe for it.
+
+**`manifest.json` has to travel with `static/`.** When the server does not build
+( `config.build.enabled` off - assets are built elsewhere and deployed ), nothing
+populates the in-memory hash store, and the view engine resolves `asseturl` /
+`bundleurl` by reading this file. Without it, prerendered pages carry content-addressed
+urls while server-rendered pages fall back to the plain ones: the same site behaving two
+ways, silently. Whatever policy `static/` gets, this file gets the same one.
+
+**`*.dep`** is builder state - which sources a bundle concatenates, which pug file
+declares it. A server that does not build never reads it. Committing it only saves a
+first-build pass.
+
+**`.view/`** repairs itself only in one direction. A *missing* template is compiled from
+`src/pug` on demand - verified by deleting the whole directory while the server was
+running, pages kept rendering and the directory came back. A *stale* one is not, and
+that is the case that matters, because pug `include` is expanded at compile time: a
+precompiled view has the text of everything it includes inlined into it, `@/...` ones
+resolved out of node_modules included. `frontend/base/.view/index.js` is 46KB against a
+6.7KB `index.pug`; `scriptLoader`, a string that appears nowhere in `index.pug`, appears
+in it 18 times, straight out of `@loadingio/bootstrap.ext/index.pug`. And the view
+engine's check is two `statSync` calls - that one `.pug` against its own `.js` - so an
+`npm i` that swaps the included file leaves the compiled view holding the previous
+version, and nothing ever notices. The builder does not have this problem: it tracks
+dependencies ( `compileClientWithDependenciesTracked` ) and watches node_modules, which
+is why `@/` includes rebuild correctly in development and why node_modules cannot simply
+be excluded from the watch.
+
+So whether to commit `.view/` is not about saving the first compile per page. An app
+that builds locally and deploys artifacts should commit it, because that is what keeps
+the precompiled templates in step with the lockfile they were built against. An app that
+builds on the server should not, because the builder there keeps them in step instead.
+
+**`.@root/` is the exception inside `.view/`, and is never committed.** srcbuild sends a
+pug file that lives outside `src/pug` here, at a path mirroring its own location under
+the project root - `module/base/x/y.pug` becomes `.view/.@root/module/base/x/y.js`. Only
+the view engine produces these ( the builder's `isSupported` requires `src/pug` ), and
+what lands there includes templates deployed at runtime, `.@root/user/template/...`,
+which carry user data and must be compiled per request anyway. The `.gitignore` excludes
+`**/.view/.@root/` for every project.
+
+Which leaves `.@root/` as the one kind of artifact with nothing to invalidate it: not
+committed, not built by the builder, and reached only through the staleness check
+described above - the one that does not look at includes. A runtime-deployed template
+whose shared base changes, while its own entry does not, keeps serving the old base
+indefinitely. See `context/servebase/tasks/todo/20260919-view-atroot-stale.md`.
+
+
+## Deploying Build Artifacts
+
+Two shapes, and the base project and its derived projects land on different ones.
+
+**Build on the server.** Nothing is committed; `git pull` leaves the generated
+directories alone because they are ignored, so a restart is warm and there is nothing to
+arrange. This is what servebase itself does - its `frontend/base/static` is a demo, not
+something a derived project consumes. It requires the `src/raw` migration: a file that
+was never committed and is not regenerable does not exist on the server at all.
+
+**Build locally, deploy artifacts.** `static/` and `manifest.json` are committed and
+reach the server by `git pull`. This is what derived projects do with `frontend/web`.
+The cost is merge noise on files nobody edits by hand.
+
+That noise is avoidable, because these files are regenerable: taking either side and
+rebuilding is always correct. A `.gitattributes` saying so turns every such conflict
+into a no-op:
+
+    frontend/web/static/**            merge=ours
+    frontend/web/.bundle-dep/*.json   merge=ours
+
+with `git config merge.ours.driver true` ( a driver that keeps the local version ). Run
+the build after the merge, and the tree is correct again.
+
+**Committing `static/` changes which hash mode you want.** In `filename` mode every
+content change introduces a new *filename*, which git keeps in history forever even
+after the file is expired from disk - one edit to one `.ls` already leaves four hashed
+files behind. In `query` mode the file set never changes; only the bytes inside
+`site.min.js` and the `?v=` in the html do, which is what git stores efficiently. If the
+project commits its `static/`, prefer `mode: 'query'`.
+
+**A separate deploy repository removes that argument.** Pushing `static/` to a repo of
+its own - one whose history may be pruned or force-pushed, and whose commit message can
+record the source commit it was built from - makes `filename` mode viable again, and
+`filename` is the mode that actually earns an immutable `max-age`. It is not the current
+flow ( production does a `git pull` of the project itself ) and nothing here changes
+that yet; it is written down because the choice only opens up once `static/` is fully
+derived, which is the point of the `src/raw` migration above.
+
+
+## Database
+
+ - database scaling
+   - https://cloud.google.com/community/tutorials/horizontally-scale-mysql-database-backend-with-google-cloud-sql-and-proxysql
+ - sharding: break large table content into small chunks call shards.
+   - https://percona.com/blog/2019/05/24/an-overview-of-sharding-in-postgresql-and-how-it-relates-to-mongodbs/
+   - https://blog.yugabyte.com/how-data-sharding-works-in-a-distributed-sql-database/
+ - sql proxy
+   - https://www.envoyproxy.io/docs/envoy/latest/configuration/listeners/network_filters/postgres_proxy_filter
+   - https://medium.com/google-cloud/google-cloud-sql-proxy-with-autoscaling-1f63f1dd4017
+ - cluster
+   - it seems that "cluster" in postgresql is just a database. yet it can still be "clustered":
+     - https://www.opsdash.com/blog/postgresql-cluster.html
+     - https://www.opsdash.com/blog/postgresql-streaming-replication-howto.html
+     - https://wiki.postgresql.org/wiki/Replication,_Clustering,_and_Connection_Pooling
+ - replication
+ - in-table auditing and logging
+    - https://dzone.com/articles/audit-log-database-changes-in-postgresql

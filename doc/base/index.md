@@ -1,0 +1,191 @@
+# Servebase
+
+Servebase is a nodeJS / Express based server, designed as a basis of web server development in both Backend and Frontend.
+
+Codestack of servebase:
+
+ - nodejs
+ - livescript
+ - postgresql
+ - express
+ - stylus
+ - pug
+ - docker
+
+
+## Usage
+
+Use servebase as if you fork it, and constantly pull and merge changes from servebase repo. For more information, check `version-control`.
+
+Once setup, run following commands:
+
+    # for development
+    npm run dev
+
+    # or, for production
+    npm start
+
+
+### Customized Config
+
+Instead of `npm`, you can run `start` script directly, with optional `-c <cfg-name>`:
+
+    ./start
+    # or, alternatively
+    ./start -c myconfig
+
+with `myconfig` option added, you should prepare a corresponding config file `config/private/myconfig.ls`. Check `config/private/demo.ls` for a sample config file.
+
+### Database
+
+To run most of the Servebase backend code you will need a corresponding database. For now Servebase supports Postgresql only. For a quick startup of a Postgresql Instance with docker, run following:
+
+    npm run docker-db
+
+You may need a corresponding database configuration in your private config file.
+
+
+### Ping
+
+With several terminals or coding agents on one machine it is easy to lose track
+of which of them is running the server. `npm run ping` answers that for the
+current project:
+
+    npm run ping           # human readable status
+    npm run ping -- -j     # raw json, for scripts and agents
+    npm run ping -- -q     # no output, exit code only
+
+    server running:
+      title    servebase:servebase:demo
+      pid      90256
+      home     /Users/me/projects/servebase
+      config   config/private/secret.ls
+      port     8901
+      mode     development
+      version  rand-w4pfjuxk438
+      uptime   3h 12m 40s
+
+It exits 0 when a server is up and 1 when none is, so `npm run ping -q || npm run dev`
+is a safe way to start one only if needed.
+
+Liveness is decided by whether `.localctl.sock` accepts a connection ( the socket
+serves `/info`, see `backend/engine/localctl.ls` ), not by `.server.pid`: a pidfile
+survives `SIGKILL` and its pid may later be reused, while a leftover socket file
+refuses connection and is reported as stale. Each project root has its own socket,
+so ping never reports another project's server.
+
+Accepting is the whole test; answering is not. A server whose event loop is busy
+- starting up, or in the middle of heavy synchronous work - holds the port and
+is up, it just cannot reply yet, and is reported as `running: true, busy: true`.
+Calling that "no server" is how two servers end up fighting over one port.
+
+When nothing is running, a `.server.crash` left behind by `start` is reported
+too; see `doc/base/infrastructure.md` -> Giving Up.
+
+
+### Servers
+
+`npm run ping` answers for one project. `npm run servers` answers for the
+machine - every servebase process running on it, whichever project or agent
+started it:
+
+    npm run servers          # human readable
+    npm run servers -- -j    # raw json, for scripts and agents
+
+    2 servebase servers running:
+
+      jiemu.local  9100   development  17h 18m   /Users/me/workspace/jiemu/server
+      Make Chart   9103   development  9d 5h     /Users/me/workspace/makechart/server
+
+They are found in `ps`, not in a registry. `start` re-execs itself as
+`start:<dirname>` and the engine titles itself
+`servebase:<dirname>[:<sitename>]` ( see `backend/engine/index.ls` ), so the
+evidence is already there; a registry would have to stay true across `kill -9`,
+reboots, worktrees and `--force`, and a registry that lies is worse than none.
+The project root is each process's own cwd, and the port, mode and uptime come
+from that project's `tool/base/ping` over its own socket - nothing here guesses
+a port or reads a config.
+
+The name shown is the sitename where a config sets one, since the dirname half
+is very often just `server`. What counts as a running server is decided by that
+`ping`, not by the title - a title makes no claim about whether anything is
+answering. An engine `ping` cannot reach is listed on its own rather than
+guessed about:
+
+    1 servebase engine ping could not reach:
+
+      v3.ldio.dev  pid 70359   /Users/me/workspace/loading/v3/tool/ldio/subscription
+
+      running, but with no control socket to ask: an older engine, a layout
+      without tool/base/ping, or a process belonging to another user.
+
+`lsof` reads cwd only for your own processes, so another user's server lists
+without a root, and without the details looked up through it.
+
+A `start` with no engine under it is listed separately, as a warning:
+
+    1 project with a start script but no engine - starting up, or stuck failing to start:
+
+      pid 46075  /Users/me/workspace/jiemu/server
+
+That is either a server still coming up, which clears in a moment, or one stuck
+failing to start. The second case is the one worth a tool: it is invisible
+everywhere else, because a healthy server is usually running right next to it
+and the project looks fine.
+
+`./start` runs the same check on startup and refuses to launch a second server for
+the same project, printing the running one's info instead. Pass `--force` ( `-F` )
+to start anyway.
+
+
+### Log
+
+`./start` output logs into a log file `server.log`, with the `pino` log format.
+It is append-only and never rotated, so on a long-running instance it grows into
+hundreds of MB - read it through `npm run log`, which wraps `tool/base/logview`:
+
+    npm run log                    # follow, like `tail -f` ( no option = old behavior )
+    npm run log -- -n 500          # last 500 lines, pretty-printed, in less
+    npm run log -- -a              # whole file
+    npm run log -- -f -n 500       # follow, starting from the last 500 lines
+    npm run log -- -m db           # only module `db`
+    npm run log -- -l 40           # only level >= 40 ( 30 info / 40 warn / 50 error )
+    npm run log -- -g 'timeout'    # only lines matching regex ( raw json, pre-format )
+    npm run log -- -s 20260810     # from 2026-08-10 00:00 ( UTC, inclusive )
+    npm run log -- -e 20260817     # until 2026-08-17 23:59:59 ( UTC, inclusive )
+    npm run log -- -d 3            # last 3 days ( dayspan; shorthand for -s )
+    npm run log -- -h              # full usage
+    npm run log -- other.log       # read another file
+
+Options combine, e.g. `npm run log -- -s 20260813 -e 20260813 -l 40` for one day
+of warnings and errors. Note the `--`: without it npm appends the arguments to
+the script string instead of passing them along.
+
+Notes on behavior:
+
+ - non-follow mode pipes into `less -R` ( `-R` because pino colors the messages ).
+   in less: `/` search, `n`/`N` next-prev, `g`/`G` top-bottom, `-S` toggle wrap.
+ - any date option scans the whole file unless `-n` / `-a` is also given - a date
+   range against the default `tail -n 2000` window would silently return nothing.
+   under `-f` the window is kept, since the point there is what comes next.
+ - dates are UTC, matching the timestamps pino-pretty prints ( `+0000` ).
+ - `server.log` holds a few non-json lines ( subprocess output such as
+   `[dev] deploy code ...` ). they pass through untouched, except under a date
+   filter, where they cannot be placed in time and are dropped.
+ - `-m` / `-l` / `-s` / `-e` / `-d` need `jq`; the other modes do not.
+
+TODO:
+
+ - log backup / rotation
+ - visualization
+
+
+## Repo Structure
+
+Server files are separated in several aspects:
+
+ - frontend / backend
+ - base / derived 
+
+For more information about repo structure, check `repo-structore'
+

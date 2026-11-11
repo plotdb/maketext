@@ -1,0 +1,38 @@
+#!/usr/bin/env bash
+
+echo "prepare..."
+rm -rf dist
+mkdir -p dist/done
+
+bin=../../../node_modules/.bin
+echo "build src/auth.ls -> dist/index.js ..."
+$bin/lsc -cp src/auth.ls > dist/index.js
+echo "minify dist/index.js -> dist/index.min.js ..."
+$bin/uglifyjs dist/index.js > dist/index.min.js
+
+echo "build src/route.ls -> dist/route.js ..."
+$bin/lsc -cp src/route.ls > dist/route.js
+echo "minify dist/route.js -> dist/route.min.js ..."
+$bin/uglifyjs dist/route.js > dist/route.min.js
+
+echo "build src/base-imp.ls -> dist/base-imp.js ..."
+$bin/lsc -cpb --no-header src/base-imp.ls > dist/base-imp.js
+echo "minify dist/base-imp.js -> dist/base-imp.min.js ..."
+$bin/uglifyjs dist/base-imp.js -m -c > dist/base-imp.min.js
+
+echo "build authpanel.pug -> dist/index.html ..."
+$bin/srcbuild-pug src/authpanel.pug > dist/index.html
+echo "build base.pug -> dist/base.html ..."
+$bin/srcbuild-pug src/base.pug > dist/base.html
+blocks="auth mail-verified oauth-failed passwd-done passwd-reset passwd-renew mail-expire oauth-done passwd-change passwd-expire account-info change-password verification-mail-sent verification-mail-skipped ensure-verified delete-account account-deleted invite-token mfa-verify mfa-required mfa-setup activate activate-required"
+for name in $blocks; do
+  mkdir -p dist/$name
+  echo "build $name/index.pug -> dist/$name/index.html ..."
+  $bin/srcbuild-pug src/block/$name/index.pug > dist/$name/index.html
+done
+
+echo "prepare img files"
+cp -R src/img/ dist/img/
+
+echo "build server files ..."
+$bin/lsc -co dist/lib lib

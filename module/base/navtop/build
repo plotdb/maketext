@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+
+echo "prepare..."
+rm -rf dist
+mkdir -p dist
+
+bin=../../../node_modules/.bin
+echo "build index.ls -> index.js ..."
+$bin/lsc -cp src/index.ls > dist/index.js
+echo "minify index.js -> index.min.js ..."
+$bin/uglifyjs dist/index.js > dist/index.min.js
