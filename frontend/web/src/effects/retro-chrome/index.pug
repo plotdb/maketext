@@ -1,0 +1,16 @@
+svg(xmlns="http://www.w3.org/2000/svg",viewBox="0 0 500 150",style="background:#14082b")
+  defs
+    linearGradient#retro-chrome-fill(x1="0",y1="0",x2="0",y2="1")
+      stop(offset="0",stop-color="#0b1a4a")
+      stop(offset="0.48",stop-color="#9fd8ff")
+      stop(offset="0.5",stop-color="#ffffff")
+      stop(offset="0.53",stop-color="#3b1f0e")
+      stop(offset="1",stop-color="#f7b267")
+    filter#retro-chrome(x="-50%",y="-50%",width="200%",height="200%")
+      feGaussianBlur(in="SourceAlpha",stdDeviation="7",result="blur")
+      feFlood(flood-color="#ff4fd8",result="glow-color")
+      feComposite(operator="in",in="glow-color",in2="blur",result="glow")
+      feMerge
+        feMergeNode(in="glow")
+        feMergeNode(in="SourceGraphic")
+  text(x="250",y="75",fill="url(#retro-chrome-fill)",stroke="#ffffff",stroke-width="1",filter="url(#retro-chrome)") Hello World!

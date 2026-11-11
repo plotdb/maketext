@@ -1,0 +1,12 @@
+# 效果描述 ( 名稱 / 排序 / 參數等 ), 欄位說明見 tool/maketext/build-effects.ls
+order: 430
+font: Titan One
+edit:
+  fill:
+    name: fill
+    type: color
+    default: '#ff6fb5'
+  shadow:
+    name: shadow
+    type: color
+    default: '#a0306a'

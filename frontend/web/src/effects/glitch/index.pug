@@ -1,0 +1,20 @@
+svg(xmlns="http://www.w3.org/2000/svg",viewBox="0 0 500 150",style="background:#111111")
+  defs
+    filter#glitch(x="-20%",y="-50%",width="140%",height="200%")
+      feFlood(flood-color="#ff2a55",result="red")
+      feComposite(operator="in",in="red",in2="SourceAlpha",result="red-text")
+      feOffset(in="red-text",dx="-5",result="red-shift")
+      feFlood(flood-color="#00e5ff",result="cyan")
+      feComposite(operator="in",in="cyan",in2="SourceAlpha",result="cyan-text")
+      feOffset(in="cyan-text",dx="5",result="cyan-shift")
+      feBlend(mode="screen",in="red-shift",in2="cyan-shift",result="split")
+      feMerge(result="merged")
+        feMergeNode(in="split")
+        feMergeNode(in="SourceGraphic")
+      //- 雜訊量化成幾段橫向色帶: R 決定各段水平位移 ( 0.5 為不動 ), A 固定 0.5 讓垂直不動
+      feTurbulence(type="fractalNoise",baseFrequency="0 0.05",numOctaves="1",seed="7",result="noise")
+      feComponentTransfer(in="noise",result="slices")
+        feFuncR(type="discrete",tableValues="0.5 0.5 0.32 0.5 0.5 0.7 0.5 0.5")
+        feFuncA(type="linear",slope="0",intercept="0.5")
+      feDisplacementMap(in="merged",in2="slices",scale="20",xChannelSelector="R",yChannelSelector="A")
+  text(x="250",y="75",fill="#ffffff",letter-spacing="4",filter="url(#glitch)") Hello World!

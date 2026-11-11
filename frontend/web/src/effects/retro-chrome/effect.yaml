@@ -1,0 +1,16 @@
+# 效果描述 ( 名稱 / 排序 / 參數等 ), 欄位說明見 tool/maketext/build-effects.ls
+order: 410
+font: Audiowide
+edit:
+  sky:
+    name: sky
+    type: color
+    default: '#9fd8ff'
+  ground:
+    name: ground
+    type: color
+    default: '#f7b267'
+  glow:
+    name: glow
+    type: color
+    default: '#ff4fd8'

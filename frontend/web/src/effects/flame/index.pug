@@ -1,0 +1,25 @@
+svg(xmlns="http://www.w3.org/2000/svg",viewBox="0 0 500 150",style="background:#1b0d05")
+  defs
+    //- 模糊後往上移, 再以縱向拉長的雜訊扭曲成火焰
+    filter#flame(x="-20%",y="-100%",width="140%",height="250%")
+      feTurbulence(type="fractalNoise",baseFrequency="0.025 0.11",numOctaves="3",seed="4",result="noise")
+      feGaussianBlur(in="SourceAlpha",stdDeviation="6",result="blur")
+      feOffset(in="blur",dy="-16",result="rise")
+      feDisplacementMap(in="rise",in2="noise",scale="46",xChannelSelector="R",yChannelSelector="G",result="flame-shape")
+      feComponentTransfer(in="flame-shape",result="flame-solid")
+        feFuncA(type="linear",slope="2.2")
+      feFlood(flood-color="#ff6a00",result="flame-color")
+      feComposite(operator="in",in="flame-color",in2="flame-solid",result="outer")
+      feGaussianBlur(in="outer",stdDeviation="4",result="halo-blur")
+      feFlood(flood-color="#d4170a",result="halo-color")
+      feComposite(operator="in",in="halo-color",in2="halo-blur",result="halo")
+      feGaussianBlur(in="SourceAlpha",stdDeviation="2",result="core-blur")
+      feDisplacementMap(in="core-blur",in2="noise",scale="14",xChannelSelector="R",yChannelSelector="G",result="core-shape")
+      feFlood(flood-color="#ffc400",result="core-color")
+      feComposite(operator="in",in="core-color",in2="core-shape",result="core")
+      feMerge
+        feMergeNode(in="halo")
+        feMergeNode(in="outer")
+        feMergeNode(in="core")
+        feMergeNode(in="SourceGraphic")
+  text(x="250",y="80",fill="#ffe08a",filter="url(#flame)") Hello World!

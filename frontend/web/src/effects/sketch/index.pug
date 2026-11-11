@@ -1,0 +1,14 @@
+svg(xmlns="http://www.w3.org/2000/svg",viewBox="0 0 500 150",style="background:#fbf7ec")
+  defs
+    //- 兩組不同的雜訊各自扭曲一次, 疊成手繪的雙線
+    filter#sketch(x="-20%",y="-50%",width="140%",height="200%")
+      feTurbulence(type="fractalNoise",baseFrequency="0.04",numOctaves="3",seed="2",result="noise1")
+      feDisplacementMap(in="SourceGraphic",in2="noise1",scale="5",xChannelSelector="R",yChannelSelector="G",result="line1")
+      feTurbulence(type="fractalNoise",baseFrequency="0.05",numOctaves="3",seed="9",result="noise2")
+      feDisplacementMap(in="SourceGraphic",in2="noise2",scale="6",xChannelSelector="G",yChannelSelector="R",result="line2-raw")
+      feComponentTransfer(in="line2-raw",result="line2")
+        feFuncA(type="linear",slope="0.55")
+      feMerge
+        feMergeNode(in="line2")
+        feMergeNode(in="line1")
+  text(x="250",y="75",fill="none",stroke="#2b2b2b",stroke-width="2.5",stroke-linejoin="round",filter="url(#sketch)") Hello World!

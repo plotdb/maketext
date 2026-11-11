@@ -1,0 +1,14 @@
+svg(xmlns="http://www.w3.org/2000/svg",viewBox="0 0 500 150")
+  defs
+    filter#comic(x="-50%",y="-50%",width="200%",height="200%")
+      feMorphology(operator="dilate",radius="4",in="SourceAlpha",result="thick")
+      feFlood(flood-color="#111111",result="ink")
+      feComposite(operator="in",in="ink",in2="thick",result="outline")
+      feOffset(in="thick",dx="6",dy="6",result="shadow-shape")
+      feFlood(flood-color="#e8322b",result="shadow-color")
+      feComposite(operator="in",in="shadow-color",in2="shadow-shape",result="shadow")
+      feMerge
+        feMergeNode(in="shadow")
+        feMergeNode(in="outline")
+        feMergeNode(in="SourceGraphic")
+  text(x="250",y="75",fill="#ffd400",letter-spacing="2",filter="url(#comic)") Hello World!

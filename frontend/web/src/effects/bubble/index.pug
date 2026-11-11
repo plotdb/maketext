@@ -1,0 +1,16 @@
+svg(xmlns="http://www.w3.org/2000/svg",viewBox="0 0 500 150")
+  defs
+    filter#bubble(x="-50%",y="-50%",width="200%",height="200%")
+      feGaussianBlur(in="SourceAlpha",stdDeviation="4",result="blur")
+      feSpecularLighting(in="blur",surfaceScale="6",specularConstant="1.1",specularExponent="22",lighting-color="#ffffff",result="spec")
+        feDistantLight(azimuth="235",elevation="48")
+      feComposite(operator="in",in="spec",in2="SourceAlpha",result="spec-in")
+      feComposite(operator="arithmetic",in="SourceGraphic",in2="spec-in",k1="0",k2="1",k3="1",k4="0",result="lit")
+      feGaussianBlur(in="SourceAlpha",stdDeviation="3",result="shadow-blur")
+      feOffset(in="shadow-blur",dy="5",result="shadow-offset")
+      feFlood(flood-color="#a0306a",flood-opacity="0.55",result="shadow-color")
+      feComposite(operator="in",in="shadow-color",in2="shadow-offset",result="shadow")
+      feMerge
+        feMergeNode(in="shadow")
+        feMergeNode(in="lit")
+  text(x="250",y="75",fill="#ff6fb5",filter="url(#bubble)") Hello World!
