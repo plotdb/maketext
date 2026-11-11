@@ -135,10 +135,12 @@ $(document).ready(function(){
   };
   initColorpicker = function(node, key, value){
     var ldcp;
-    ldcp = new ldColorPicker(node.querySelector('input'), {});
+    ldcp = new ldcolorpicker(node.querySelector('input'));
     return ldcp.on('change', function(it){
-      editor.update(key, it);
-      return node.querySelector('.inner').style.background = it;
+      var c;
+      c = ldcolor.web(it);
+      editor.update(key, c);
+      return node.querySelector('.inner').style.background = c;
     });
   };
   document.querySelector('.gallery').addEventListener('click', function(e){
@@ -326,7 +328,9 @@ $(document).ready(function(){
   }).slice(0, 1).map(function(it){
     return $('#font-size-slider .up.irs-input').val(+it[1]);
   });
-  ldColorPicker.init();
+  Array.from(document.querySelectorAll('input[data-toggle="colorpicker"]')).map(function(it){
+    return new ldcolorpicker(it);
+  });
   return Array.from(document.querySelectorAll('#font-size-slider .up.irs-input')).map(function(d, i){
     var v, x$;
     editor.update('fontSize', v = +d.value || 64);
@@ -342,23 +346,20 @@ $(document).ready(function(){
   });
 });
 $(document).ready(function(){
-  var html, i$, to$, i, code, j$, j, d, setPalette, paletteBtn, palette, clusterize;
-  html = [];
-  for (i$ = 0, to$ = palettes.length; i$ < to$; i$ += 4) {
-    i = i$;
-    code = "";
-    for (j$ = 0; j$ < 4; ++j$) {
-      j = j$;
-      d = palettes[i + j];
-      if (!d) {
-        break;
-      }
-      code += ("<div class=\"palette\"><div class=\"name\">" + d[0] + "</div>") + d[1].map(fn$).join('') + "</div>";
-    }
-    html.push("<div class='line'>" + code + "</div>");
-  }
+  var pals, setPalette, palette, picker;
+  pals = palettes.map(function(arg$){
+    var name, colors;
+    name = arg$[0], colors = arg$[1];
+    return {
+      name: name,
+      colors: colors
+    };
+  });
   window.setPalette = setPalette = function(colors, name){
     name == null && (name = 'Palette');
+    colors = colors.map(function(it){
+      return ldcolor.web(it);
+    });
     document.querySelector('#palette-btn label').textContent = name;
     document.querySelector('#palette-btn .palette').innerHTML = colors.map(function(it){
       return "<div class=\"color\" style=\"background:" + it + "\"></div>";
@@ -373,49 +374,42 @@ $(document).ready(function(){
           };
         })
       });
-      return ldcp.setIdx(i % colors.length);
+      ldcp.setIdx(i % colors.length);
+      return ldcp.fire('change', ldcp.getColor('hsl'));
     });
   };
-  paletteBtn = document.querySelector('#palette-btn .palette');
-  palette = palettes[Math.floor(Math.random() * palettes.length)];
-  setPalette(palette[1], palette[0]);
-  /*
-  palette-btn.innerHTML = (
-    for i from 0 til palette.1.length =>
-      "<div class='color' style='background:#{palette.1[i]}'></div>"
-  ).join('')
-  */
-  clusterize = new Clusterize({
-    rows: html,
-    scrollElem: document.querySelector('#palette-picker .clusterize-scroll'),
-    contentElem: document.querySelector('#palette-picker .clusterize-content'),
-    rows_in_block: 50
-  });
-  document.querySelector('#palette-picker').addEventListener('click', function(e){
-    var target, colors, name;
-    target = e.target;
-    if (!target || !target.classList || !target.classList.contains('palette')) {
-      return;
+  palette = pals[Math.floor(Math.random() * pals.length)];
+  setPalette(palette.colors, palette.name);
+  picker = null;
+  window.pickPalette = function(){
+    if (!picker) {
+      picker = new ldpp({
+        root: document.querySelector('#palette-picker .ldpp'),
+        ldcv: true,
+        useVscroll: true,
+        palettes: pals
+      });
     }
-    colors = Array.from(target.querySelectorAll('.color')).map(function(it){
-      return it.style.background;
+    return picker.get().then(function(pal){
+      if (!(pal && pal.colors && pal.colors.length)) {
+        return;
+      }
+      return setPalette(pal.colors.map(function(c){
+        return c.value || c;
+      }), pal.name);
     });
-    name = target.querySelector('.name').textContent;
-    $('#palette-picker').modal('hide');
-    return setPalette(colors, name);
-  });
+  };
   return Array.from(document.querySelectorAll('.color input[data-toggle="colorpicker"]')).map(function(d, i){
     var ldcp, name;
     ldcp = d.getColorPicker();
     name = d.getAttribute('name');
     return ldcp.on('change', function(it){
-      editor.update(name, it);
-      return d.parentNode.querySelector('.inner').style.background = it;
+      var c;
+      c = ldcolor.web(it);
+      editor.update(name, c);
+      return d.parentNode.querySelector('.inner').style.background = c;
     });
   });
-  function fn$(it){
-    return "<div class='color' style='background:" + it + "'></div>";
-  }
 });
 var XFLBASE, FONTLINKS, DEFAULTFONT, fontStyle, applyFont, useFont, chooser;
 XFLBASE = 'https://xlfont.maketext.io';

@@ -10,7 +10,7 @@ function pug_merge(e,r){if(1===arguments.length){for(var t=e[0],g=1;g<e.length;g
 function pug_style(r){if(!r)return"";if("object"==typeof r){var t="";for(var e in r)pug_has_own_property.call(r,e)&&(t=t+e+":"+r[e]+";");return t}return r+""}function template(locals) {var pug_html = "", pug_mixins = {}, pug_interp;;
     var locals_for_with = (locals || {});
     
-    (function (Array, JSON, asseturl, b64img, blockLoader, bundleurl, c, cssLoader, debug, decache, defer, description, disqusUrl, escape, favicon, hashfile, libLoader, md5, scriptLoader, thumbnail, title, url, version) {
+    (function (Array, JSON, asseturl, b64img, blockLoader, bundleurl, c, cssLoader, debug, decache, defer, description, escape, favicon, hashfile, libLoader, md5, scriptLoader, thumbnail, title, url, version) {
       pug_html = pug_html + "\u003C!DOCTYPE html\u003E";
 if(!libLoader) {
   libLoader = {
@@ -261,25 +261,39 @@ pug_html = pug_html + "\u003Cmeta charset=\"utf-8\"\u003E\u003Cmeta name=\"viewp
 pug_mixins["css"]([
       "/assets/vendor/bootstrap/4.0.0/css/bootstrap.min.css",
       "/assets/vendor/fontawesome/4.7.0/css/font-awesome.min.css",
-      "/assets/vendor/ldcolorpicker/0.1.4/ldcp.css",
       "/assets/vendor/clusterize/0.18.1/clusterize.css",
       "/assets/vendor/ion-rangeslider/2.1.7/css/ion.rangeSlider.css",
       "/assets/vendor/ion-rangeslider/2.1.7/css/ion.rangeSlider.skinFlat.css",
+      {name: "@loadingio/bootstrap.ext"},
+      {name: "ldiconfont", path: "ldif.min.css"},
+      {name: "ldloader"},
+      {name: "ldcover"},
+      {name: "ldslider"},
+      {name: "@loadingio/ldcolorpicker"},
+      {name: "ldpalettepicker"},
       {name: "@xlfont/choose", path: "index.min.css"},
       "/css/mt/index.css"
     ], {pack: true});
-pug_html = pug_html + "\u003Cstyle type=\"text\u002Fcss\"\u003E.line .item {\n  height: 120px;\n  position: relative;\n}\n.line .item:after, .line .item:before {\n  display: block;\n  content: \"Copy\";\n  position: absolute;\n  top: 10px;\n  left: 10px;\n  width: 70px;\n  text-align: center;\n  height: 29px;\n  line-height: 22px;\n  font-size: 16px;\n  background: #eee;\n  border-radius: 5px;\n  padding: 3px 7px;\n  transition: opacity 0.2s ease-in-out;\n  opacity: 0;\n}\n.line .item:hover:after {\n  opacity: 1;\n}\n.line .item.active:before {\n  opacity: 1;\n}\n.line .item:before {\n  content: \"Copied\";\n  background: #2b4;\n  color: #fff;\n  z-index: 1;\n}\u003C\u002Fstyle\u003E\u003Cscript src=\"https:\u002F\u002Fcdnjs.cloudflare.com\u002Fajax\u002Flibs\u002Fclipboard.js\u002F2.0.0\u002Fclipboard.min.js\"\u003E\u003C\u002Fscript\u003E\u003C\u002Fhead\u003E\u003Cbody\u003E";
+pug_html = pug_html + "\u003Cstyle type=\"text\u002Fcss\"\u003E@font-face {\n  font-family: 'ldi';\n  src: url('\u002Fassets\u002Flib\u002Fldiconfont\u002Fmain\u002Fldif.ttf') format('truetype');\n}\u003C\u002Fstyle\u003E\u003Cstyle type=\"text\u002Fcss\"\u003E.line .item {\n  height: 120px;\n  position: relative;\n}\n.line .item:after, .line .item:before {\n  display: block;\n  content: \"Copy\";\n  position: absolute;\n  top: 10px;\n  left: 10px;\n  width: 70px;\n  text-align: center;\n  height: 29px;\n  line-height: 22px;\n  font-size: 16px;\n  background: #eee;\n  border-radius: 5px;\n  padding: 3px 7px;\n  transition: opacity 0.2s ease-in-out;\n  opacity: 0;\n}\n.line .item:hover:after {\n  opacity: 1;\n}\n.line .item.active:before {\n  opacity: 1;\n}\n.line .item:before {\n  content: \"Copied\";\n  background: #2b4;\n  color: #fff;\n  z-index: 1;\n}\u003C\u002Fstyle\u003E\u003Cscript src=\"https:\u002F\u002Fcdnjs.cloudflare.com\u002Fajax\u002Flibs\u002Fclipboard.js\u002F2.0.0\u002Fclipboard.min.js\"\u003E\u003C\u002Fscript\u003E\u003C\u002Fhead\u003E\u003Cbody\u003E";
 pug_mixins["script"]([
       "/assets/vendor/jquery/1.10.2/jquery.min.js",
       "/assets/vendor/popper/1.12.5/index.js",
       "/assets/vendor/bootstrap/4.0.0/js/bootstrap.min.js",
-      "/assets/vendor/ldcolorpicker/0.1.4/ldcp.js",
       "/assets/vendor/clusterize/0.18.1/clusterize.min.js",
       "/assets/vendor/ion-rangeslider/2.1.7/js/ion.rangeSlider.min.js",
       "/assets/vendor/smiltool/latest/index.js",
       "/assets/vendor/d3/d3-color/1.2.3/d3-color.min.js",
       "/assets/vendor/palettes.js",
+      {name: "@loadingio/ldquery"},
+      {name: "@loadingio/debounce.js"},
       {name: "proxise"},
+      {name: "ldcover"},
+      {name: "ldcolor"},
+      {name: "ldslider"},
+      {name: "@loadingio/ldcolorpicker"},
+      {name: "@loadingio/paginate"},
+      {name: "ldpalettepicker", path: "ldp.min.js"},
+      {name: "ldpalettepicker"},
       {name: "ldview"},
       {name: "ldloader"},
       {name: "@loadingio/vscroll"},
@@ -317,9 +331,7 @@ pug_html = pug_html + "\u003C\u002Fdiv\u003E";
 pug_mixins["nbr"](2);
 pug_html = pug_html + "\u003Cdiv class=\"text-center\"\u003E\u003Cbig\u003E\u003Ca href=\"\u002F\"\u003E\u003Cdiv\u003Eneed cool text in images?\u003C\u002Fdiv\u003E\u003Cdiv\u003Echeck out the cool text generator!\u003C\u002Fdiv\u003E\u003C\u002Fa\u003E\u003C\u002Fbig\u003E\u003C\u002Fdiv\u003E\u003Cbr\u003E\u003Cdiv id=\"info\"\u003E\u003Cdiv class=\"inner\"\u003E\u003Cdiv class=\"text-center\"\u003E\u003Cspan class=\"green\"\u003Eabout this tool\u003C\u002Fspan\u003E\u003Ch1\u003EMake Text Fancy! Fancy Text Generator\u003C\u002Fh1\u003E\u003C\u002Fdiv\u003E\u003Cdiv class=\"sep huge-gap\"\u003E\u003C\u002Fdiv\u003E\u003Cp\u003EWanna bomb your friends with 𝖙𝖊𝖝𝖙 𝖑𝖎𝖐𝖊 𝖙𝖍𝖎𝖘? You need fancy text generator! maketext.io's fancy text generator is dedicated to generate stylish text in \u003Cspan class=\"green\"\u003Ecopyable, pure text format\u003C\u002Fspan\u003E. \u003C\u002Fp\u003E\u003Cbr\u003E\u003Ch3\u003EImage v.s Text\u003C\u002Fh3\u003E\u003Cp\u003EYou've probably tried our \u003Ca href=\"\u002F\"\u003ECool Text Generator\u003C\u002Fa\u003E, an on-the-fly stylish text generator shipped with SVG \u002F PNG format. While cool text is cool, it's in image formats so we can only use them like an image.\u003C\u002Fp\u003E\u003Cp\u003EWhile images are not able to copy \u002F paste in places like Facebook posts, messengers or other chat apps, \"text\" can. Fancy text generator converts your texts to similar unicode characters with different styles, and all of them are copy\u002Fpaste-able in any places that support unicode with these characters.\u003C\u002Fp\u003E\u003Cbr\u003E\u003Cp\u003EThe coolest part of fancy text is it actually might be used in cool text image generator:\u003C\u002Fp\u003E\u003Cimg src=\"\u002Fassets\u002Fimg\u002Ffancy\u002Ffancy.jpg\" style=\"border-radius:3px;box-shadow:0 2px 4px rgba(0,0,0,.3);max-width:90%;margin:auto;display:block\"\u003E";
 pug_mixins["nbr"](3);
-pug_html = pug_html + "\u003Ch2\u003EContact\u003C\u002Fh2\u003E\u003Cdiv class=\"sep\"\u003E\u003C\u002Fdiv\u003E\u003Cp\u003EWe want to build this service to its best, but there are always bugs or glitches. Feel free to contact us via \u003Cb\u003Econtact@maketext.io\u003C\u002Fb\u003E by mail, or leave your words in the disqus widget below. We always appreciate your feedback and support, by which we could make this service better together.\u003C\u002Fp\u003E\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E";
-var disqusUrl = "https://maketext.io/fancy/"
-pug_html = pug_html + "\u003Cdiv id=\"disqus_thread\"\u003E\u003C\u002Fdiv\u003E\u003Cscript\u003Evar disqus_config = function () {\nthis.page.url = \"" + (null == (pug_interp = disqusUrl) ? "" : pug_interp) + "\";\nthis.page.identifier = \"\u002F\";\n};\u003C\u002Fscript\u003E\u003Cscript\u003E(function() { \u002F\u002F DON'T EDIT BELOW THIS LINE\nvar d = document, s = d.createElement('script');\ns.src = 'https:\u002F\u002Fmaketext-io.disqus.com\u002Fembed.js';\ns.setAttribute('data-timestamp', +new Date());\n(d.head || d.body).appendChild(s);\n})();\u003C\u002Fscript\u003E";
+pug_html = pug_html + "\u003Ch2\u003EContact\u003C\u002Fh2\u003E\u003Cdiv class=\"sep\"\u003E\u003C\u002Fdiv\u003E\u003Cp\u003EWe want to build this service to its best, but there are always bugs or glitches. Feel free to contact us via \u003Cb\u003Econtact@maketext.io\u003C\u002Fb\u003E by mail. We always appreciate your feedback and support, by which we could make this service better together.\u003C\u002Fp\u003E\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E";
 pug_mixins["nbr"](5);
 pug_html = pug_html + "\u003Cdiv id=\"footer\"\u003E\u003Cdiv class=\"row\"\u003E\u003Cdiv class=\"col-sm mb-4\"\u003E\u003Ch1\u003EMaketext.io\u003Cspan style=\"vertical-align:top;font-size:14px\"\u003E&copy; 2018\u003C\u002Fspan\u003E\u003C\u002Fh1\u003E\u003Cdiv class=\"sep\"\u003E\u003C\u002Fdiv\u003E\u003Cp\u003ESuper fast, vector-based cool text generator powered by modern web technologies.\u003C\u002Fp\u003E\u003Cbr\u003E\u003Cdiv class=\"row\"\u003E\u003Cdiv class=\"col-sm\"\u003E\u003Ca class=\"btn btn-block btn-outline-light mr-2 mb-2\" href=\"https:\u002F\u002Fwww.facebook.com\u002Fsharer\u002Fsharer.php?u=https:\u002F\u002Fmaketext.io\" target=\"_blank\"\u003Eshare with facebook \u003Ci class=\"fa fa-facebook\"\u003E\u003C\u002Fi\u003E\u003C\u002Fa\u003E\u003C\u002Fdiv\u003E\u003Cdiv class=\"col-sm\"\u003E\u003Ca class=\"btn btn-block btn-outline-light\" href=\"https:\u002F\u002Ftwitter.com\u002Fshare?url=https:\u002F\u002Fmaketext.io&amp;text=super-fast%20cool%20text%20generator%20for%20modern%20age\" target=\"_blank\"\u003Eshare with twitter \u003Ci class=\"fa fa-twitter\"\u003E\u003C\u002Fi\u003E\u003C\u002Fa\u003E\u003C\u002Fdiv\u003E\u003Cdiv class=\"col-sm\"\u003E\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E\u003Cdiv class=\"col-sm\"\u003E\u003Ch1\u003E\u003Csmall\u003EPartner Sites\u003C\u002Fsmall\u003E\u003C\u002Fh1\u003E\u003Cdiv class=\"sep\"\u003E\u003C\u002Fdiv\u003E\u003Cdiv class=\"mb-2\"\u003E\u003Ca href=\"https:\u002F\u002Floading.io\"\u003E\u003Ci class=\"fa fa-external-link\"\u003E\u003C\u002Fi\u003E loading.io \u003Cimg src=\"\u002Fassets\u002Fimg\u002Floader\u002Fcloudy.gif\"\u003E\u003C\u002Fa\u003E\u003Cdiv class=\"ml-3\"\u003Eanimated icons and spinner service\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E\u003Cdiv class=\"mb-2\"\u003E\u003Ca href=\"https:\u002F\u002Fmakeweb.io\"\u003E\u003Ci class=\"fa fa-external-link\"\u003E\u003C\u002Fi\u003E makeweb.io \u003Cimg src=\"\u002Fassets\u002Fimg\u002Flanding\u002Fmakeweb.png\"\u003E\u003C\u002Fa\u003E\u003Cdiv class=\"ml-3\"\u003Ereal-time collaborative web design service\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E\u003Cdiv class=\"mb-2\"\u003E\u003Ca href=\"https:\u002F\u002Fplotdb.com\"\u003E\u003Ci class=\"fa fa-external-link\"\u003E\u003C\u002Fi\u003E plotdb.com \u003Cimg src=\"\u002Fassets\u002Fimg\u002Flanding\u002Frose.png\"\u003E\u003C\u002Fa\u003E\u003Cdiv class=\"ml-3\"\u003Edata visualization as a service\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E";
 pug_mixins["nbr"](2);
@@ -350,9 +362,7 @@ pug_html = pug_html + "\u003C\u002Fbody\u003E\u003C\u002Fhtml\u003E";
         locals_for_with.defer :
         typeof defer !== 'undefined' ? defer : undefined, "description" in locals_for_with ?
         locals_for_with.description :
-        typeof description !== 'undefined' ? description : undefined, "disqusUrl" in locals_for_with ?
-        locals_for_with.disqusUrl :
-        typeof disqusUrl !== 'undefined' ? disqusUrl : undefined, "escape" in locals_for_with ?
+        typeof description !== 'undefined' ? description : undefined, "escape" in locals_for_with ?
         locals_for_with.escape :
         typeof escape !== 'undefined' ? escape : undefined, "favicon" in locals_for_with ?
         locals_for_with.favicon :

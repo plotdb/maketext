@@ -4,10 +4,9 @@ include @/@xlfont/choose/index.pug
 //- 字型選擇器的標記, 第一次打開時複製進遮罩 ( src/ls/editor/font.ls )
 template#mt-xfc-tpl: .mt-xfc-panel: +xfc
 
-#palette-picker.full-picker.fade.fade-alt.modal
-  .modal-dialog: .modal-content
-    .closebtn.lg(data-toggle="modal",data-target="#palette-picker")
-    .clusterize-scroll: .clusterize-content
+//- 色盤選擇器 ( ldpalettepicker ), 由 src/ls/editor/palette.ls 建立
+include @/ldpalettepicker/ldpp.pug
+#palette-picker.ldcv.default-size: .base: .inner.ldpp: +ldpp
 
 #download.modal
   .card
@@ -44,7 +43,7 @@ template#mt-xfc-tpl: .mt-xfc-panel: +xfc
         +color-input('background')
       #palette-btn.col-sm-3.col-4.adv
         label Palette
-        .palette(data-toggle="modal",data-target="#palette-picker")
+        .palette(onclick="pickPalette()")
           each i in ['#f00','#0f0','#00f','#0ff']
             .color(style="background:" + i)
       #editor-custom-options.col-12.col-sm-9.row.adv(style="margin-left:0;padding:0")

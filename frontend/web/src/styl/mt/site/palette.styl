@@ -13,9 +13,6 @@
     right: 5px
     border-radius: 5px
 
-#palette-picker .clusterize-scroll
-  padding: 20px 0
-
 .palette
   cursor: pointer
   width: 100%
@@ -34,31 +31,8 @@
   .color:last-child
     border-radius: 0 3px 3px 0
 
-.line .palette
-  flex(1 1 auto)
-  width: 45%
-  height: 40px
-  margin: 25px 15px
-  padding: 0px
-  border: 0
-  position: relative
-  overflow: visible
-  .name
-    font-size: 14px
-    position: absolute
-    top: -24px
-    z-index: 10
-    color: #999
-  &:after
-    content: " "
-    display: block
-    position: absolute
-    width: 100%
-    height: 100%
-    z-index: 9
-    box-shadow: inset 0 0 1px rgba(0,0,0,.5)
-    border-radius: 3px
-
-
-.ldColorPicker
-  height: 120px
+// 色盤選擇器 ( ldpalettepicker ), 由 src/ls/editor/palette.ls 建立
+// 沒有使用者帳號, 不提供「my pals」與儲存
+#palette-picker
+  [data-panel=mypal], [data-action=save]
+    display: none !important

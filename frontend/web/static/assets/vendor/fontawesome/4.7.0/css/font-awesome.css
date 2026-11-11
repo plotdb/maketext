@@ -6,8 +6,8 @@
  * -------------------------- */
 @font-face {
   font-family: 'FontAwesome';
-  src: url('/assets/fontawesome/4.7.0/fonts/fontawesome-webfont.eot?v=4.7.0');
-  src: url('/assets/fontawesome/4.7.0/fonts/fontawesome-webfont.eot?#iefix&v=4.7.0') format('embedded-opentype'), url('/assets/fontawesome/4.7.0/fonts/fontawesome-webfont.woff2?v=4.7.0') format('woff2'), url('/assets/fontawesome/4.7.0/fonts/fontawesome-webfont.woff?v=4.7.0') format('woff'), url('/assets/fontawesome/4.7.0/fonts/fontawesome-webfont.ttf?v=4.7.0') format('truetype'), url('/assets/fontawesome/4.7.0/fonts/fontawesome-webfont.svg?v=4.7.0#fontawesomeregular') format('svg');
+  src: url('/assets/vendor/fontawesome/4.7.0/fonts/fontawesome-webfont.eot?v=4.7.0');
+  src: url('/assets/vendor/fontawesome/4.7.0/fonts/fontawesome-webfont.eot?#iefix&v=4.7.0') format('embedded-opentype'), url('/assets/vendor/fontawesome/4.7.0/fonts/fontawesome-webfont.woff2?v=4.7.0') format('woff2'), url('/assets/vendor/fontawesome/4.7.0/fonts/fontawesome-webfont.woff?v=4.7.0') format('woff'), url('/assets/vendor/fontawesome/4.7.0/fonts/fontawesome-webfont.ttf?v=4.7.0') format('truetype'), url('/assets/vendor/fontawesome/4.7.0/fonts/fontawesome-webfont.svg?v=4.7.0#fontawesomeregular') format('svg');
   font-weight: normal;
   font-style: normal;
 }

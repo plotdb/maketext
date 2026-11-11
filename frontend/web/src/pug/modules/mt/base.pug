@@ -37,26 +37,45 @@ html(lang="en")
     +css([
       "/assets/vendor/bootstrap/4.0.0/css/bootstrap.min.css",
       "/assets/vendor/fontawesome/4.7.0/css/font-awesome.min.css",
-      "/assets/vendor/ldcolorpicker/0.1.4/ldcp.css",
       "/assets/vendor/clusterize/0.18.1/clusterize.css",
       "/assets/vendor/ion-rangeslider/2.1.7/css/ion.rangeSlider.css",
       "/assets/vendor/ion-rangeslider/2.1.7/css/ion.rangeSlider.skinFlat.css",
+      {name: "@loadingio/bootstrap.ext"},
+      {name: "ldiconfont", path: "ldif.min.css"},
+      {name: "ldloader"},
+      {name: "ldcover"},
+      {name: "ldslider"},
+      {name: "@loadingio/ldcolorpicker"},
+      {name: "ldpalettepicker"},
       {name: "@xlfont/choose", path: "index.min.css"},
       "/css/mt/index.css"
     ], {pack: true})
+    style(type="text/css").
+      @font-face {
+        font-family: 'ldi';
+        src: url('/assets/lib/ldiconfont/main/ldif.ttf') format('truetype');
+      }
     block head
   body
     +script([
       "/assets/vendor/jquery/1.10.2/jquery.min.js",
       "/assets/vendor/popper/1.12.5/index.js",
       "/assets/vendor/bootstrap/4.0.0/js/bootstrap.min.js",
-      "/assets/vendor/ldcolorpicker/0.1.4/ldcp.js",
       "/assets/vendor/clusterize/0.18.1/clusterize.min.js",
       "/assets/vendor/ion-rangeslider/2.1.7/js/ion.rangeSlider.min.js",
       "/assets/vendor/smiltool/latest/index.js",
       "/assets/vendor/d3/d3-color/1.2.3/d3-color.min.js",
       "/assets/vendor/palettes.js",
+      {name: "@loadingio/ldquery"},
+      {name: "@loadingio/debounce.js"},
       {name: "proxise"},
+      {name: "ldcover"},
+      {name: "ldcolor"},
+      {name: "ldslider"},
+      {name: "@loadingio/ldcolorpicker"},
+      {name: "@loadingio/paginate"},
+      {name: "ldpalettepicker", path: "ldp.min.js"},
+      {name: "ldpalettepicker"},
       {name: "ldview"},
       {name: "ldloader"},
       {name: "@loadingio/vscroll"},

@@ -10,7 +10,7 @@ function pug_merge(e,r){if(1===arguments.length){for(var t=e[0],g=1;g<e.length;g
 function pug_style(r){if(!r)return"";if("object"==typeof r){var t="";for(var e in r)pug_has_own_property.call(r,e)&&(t=t+e+":"+r[e]+";");return t}return r+""}function template(locals) {var pug_html = "", pug_mixins = {}, pug_interp;;
     var locals_for_with = (locals || {});
     
-    (function (Array, JSON, asseturl, b64img, blockLoader, bundleurl, c, cssLoader, debug, decache, defer, description, disqusUrl, escape, favicon, hashfile, isApi, libLoader, md5, scriptLoader, thumbnail, title, url, version) {
+    (function (Array, JSON, asseturl, b64img, blockLoader, bundleurl, c, cssLoader, debug, decache, defer, description, escape, favicon, hashfile, isApi, libLoader, md5, scriptLoader, thumbnail, title, url, version) {
       pug_html = pug_html + "\u003C!DOCTYPE html\u003E";
 if(!libLoader) {
   libLoader = {
@@ -250,7 +250,7 @@ pug_html = pug_html + "\u003Cdiv class=\"up irs-input\"\u003E\u003Cinput" + (pug
 pug_mixins["color-input"] = pug_interp = function(name,size){
 var block = (this && this.block), attributes = (this && this.attributes) || {};
 if(!size) size = "sm"
-pug_html = pug_html + "\u003Cdiv class=\"color\"\u003E\u003Cinput" + (pug_attr("class", pug_classes(["form-control","form-control-" + size], [false,true]), false, true)+pug_attr("name", name, true, true)+" value=\"#f0f0f0\" data-cpclass=\"no-button compact-palette flat\" data-toggle=\"colorpicker\" data-context=\"random\" data-exclusive=\"true\"") + "\u003E\u003Cdiv class=\"inner\"\u003E\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E";
+pug_html = pug_html + "\u003Cdiv class=\"color\"\u003E\u003Cinput" + (pug_attr("class", pug_classes(["form-control","form-control-" + size], [false,true]), false, true)+pug_attr("name", name, true, true)+" value=\"#f0f0f0\" data-classname=\"no-button compact-palette flat\" data-toggle=\"colorpicker\" data-context=\"random\" data-exclusive=\"true\"") + "\u003E\u003Cdiv class=\"inner\"\u003E\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E";
 };
 pug_html = pug_html + "\u003Chead prefix=\"og: http:\u002F\u002Fogp.me\u002Fns#\"\u003E";
 if (!debug) {
@@ -260,25 +260,39 @@ pug_html = pug_html + "\u003Cmeta charset=\"utf-8\"\u003E\u003Cmeta name=\"viewp
 pug_mixins["css"]([
       "/assets/vendor/bootstrap/4.0.0/css/bootstrap.min.css",
       "/assets/vendor/fontawesome/4.7.0/css/font-awesome.min.css",
-      "/assets/vendor/ldcolorpicker/0.1.4/ldcp.css",
       "/assets/vendor/clusterize/0.18.1/clusterize.css",
       "/assets/vendor/ion-rangeslider/2.1.7/css/ion.rangeSlider.css",
       "/assets/vendor/ion-rangeslider/2.1.7/css/ion.rangeSlider.skinFlat.css",
+      {name: "@loadingio/bootstrap.ext"},
+      {name: "ldiconfont", path: "ldif.min.css"},
+      {name: "ldloader"},
+      {name: "ldcover"},
+      {name: "ldslider"},
+      {name: "@loadingio/ldcolorpicker"},
+      {name: "ldpalettepicker"},
       {name: "@xlfont/choose", path: "index.min.css"},
       "/css/mt/index.css"
     ], {pack: true});
-pug_html = pug_html + "\u003C\u002Fhead\u003E\u003Cbody\u003E";
+pug_html = pug_html + "\u003Cstyle type=\"text\u002Fcss\"\u003E@font-face {\n  font-family: 'ldi';\n  src: url('\u002Fassets\u002Flib\u002Fldiconfont\u002Fmain\u002Fldif.ttf') format('truetype');\n}\u003C\u002Fstyle\u003E\u003C\u002Fhead\u003E\u003Cbody\u003E";
 pug_mixins["script"]([
       "/assets/vendor/jquery/1.10.2/jquery.min.js",
       "/assets/vendor/popper/1.12.5/index.js",
       "/assets/vendor/bootstrap/4.0.0/js/bootstrap.min.js",
-      "/assets/vendor/ldcolorpicker/0.1.4/ldcp.js",
       "/assets/vendor/clusterize/0.18.1/clusterize.min.js",
       "/assets/vendor/ion-rangeslider/2.1.7/js/ion.rangeSlider.min.js",
       "/assets/vendor/smiltool/latest/index.js",
       "/assets/vendor/d3/d3-color/1.2.3/d3-color.min.js",
       "/assets/vendor/palettes.js",
+      {name: "@loadingio/ldquery"},
+      {name: "@loadingio/debounce.js"},
       {name: "proxise"},
+      {name: "ldcover"},
+      {name: "ldcolor"},
+      {name: "ldslider"},
+      {name: "@loadingio/ldcolorpicker"},
+      {name: "@loadingio/paginate"},
+      {name: "ldpalettepicker", path: "ldp.min.js"},
+      {name: "ldpalettepicker"},
       {name: "ldview"},
       {name: "ldloader"},
       {name: "@loadingio/vscroll"},
@@ -296,7 +310,67 @@ pug_html = pug_html + "\u003C\u002Fdiv\u003E";
 };
 pug_html = pug_html + "\u003Ctemplate id=\"mt-xfc-tpl\"\u003E\u003Cdiv class=\"mt-xfc-panel\"\u003E";
 pug_mixins["xfc"]();
-pug_html = pug_html + "\u003C\u002Fdiv\u003E\u003C\u002Ftemplate\u003E\u003Cdiv class=\"full-picker fade fade-alt modal\" id=\"palette-picker\"\u003E\u003Cdiv class=\"modal-dialog\"\u003E\u003Cdiv class=\"modal-content\"\u003E\u003Cdiv class=\"closebtn lg\" data-toggle=\"modal\" data-target=\"#palette-picker\"\u003E\u003C\u002Fdiv\u003E\u003Cdiv class=\"clusterize-scroll\"\u003E\u003Cdiv class=\"clusterize-content\"\u003E\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E\u003Cdiv class=\"modal\" id=\"download\"\u003E\u003Cdiv class=\"card\"\u003E\u003Cdiv class=\"card-body\"\u003E\u003Ch4\u003EGenerated Image\u003C\u002Fh4\u003E\u003Csmall class=\"gray\"\u003Eclick the download button to download\u003C\u002Fsmall\u003E\u003Cdiv class=\"result\"\u003E\u003Cimg\u003E\u003C\u002Fdiv\u003E\u003Chr\u003E\u003Ca class=\"btn btn-lg btn-outline-success mr-2\" href=\"#\" download=\"\"\u003EDownload\u003C\u002Fa\u003E\u003Cdiv class=\"btn btn-lg btn-outline-secondary\" onclick=\"$('#download').modal('hide')\"\u003EClose\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E\u003Cdiv id=\"editor-option-sample\" style=\"display:none\"\u003E\u003Cdiv class=\"col-sm col-4\" id=\"editor-option-sample-color\"\u003E\u003Clabel\u003EColor\u003C\u002Flabel\u003E";
+pug_html = pug_html + "\u003C\u002Fdiv\u003E\u003C\u002Ftemplate\u003E";
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+pug_mixins["ldpe"] = pug_interp = function(){
+var block = (this && this.block), attributes = (this && this.attributes) || {};
+pug_html = pug_html + "\u003Cdiv class=\"ldp\"\u003E\u003Cdiv class=\"name\"\u003E\u003C\u002Fdiv\u003E\u003Cdiv class=\"colors\"\u003E\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E\u003Cdiv class=\"edit\"\u003E\u003Cdiv class=\"inner\"\u003E\u003Cdiv class=\"row\"\u003E\u003Cdiv class=\"col-sm-6 mb-2\"\u003E\u003Cdiv class=\"ldcolorpicker no-border no-palette\"\u003E\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E\u003Cdiv class=\"col-sm-6 mb-2\"\u003E\u003Cdiv class=\"d-flex g-2 mb-2\"\u003E\u003Cdiv class=\"w-50\"\u003E\u003Cselect class=\"form-control form-control-local-sm\" value=\"rgb\"\u003E\u003Coption value=\"rgb\"\u003ERGB\u003C\u002Foption\u003E\u003Coption value=\"hsl\"\u003EHSL\u003C\u002Foption\u003E\u003Coption value=\"hcl\"\u003EHCL\u003C\u002Foption\u003E\u003C\u002Fselect\u003E\u003C\u002Fdiv\u003E\u003Cdiv class=\"w-100\"\u003E\u003Cinput class=\"form-control form-control-local-sm value\" placeholder=\"Hex Value\" data-tag=\"hex\" style=\"margin:0\"\u003E\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E";
+var configs = [["Red", "Green", "Blue", "rgb", "active"], ["Hue", "Saturation", "Luminance", "hsl",""], ["Hue", "Chroma", "Luminance", "hcl",""]];
+// iterate configs
+;(function(){
+  var $$obj = configs;
+  if ('number' == typeof $$obj.length) {
+      for (var pug_index4 = 0, $$l = $$obj.length; pug_index4 < $$l; pug_index4++) {
+        var config = $$obj[pug_index4];
+pug_html = pug_html + "\u003Cdiv" + (pug_attr("class", pug_classes(["config","g-2",config[4]], [false,false,true]), false, true)+pug_attr("data-tag", config[3], true, true)) + "\u003E\u003Cdiv class=\"w-100\"\u003E\u003Cdiv class=\"label-group\"\u003E\u003Cspan\u003E" + (pug_escape(null == (pug_interp = config[0]) ? "" : pug_interp)) + "\u003C\u002Fspan\u003E\u003C\u002Fdiv\u003E\u003Cinput" + (" class=\"ldrs sm auto\""+pug_attr("data-tag", config[3] + "-" + config[0][0].toLowerCase(), true, true)) + "\u003E\u003Cdiv class=\"label-group\"\u003E\u003Cspan\u003E" + (pug_escape(null == (pug_interp = config[1]) ? "" : pug_interp)) + "\u003C\u002Fspan\u003E\u003C\u002Fdiv\u003E\u003Cinput" + (" class=\"ldrs sm auto\""+pug_attr("data-tag", config[3] + "-" + config[1][0].toLowerCase(), true, true)) + "\u003E\u003Cdiv class=\"label-group\"\u003E\u003Cspan\u003E" + (pug_escape(null == (pug_interp = config[2]) ? "" : pug_interp)) + "\u003C\u002Fspan\u003E\u003C\u002Fdiv\u003E\u003Cinput" + (" class=\"ldrs sm auto\""+pug_attr("data-tag", config[3] + "-" + config[2][0].toLowerCase(), true, true)) + "\u003E\u003C\u002Fdiv\u003E\u003Cdiv class=\"w-50\"\u003E\u003Cinput" + (" class=\"value form-control form-control-local-sm\""+pug_attr("data-tag", config[3] + "-" + config[0][0].toLowerCase(), true, true)) + "\u003E\u003Cinput" + (" class=\"value form-control form-control-local-sm\""+pug_attr("data-tag", config[3] + "-" + config[1][0].toLowerCase(), true, true)) + "\u003E\u003Cinput" + (" class=\"value form-control form-control-local-sm\""+pug_attr("data-tag", config[3] + "-" + config[2][0].toLowerCase(), true, true)) + "\u003E\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E";
+      }
+  } else {
+    var $$l = 0;
+    for (var pug_index4 in $$obj) {
+      $$l++;
+      var config = $$obj[pug_index4];
+pug_html = pug_html + "\u003Cdiv" + (pug_attr("class", pug_classes(["config","g-2",config[4]], [false,false,true]), false, true)+pug_attr("data-tag", config[3], true, true)) + "\u003E\u003Cdiv class=\"w-100\"\u003E\u003Cdiv class=\"label-group\"\u003E\u003Cspan\u003E" + (pug_escape(null == (pug_interp = config[0]) ? "" : pug_interp)) + "\u003C\u002Fspan\u003E\u003C\u002Fdiv\u003E\u003Cinput" + (" class=\"ldrs sm auto\""+pug_attr("data-tag", config[3] + "-" + config[0][0].toLowerCase(), true, true)) + "\u003E\u003Cdiv class=\"label-group\"\u003E\u003Cspan\u003E" + (pug_escape(null == (pug_interp = config[1]) ? "" : pug_interp)) + "\u003C\u002Fspan\u003E\u003C\u002Fdiv\u003E\u003Cinput" + (" class=\"ldrs sm auto\""+pug_attr("data-tag", config[3] + "-" + config[1][0].toLowerCase(), true, true)) + "\u003E\u003Cdiv class=\"label-group\"\u003E\u003Cspan\u003E" + (pug_escape(null == (pug_interp = config[2]) ? "" : pug_interp)) + "\u003C\u002Fspan\u003E\u003C\u002Fdiv\u003E\u003Cinput" + (" class=\"ldrs sm auto\""+pug_attr("data-tag", config[3] + "-" + config[2][0].toLowerCase(), true, true)) + "\u003E\u003C\u002Fdiv\u003E\u003Cdiv class=\"w-50\"\u003E\u003Cinput" + (" class=\"value form-control form-control-local-sm\""+pug_attr("data-tag", config[3] + "-" + config[0][0].toLowerCase(), true, true)) + "\u003E\u003Cinput" + (" class=\"value form-control form-control-local-sm\""+pug_attr("data-tag", config[3] + "-" + config[1][0].toLowerCase(), true, true)) + "\u003E\u003Cinput" + (" class=\"value form-control form-control-local-sm\""+pug_attr("data-tag", config[3] + "-" + config[2][0].toLowerCase(), true, true)) + "\u003E\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E";
+    }
+  }
+}).call(this);
+
+pug_html = pug_html + "\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E\u003Cdiv class=\"my-2\"\u003E\u003Cinput class=\"form-control form-control-local-sm\" data-tag=\"tag\" placeholder=\"Comma separated tags for this color\"\u003E\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E";
+};
+pug_mixins["ldpp"] = pug_interp = function(){
+var block = (this && this.block), attributes = (this && this.attributes) || {};
+pug_html = pug_html + "\u003Cdiv" + (" class=\"ldpp\""+pug_attr("ldpp", true, true, true)) + "\u003E\u003Cdiv class=\"header d-flex justify-content-center flex-wrap g-2\"\u003E\u003Cdiv style=\"white-space:nowrap;flex:3 0 auto;width:10em\"\u003E\u003Cdiv class=\"input-group\"\u003E\u003Cinput class=\"form-control\" data-tag=\"search\"\u003E\u003Cdiv class=\"input-group-append\"\u003E\u003Cdiv class=\"btn btn-outline-dark dropdown-toggle\" data-toggle=\"dropdown\"\u003E\u003Cspan t=\"filter\"\u003E&nbsp;\u003C\u002Fspan\u003E\u003C\u002Fdiv\u003E\u003Cdiv class=\"dropdown-menu shadow-sm\" data-tag=\"categories\"\u003E\u003Ca class=\"dropdown-item\" href=\"#\" data-cat=\"\"\u003E\u003Cspan t=\"all\"\u003E\u003C\u002Fspan\u003E\u003C\u002Fa\u003E\u003Cdiv class=\"dropdown-divider\"\u003E\u003C\u002Fdiv\u003E\u003Ca class=\"dropdown-item\" href=\"#\" data-cat=\"artwork\"\u003E\u003Cspan t=\"artwork\"\u003E\u003C\u002Fspan\u003E\u003C\u002Fa\u003E\u003Ca class=\"dropdown-item\" href=\"#\" data-cat=\"brand\"\u003E\u003Cspan t=\"brand\"\u003E\u003C\u002Fspan\u003E\u003C\u002Fa\u003E\u003Ca class=\"dropdown-item\" href=\"#\" data-cat=\"concept\"\u003E\u003Cspan t=\"concept\"\u003E\u003C\u002Fspan\u003E\u003C\u002Fa\u003E\u003Cdiv class=\"dropdown-divider\"\u003E\u003C\u002Fdiv\u003E\u003Ca class=\"dropdown-item\" href=\"#\" data-cat=\"gradient\"\u003E\u003Cspan t=\"gradient\"\u003E\u003C\u002Fspan\u003E\u003C\u002Fa\u003E\u003Ca class=\"dropdown-item\" href=\"#\" data-cat=\"qualitative\"\u003E\u003Cspan t=\"qualitative\"\u003E\u003C\u002Fspan\u003E\u003C\u002Fa\u003E\u003Ca class=\"dropdown-item\" href=\"#\" data-cat=\"diverging\"\u003E\u003Cspan t=\"diverging\"\u003E\u003C\u002Fspan\u003E\u003C\u002Fa\u003E\u003Ca class=\"dropdown-item\" href=\"#\" data-cat=\"colorbrew\"\u003E\u003Cspan t=\"colorbrew\"\u003E\u003C\u002Fspan\u003E\u003C\u002Fa\u003E\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E\u003Cdiv class=\"d-none d-md-block\" style=\"flex:5 0 1px\"\u003E\u003C\u002Fdiv\u003E\u003Cdiv class=\"d-flex justify-content-end text-nowrap\" style=\"flex:1 0 auto;width:fit-content\"\u003E\u003Cdiv class=\"btn btn-primary\" data-panel=\"view\"\u003E\u003Cspan t=\"view\"\u003E\u003C\u002Fspan\u003E\u003C\u002Fdiv\u003E\u003Cdiv class=\"btn btn-text\" data-panel=\"mypal\"\u003E\u003Cspan t=\"my pals\"\u003E\u003C\u002Fspan\u003E\u003C\u002Fdiv\u003E\u003Cdiv class=\"btn btn-text\" data-panel=\"edit\"\u003E\u003Cspan t=\"edit\"\u003E\u003C\u002Fspan\u003E\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E\u003Cdiv class=\"panels\"\u003E\u003Cdiv class=\"panel active clusterize-scroll\" data-panel=\"view\" style=\"max-height:600px\"\u003E\u003Cdiv class=\"inner clusterize-content\"\u003E\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E\u003Cdiv class=\"panel clusterize-scroll\" data-panel=\"mypal\" style=\"max-height:600px\"\u003E\u003Cdiv class=\"inner clusterize-content\"\u003E\u003C\u002Fdiv\u003E\u003Cdiv class=\"btn btn-primary btn-block ld-over-inverse btn-load\"\u003E\u003Cspan t=\"load more\"\u003E\u003C\u002Fspan\u003E\u003Cdiv class=\"ld ldld ldbtn sm\"\u003E\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E\u003Cdiv class=\"panel\" data-panel=\"edit\"\u003E";
+pug_mixins["ldpe"]();
+pug_html = pug_html + "\u003Cdiv class=\"foot\"\u003E\u003Chr class=\"mt-0 mb-3\"\u003E\u003Cdiv class=\"d-flex g-1 flex-wrap\"\u003E\u003Cdiv class=\"d-flex g-1 flex-grow-1\"\u003E\u003Cdiv class=\"btn btn-outline-secondary flex-grow-1\" data-action=\"undo\"\u003E\u003Cspan t=\"undo\"\u003E\u003C\u002Fspan\u003E \u003Ci class=\"i-undo\"\u003E\u003C\u002Fi\u003E\u003C\u002Fdiv\u003E\u003Cdiv class=\"btn btn-outline-secondary flex-grow-1\" data-action=\"paste\"\u003E\u003Cspan t=\"paste\"\u003E\u003C\u002Fspan\u003E\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E\u003Cdiv class=\"d-none d-md-block\" style=\"flex:10 0 auto\"\u003E\u003C\u002Fdiv\u003E\u003Cdiv class=\"d-flex g-1 flex-grow-1\"\u003E\u003Cdiv class=\"btn btn-primary flex-grow-1\" data-action=\"use\"\u003E\u003Cspan t=\"use this palette\"\u003E\u003C\u002Fspan\u003E\u003C\u002Fdiv\u003E\u003Cdiv class=\"btn btn-outline-secondary ld-ext-right flex-grow-1\" data-action=\"save\"\u003E\u003Cspan t=\"save as asset\"\u003E\u003C\u002Fspan\u003E\u003Cdiv class=\"ld ldld ldbtn sm\"\u003E\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E";
+};
+pug_html = pug_html + "\u003Cdiv class=\"ldcv default-size\" id=\"palette-picker\"\u003E\u003Cdiv class=\"base\"\u003E\u003Cdiv class=\"inner ldpp\"\u003E";
+pug_mixins["ldpp"]();
+pug_html = pug_html + "\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E\u003Cdiv class=\"modal\" id=\"download\"\u003E\u003Cdiv class=\"card\"\u003E\u003Cdiv class=\"card-body\"\u003E\u003Ch4\u003EGenerated Image\u003C\u002Fh4\u003E\u003Csmall class=\"gray\"\u003Eclick the download button to download\u003C\u002Fsmall\u003E\u003Cdiv class=\"result\"\u003E\u003Cimg\u003E\u003C\u002Fdiv\u003E\u003Chr\u003E\u003Ca class=\"btn btn-lg btn-outline-success mr-2\" href=\"#\" download=\"\"\u003EDownload\u003C\u002Fa\u003E\u003Cdiv class=\"btn btn-lg btn-outline-secondary\" onclick=\"$('#download').modal('hide')\"\u003EClose\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E\u003Cdiv id=\"editor-option-sample\" style=\"display:none\"\u003E\u003Cdiv class=\"col-sm col-4\" id=\"editor-option-sample-color\"\u003E\u003Clabel\u003EColor\u003C\u002Flabel\u003E";
 pug_mixins["color-input"]('color');
 pug_html = pug_html + "\u003C\u002Fdiv\u003E\u003Cdiv class=\"col-sm col-4\" id=\"editor-option-sample-number\"\u003E\u003Clabel\u003ENumber\u003C\u002Flabel\u003E";
 pug_mixins["slider"]();
@@ -304,20 +378,20 @@ pug_html = pug_html + "\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E\u003Cdiv id=\"
 pug_mixins["slider"]();
 pug_html = pug_html + "\u003C\u002Fdiv\u003E\u003Cdiv class=\"col-4 col-sm-3\"\u003E\u003Clabel\u003EBackground\u003C\u002Flabel\u003E";
 pug_mixins["color-input"]('background');
-pug_html = pug_html + "\u003C\u002Fdiv\u003E\u003Cdiv class=\"col-sm-3 col-4 adv\" id=\"palette-btn\"\u003E\u003Clabel\u003EPalette\u003C\u002Flabel\u003E\u003Cdiv class=\"palette\" data-toggle=\"modal\" data-target=\"#palette-picker\"\u003E";
+pug_html = pug_html + "\u003C\u002Fdiv\u003E\u003Cdiv class=\"col-sm-3 col-4 adv\" id=\"palette-btn\"\u003E\u003Clabel\u003EPalette\u003C\u002Flabel\u003E\u003Cdiv class=\"palette\" onclick=\"pickPalette()\"\u003E";
 // iterate ['#f00','#0f0','#00f','#0ff']
 ;(function(){
   var $$obj = ['#f00','#0f0','#00f','#0ff'];
   if ('number' == typeof $$obj.length) {
-      for (var pug_index2 = 0, $$l = $$obj.length; pug_index2 < $$l; pug_index2++) {
-        var i = $$obj[pug_index2];
+      for (var pug_index5 = 0, $$l = $$obj.length; pug_index5 < $$l; pug_index5++) {
+        var i = $$obj[pug_index5];
 pug_html = pug_html + "\u003Cdiv" + (" class=\"color\""+pug_attr("style", pug_style("background:" + i), true, true)) + "\u003E\u003C\u002Fdiv\u003E";
       }
   } else {
     var $$l = 0;
-    for (var pug_index2 in $$obj) {
+    for (var pug_index5 in $$obj) {
       $$l++;
-      var i = $$obj[pug_index2];
+      var i = $$obj[pug_index5];
 pug_html = pug_html + "\u003Cdiv" + (" class=\"color\""+pug_attr("style", pug_style("background:" + i), true, true)) + "\u003E\u003C\u002Fdiv\u003E";
     }
   }
@@ -352,9 +426,7 @@ pug_html = pug_html + " ";
 }, 2);
 pug_html = pug_html + "\u003Ch2\u003EResources\u003C\u002Fh2\u003E\u003Cdiv class=\"sep\"\u003E\u003C\u002Fdiv\u003E\u003Cp\u003EWhile making stylish text with maketext.io, you may also want to build your own cool text filter. This article \"\u003Ca href=\"https:\u002F\u002Fwww.smashingmagazine.com\u002F2015\u002F05\u002Fwhy-the-svg-filter-is-awesome\u002F\"\u003EThe Art Of SVG Filters And Why It Is Awesome\u003C\u002Fa\u003E\" provides a comprehensive guide with a lot of example for anyone who want to build a cool text SVG filter from scratch, a definitely must-read. \u003C\u002Fp\u003E\u003Cp\u003EAdditionally, these filters can actually be used in any shapes, not only for text. For an inspiring example of SVG beyong merely shapes, this talk and slide about \"\u003Ca href=\"https:\u002F\u002Fwww.visualcinnamon.com\u002F2016\u002F05\u002Fslides-openvis\"\u003ESVGs beyond mere shapes\u003C\u002Fa\u003E\" is the thing you will never want to miss.\u003C\u002Fp\u003E\u003Cp\u003EThe fact that these cool text effects are built with SVG filters makes it possible to couple with other css or javascript libraries. For example, you can use \u003Ca href=\"https:\u002F\u002Floading.io\u002Fanimation\u002F\" target=\"_blank\"\u003Eloading.css\u003C\u002Fa\u003E or \u003Ca href=\"https:\u002F\u002Floading.io\u002Ftransition\u002F\" target=\"_blank\"\u003Etransition.css\u003C\u002Fa\u003E to animate your stylish text. Check \u003Ca href=\"https:\u002F\u002Floading.io\u002Fanimation\u002Ftext\" target=\"_blank\"\u003Eloading.io animated text generator\u003C\u002Fa\u003E for inspiration of how loading.css can be used in text animation.\u003C\u002Fp\u003E";
 pug_mixins["nbr"](2);
-pug_html = pug_html + "\u003Ch2\u003EContact\u003C\u002Fh2\u003E\u003Cdiv class=\"sep\"\u003E\u003C\u002Fdiv\u003E\u003Cp\u003EWe want to build this service to its best, but there are always bugs or glitches. Feel free to contact us via \u003Cb\u003Econtact@maketext.io\u003C\u002Fb\u003E by mail, or leave your words in the disqus widget below. We always appreciate your feedback and support, by which we could make this service better together.\u003C\u002Fp\u003E\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E";
-var disqusUrl = "https://maketext.io/"
-pug_html = pug_html + "\u003Cdiv id=\"disqus_thread\"\u003E\u003C\u002Fdiv\u003E\u003Cscript\u003Evar disqus_config = function () {\nthis.page.url = \"" + (null == (pug_interp = disqusUrl) ? "" : pug_interp) + "\";\nthis.page.identifier = \"\u002F\";\n};\u003C\u002Fscript\u003E\u003Cscript\u003E(function() { \u002F\u002F DON'T EDIT BELOW THIS LINE\nvar d = document, s = d.createElement('script');\ns.src = 'https:\u002F\u002Fmaketext-io.disqus.com\u002Fembed.js';\ns.setAttribute('data-timestamp', +new Date());\n(d.head || d.body).appendChild(s);\n})();\u003C\u002Fscript\u003E";
+pug_html = pug_html + "\u003Ch2\u003EContact\u003C\u002Fh2\u003E\u003Cdiv class=\"sep\"\u003E\u003C\u002Fdiv\u003E\u003Cp\u003EWe want to build this service to its best, but there are always bugs or glitches. Feel free to contact us via \u003Cb\u003Econtact@maketext.io\u003C\u002Fb\u003E by mail. We always appreciate your feedback and support, by which we could make this service better together.\u003C\u002Fp\u003E\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E";
 pug_mixins["nbr"](5);
 pug_html = pug_html + "\u003Cdiv id=\"footer\"\u003E\u003Cdiv class=\"row\"\u003E\u003Cdiv class=\"col-sm mb-4\"\u003E\u003Ch1\u003EMaketext.io\u003Cspan style=\"vertical-align:top;font-size:14px\"\u003E&copy; 2018\u003C\u002Fspan\u003E\u003C\u002Fh1\u003E\u003Cdiv class=\"sep\"\u003E\u003C\u002Fdiv\u003E\u003Cp\u003ESuper fast, vector-based cool text generator powered by modern web technologies.\u003C\u002Fp\u003E\u003Cbr\u003E\u003Cdiv class=\"row\"\u003E\u003Cdiv class=\"col-sm\"\u003E\u003Ca class=\"btn btn-block btn-outline-light mr-2 mb-2\" href=\"https:\u002F\u002Fwww.facebook.com\u002Fsharer\u002Fsharer.php?u=https:\u002F\u002Fmaketext.io\" target=\"_blank\"\u003Eshare with facebook \u003Ci class=\"fa fa-facebook\"\u003E\u003C\u002Fi\u003E\u003C\u002Fa\u003E\u003C\u002Fdiv\u003E\u003Cdiv class=\"col-sm\"\u003E\u003Ca class=\"btn btn-block btn-outline-light\" href=\"https:\u002F\u002Ftwitter.com\u002Fshare?url=https:\u002F\u002Fmaketext.io&amp;text=super-fast%20cool%20text%20generator%20for%20modern%20age\" target=\"_blank\"\u003Eshare with twitter \u003Ci class=\"fa fa-twitter\"\u003E\u003C\u002Fi\u003E\u003C\u002Fa\u003E\u003C\u002Fdiv\u003E\u003Cdiv class=\"col-sm\"\u003E\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E\u003Cdiv class=\"col-sm\"\u003E\u003Ch1\u003E\u003Csmall\u003EPartner Sites\u003C\u002Fsmall\u003E\u003C\u002Fh1\u003E\u003Cdiv class=\"sep\"\u003E\u003C\u002Fdiv\u003E\u003Cdiv class=\"mb-2\"\u003E\u003Ca href=\"https:\u002F\u002Floading.io\"\u003E\u003Ci class=\"fa fa-external-link\"\u003E\u003C\u002Fi\u003E loading.io \u003Cimg src=\"\u002Fassets\u002Fimg\u002Floader\u002Fcloudy.gif\"\u003E\u003C\u002Fa\u003E\u003Cdiv class=\"ml-3\"\u003Eanimated icons and spinner service\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E\u003Cdiv class=\"mb-2\"\u003E\u003Ca href=\"https:\u002F\u002Fmakeweb.io\"\u003E\u003Ci class=\"fa fa-external-link\"\u003E\u003C\u002Fi\u003E makeweb.io \u003Cimg src=\"\u002Fassets\u002Fimg\u002Flanding\u002Fmakeweb.png\"\u003E\u003C\u002Fa\u003E\u003Cdiv class=\"ml-3\"\u003Ereal-time collaborative web design service\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E\u003Cdiv class=\"mb-2\"\u003E\u003Ca href=\"https:\u002F\u002Fplotdb.com\"\u003E\u003Ci class=\"fa fa-external-link\"\u003E\u003C\u002Fi\u003E plotdb.com \u003Cimg src=\"\u002Fassets\u002Fimg\u002Flanding\u002Frose.png\"\u003E\u003C\u002Fa\u003E\u003Cdiv class=\"ml-3\"\u003Edata visualization as a service\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E";
 pug_mixins["nbr"](2);
@@ -390,9 +462,7 @@ pug_html = pug_html + "\u003C\u002Fbody\u003E\u003C\u002Fhtml\u003E";
         locals_for_with.defer :
         typeof defer !== 'undefined' ? defer : undefined, "description" in locals_for_with ?
         locals_for_with.description :
-        typeof description !== 'undefined' ? description : undefined, "disqusUrl" in locals_for_with ?
-        locals_for_with.disqusUrl :
-        typeof disqusUrl !== 'undefined' ? disqusUrl : undefined, "escape" in locals_for_with ?
+        typeof description !== 'undefined' ? description : undefined, "escape" in locals_for_with ?
         locals_for_with.escape :
         typeof escape !== 'undefined' ? escape : undefined, "favicon" in locals_for_with ?
         locals_for_with.favicon :

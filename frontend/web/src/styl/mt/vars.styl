@@ -1,5 +1,6 @@
 //- module
-order = join(" ",
+// stylus 0.55 的 join 回傳字串, index() 查不到; 以 split 轉回 list ( 舊站用 0.50 沒這問題 )
+order = split(" ", join(" ",
   base ,
   slider-switch hover-tip,
   footer nav-top authpanel-outer,
@@ -9,4 +10,4 @@ order = join(" ",
   authpanel-background authpanel-inner,
   closebtn,
   notifications icon-dimmer
-  )
+  ))

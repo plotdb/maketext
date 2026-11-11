@@ -78,10 +78,12 @@ init-slider = (node, key, value) ->
       onChange: (data) -> editor.update key, data.from
 
 init-colorpicker = (node, key, value) ->
-  ldcp = new ldColorPicker(node.querySelector('input'), {})
+  ldcp = new ldcolorpicker(node.querySelector('input'))
+  # 新版 change 傳的是 hsl 物件, 轉成 css 色碼給 effect 的 watch 用
   ldcp.on \change, ->
-    editor.update key, it
-    node.querySelector('.inner').style.background = it
+    c = ldcolor.web it
+    editor.update key, c
+    node.querySelector('.inner').style.background = c
 
 document.querySelector \.gallery .addEventListener \click, (e) ->
   target = e.target
@@ -211,7 +213,8 @@ queries
   .slice(0,1)
   .map -> $('#font-size-slider .up.irs-input').val +it.1
 
-ldColorPicker.init!
+# 新版 ldcolorpicker 沒有自動掃描的 init, 逐一建立 ( 設定由 input 上的 data-* 屬性讀取 )
+Array.from(document.querySelectorAll 'input[data-toggle="colorpicker"]').map -> new ldcolorpicker it
 
 Array.from(document.querySelectorAll('#font-size-slider .up.irs-input')).map (d,i) ->
   editor.update \fontSize, (v = (+d.value or 64))

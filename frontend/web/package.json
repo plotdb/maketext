@@ -26,8 +26,10 @@
     "@loadingio/bootstrap.ext": "^0.0.9",
     "@loadingio/debounce.js": "^1.0.1",
     "@loadingio/ldc": "^0.0.4",
+    "@loadingio/ldcolorpicker": "^3.0.6",
     "@loadingio/ldquery": "^3.0.7",
     "@loadingio/loading.css": "^3.1.0",
+    "@loadingio/paginate": "^0.1.1",
     "@loadingio/transition.css": "^3.0.0",
     "@loadingio/vscroll": "^0.0.11",
     "@plotdb/block": "^5.0.7",
@@ -51,6 +53,7 @@
     "i18next": "^22.4.7",
     "i18next-browser-languagedetector": "^6.1.4",
     "ldbutton": "^2.0.1",
+    "ldcolor": "^1.1.3",
     "ldcover": "^3.5.3",
     "ldcvmgr": "^0.0.15",
     "lderror": "^2.4.2",
@@ -60,6 +63,8 @@
     "ldiconfont": "^0.2.3",
     "ldloader": "^3.0.1",
     "ldnotify": "^0.0.6",
+    "ldpalettepicker": "^4.1.4",
+    "ldslider": "^3.2.0",
     "ldtab": "^1.0.0",
     "ldview": "^1.2.1",
     "marked": "^7.0.0",
@@ -152,7 +157,12 @@
       "@plotdb/opentype.js",
       "@xlfont/load",
       "@xlfont/choose",
-      "@loadingio/vscroll"
+      "@loadingio/vscroll",
+      "ldcolor",
+      "ldslider",
+      "@loadingio/ldcolorpicker",
+      "@loadingio/paginate",
+      "ldpalettepicker"
     ]
   },
   "private": true

@@ -135,10 +135,12 @@ $(document).ready(function(){
   };
   initColorpicker = function(node, key, value){
     var ldcp;
-    ldcp = new ldColorPicker(node.querySelector('input'), {});
+    ldcp = new ldcolorpicker(node.querySelector('input'));
     return ldcp.on('change', function(it){
-      editor.update(key, it);
-      return node.querySelector('.inner').style.background = it;
+      var c;
+      c = ldcolor.web(it);
+      editor.update(key, c);
+      return node.querySelector('.inner').style.background = c;
     });
   };
   document.querySelector('.gallery').addEventListener('click', function(e){
@@ -326,7 +328,9 @@ $(document).ready(function(){
   }).slice(0, 1).map(function(it){
     return $('#font-size-slider .up.irs-input').val(+it[1]);
   });
-  ldColorPicker.init();
+  Array.from(document.querySelectorAll('input[data-toggle="colorpicker"]')).map(function(it){
+    return new ldcolorpicker(it);
+  });
   return Array.from(document.querySelectorAll('#font-size-slider .up.irs-input')).map(function(d, i){
     var v, x$;
     editor.update('fontSize', v = +d.value || 64);
