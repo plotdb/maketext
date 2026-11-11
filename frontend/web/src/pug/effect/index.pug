@@ -5,10 +5,10 @@ extends /modules/mt/base.pug
 block vars
   -
     title = effect.label + " Text Effect - Free Online Generator in SVG / PNG · maketext.io";
-    description = effect.desc || ("make " + effect.label.toLowerCase() + " text effect online and download it as SVG or PNG. customize colors and fonts within seconds.");
+    description = (effect.desc ? effect.desc + " " : "") + "Make " + effect.label.toLowerCase() + " text effect online, customize colors and fonts, and download it as SVG, PNG, JPG, WEBP or GIF.";
     url = "https://maketext.io/effect/" + effect.key + "/";
-    thumbnail = "https://maketext.io/assets/thumb/" + effect.key + ".webp";
-    thumb = {type: "image/webp", width: "980", height: "320"};
+    thumbnail = "https://maketext.io/assets/og/" + effect.key + ".jpg";
+    thumb = {type: "image/jpeg", width: "1200", height: "630"};
 block body
   - var isApi = false
   include /modules/mt/landing.pug
@@ -16,8 +16,10 @@ block body
   include /modules/mt/footer.pug
 block script
   +script([
+    "/js/editor/util.js",
     "/js/editor/index.js",
     "/js/editor/palette.js",
     "/js/editor/font.js",
-    "/js/editor/download.js"
+    "/js/editor/download.js",
+    "/js/editor/star.js"
   ], {pack: true})

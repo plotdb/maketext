@@ -94,3 +94,19 @@ gallery 一開始顯示 build 時以固定文字、預設字型 render 的 webp 
  - 原本以全域 css rule `svg text { font-family }` 套字型，改為對各容器內的 text 設 inline style ( 同樣能蓋過效果寫在屬性上的字型 )
 
 待決定：各效果要配什麼字型。
+
+
+## 效果獨立頁、收藏、下載格式 ( 2026-11-12 )
+
+ - 效果獨立頁 `/effect/<name>/`：說明取自 `effect.yaml` 的 `desc`，og:image 為 `static/assets/og/<name>.jpg` ( 1200 x 630，build-thumbs.ls 產生 )
+ - 收藏 ( star )：表格 `config/web/db/star.sql`，API `/api/star` ( backend/maketext/index.ls )。
+   servebase core 只在第一次按收藏時才載入 ( `modules/mt/core.pug` 的 template + `ls/editor/star.ls` )，首頁不多載
+ - 下載：SVG 與 PNG / JPG / WEBP / GIF ( 靜態，gifenc 以 dynamic import 載入 )。不支援輸出 webp 的瀏覽器 ( Safari ) 不顯示 WEBP
+ - GA 事件 ( `mt-track`，ls/editor/util.ls )：`effect_select` ( from: gallery / effect_page )、`download` ( format )、`star` / `unstar`、
+   `font_chooser_open`、`palette_picker_open`
+
+待處理：
+
+ - GA 仍是 UA-120719734-1，UA 已在 2023 年停止處理資料，需要 GA4 的 `G-*` ID ( 加到 `modules/mt/ga.pug` 的 gaIds )
+ - srcbuild：改 `//- module` 的 styl / pug 時，引用它的頁面不會重 build，要 touch 頁面 ( 例：`styl/mt/index.styl`、`pug/index.pug` )
+ - HTML 沒有 Cache-Control，瀏覽器會依 Last-Modified 推測快取，改版後可能看到舊頁面 ( nginx 設定來自 servebase )

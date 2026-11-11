@@ -1,4 +1,4 @@
-var XFLBASE, FONTLINKS, fontPath, loaded, load, mtFont, chooser;
+var XFLBASE, FONTLINKS, fontPath, loaded, load, mtFont, chooser, getChooser;
 XFLBASE = 'https://xlfont.maketext.io';
 FONTLINKS = XFLBASE + "/links";
 fontPath = function(name){
@@ -59,45 +59,54 @@ window.resetFont = function(){
   return mtFont.setOverride(null);
 };
 chooser = null;
-window.chooseFont = function(){
+getChooser = function(){
   var overlay, hide;
-  if (!chooser) {
-    overlay = document.createElement('div');
-    overlay.className = 'mt-xfc-overlay d-none';
-    overlay.innerHTML = document.getElementById('mt-xfc-tpl').innerHTML;
-    document.body.appendChild(overlay);
-    hide = function(){
-      return overlay.classList.add('d-none');
-    };
-    overlay.addEventListener('mousedown', function(e){
-      if (e.target === overlay) {
-        return hide();
-      }
-    });
-    chooser = {
-      overlay: overlay,
-      hide: hide,
-      xfc: new xfc({
-        root: overlay.querySelector('.xfc'),
-        meta: XFLBASE + "/meta",
-        links: FONTLINKS,
-        initRender: false
-      })
-    };
-    chooser.xfc.on('choose', function(font){
-      hide();
-      if (font) {
-        return mtFont.setOverride(font);
-      }
-    });
+  if (chooser) {
+    return chooser;
   }
-  chooser.overlay.classList.remove('d-none');
-  if (!chooser.rendered) {
-    return chooser.rendered = chooser.xfc.init().then(function(){
-      return chooser.xfc.render();
-    });
-  }
+  overlay = document.createElement('div');
+  overlay.className = 'mt-xfc-overlay mt-xfc-hidden';
+  overlay.innerHTML = document.getElementById('mt-xfc-tpl').innerHTML;
+  document.body.appendChild(overlay);
+  hide = function(){
+    return overlay.classList.add('mt-xfc-hidden');
+  };
+  overlay.addEventListener('mousedown', function(e){
+    if (e.target === overlay) {
+      return hide();
+    }
+  });
+  chooser = {
+    overlay: overlay,
+    hide: hide,
+    xfc: new xfc({
+      root: overlay.querySelector('.xfc'),
+      meta: XFLBASE + "/meta",
+      links: FONTLINKS,
+      initRender: false
+    })
+  };
+  chooser.xfc.on('choose', function(font){
+    hide();
+    if (font) {
+      return mtFont.setOverride(font);
+    }
+  });
+  chooser.rendered = chooser.xfc.init().then(function(){
+    return chooser.xfc.render();
+  });
+  chooser.rendered['catch'](function(e){
+    return console.warn("[maketext] font chooser:", e);
+  });
+  return chooser;
 };
+window.chooseFont = function(){
+  mtTrack('font_chooser_open');
+  return getChooser().overlay.classList.remove('mt-xfc-hidden');
+};
+idle(function(){
+  return getChooser();
+}, 2000);
 function in$(x, xs){
   var i = -1, l = xs.length >>> 0;
   while (++i < l) if (x === xs[i]) return true;

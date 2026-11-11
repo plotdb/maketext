@@ -97,6 +97,7 @@ window.convert = do
     maketext.editor.fire \image.ready, {url} <<< option{name, type, dataurl}
 
   svg: ->
+    mt-track \download, {format: \svg, effect: editor.effects.type}
     local = {}
     @prepare!
       .then (ret = {}) ~>
@@ -108,19 +109,68 @@ window.convert = do
           name: local.text, content: local.svg.outerHTML,
           type: 'image/svg+xml', postfix: \svg
         } <<< local{width, height}
-  png: ->
-    [text-value, box, dataurl] = ['', {width: 500, height: 150}, null]
+  # 點陣格式 ( 下載按鈕旁的下拉選單, src/pug/modules/mt/editor.pug ). API 使用者會用到 png ( 見 index.ls 的說明 )
+  png: -> @raster \png
+  raster: (format = \png) ->
+    if !(fmt = RASTER[format]) => return
+    mt-track \download, {format, effect: editor.effects.type}
+    local = {}
     @prepare!
       .then ({svg, text, width, height}) ->
-        text-value := text
-        box <<< {width, height}
+        local <<< {text, width, height}
         smiltool.svg-to-dataurl svg.outerHTML
-      .then -> smiltool.url-to-dataurl it, box.width, box.height
-      .then ->
-        dataurl := it
-        smiltool.dataurl-to-blob it
-      .then ~>
+      .then (url) -> new Promise (res, rej) ->
+        img = new Image!
+        img.onload = -> res img
+        img.onerror = rej
+        img.src = url
+      .then (img) ->
+        canvas = document.createElement \canvas
+        canvas <<< local{width, height}
+        ctx = canvas.getContext \2d
+        # 沒有透明的格式先鋪上 editor 的背景色 ( gif 只有全透明 / 不透明, 半透明的光暈會有鋸齒, 也鋪底 )
+        if fmt.opaque =>
+          ctx.fillStyle = background-color!
+          ctx.fillRect 0, 0, local.width, local.height
+        ctx.drawImage img, 0, 0, local.width, local.height
+        if format == \gif => return gif-blob(ctx, local.width, local.height)
+        new Promise (res) -> canvas.toBlob res, fmt.type, 0.92
+      .then (blob) -> blob-to-dataurl(blob).then (dataurl) -> {blob, dataurl}
+      .then ({blob, dataurl}) ~>
         @download {
-          dataurl: dataurl
-          width: box.width, height: box.height, blob: it, name: text-value, postfix: \png, type: 'image/png'
-        }
+          dataurl, blob, name: local.text, postfix: fmt.ext, type: fmt.type
+        } <<< local{width, height}
+
+RASTER =
+  png: {type: 'image/png', ext: \png}
+  jpg: {type: 'image/jpeg', ext: \jpg, opaque: true}
+  webp: {type: 'image/webp', ext: \webp}
+  gif: {type: 'image/gif', ext: \gif, opaque: true}
+
+# 匯出時的底色: editor 設定的背景, 沒有 ( 透明 ) 時用白色
+background-color = ->
+  c = getComputedStyle(document.querySelector '#cooltext svg').backgroundColor
+  if !c or c == \transparent or /rgba\(.*,\s*0\)$/.exec(c) => '#fff' else c
+
+blob-to-dataurl = (blob) -> new Promise (res, rej) ->
+  fr = new FileReader!
+  fr.onload = -> res fr.result
+  fr.onerror = rej
+  fr.readAsDataURL blob
+
+# 靜態 gif: 以 gifenc 編碼. 只有選 gif 時才載入 ( esm, 以 dynamic import 載入 )
+gifenc = null
+gif-blob = (ctx, w, h) ->
+  gifenc := gifenc or (new Function('u', 'return import(u)'))('/assets/lib/gifenc/main/gifenc.esm.js')
+  gifenc.then ({GIFEncoder, quantize, applyPalette}) ->
+    {data} = ctx.getImageData 0, 0, w, h
+    palette = quantize data, 256
+    enc = GIFEncoder!
+    enc.writeFrame applyPalette(data, palette), w, h, {palette}
+    enc.finish!
+    new Blob [enc.bytes!], {type: 'image/gif'}
+
+# 瀏覽器不支援輸出 webp ( 例: Safari, toBlob 會改給 png ) 時不提供這個選項
+if !/^data:image\/webp/.exec(document.createElement(\canvas).toDataURL 'image/webp') =>
+  document.addEventListener \DOMContentLoaded, ->
+    Array.from(document.querySelectorAll '#editor-download-btn [data-type=webp]').map -> it.remove!

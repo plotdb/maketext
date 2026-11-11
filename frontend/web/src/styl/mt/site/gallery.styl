@@ -70,18 +70,39 @@
       max-width: 490px
       height: 160px
 
-// 各效果獨立頁的連結 ( src/ls/editor/index.ls ), 滑過格子時出現; 要在 .item:after 的遮罩之上才點得到
-.gallery .item .mt-effect-link
-  position: absolute
-  top: 4px
-  right: 8px
-  z-index: 2
-  font-size: 16px
-  line-height: 1
-  padding: 4px
-  color: #999
-  text-decoration: none
-  opacity: 0
-  transition: opacity .2s ease-in-out
-.gallery .item:hover .mt-effect-link
-  opacity: 1
+// 各效果獨立頁的連結 ( src/ls/editor/index.ls ) 與收藏 ( star.ls ), 滑過格子時出現;
+// 要在 .item:after 的遮罩之上才點得到. 已收藏的星號由 star.ls 產生的 css 標成金色並常駐
+.gallery .item
+  .mt-effect-link, .mt-star
+    position: absolute
+    top: 4px
+    z-index: 2
+    font-size: 18px
+    line-height: 1
+    padding: 4px
+    color: #999
+    text-decoration: none
+    opacity: 0
+    transition: opacity .2s ease-in-out
+  .mt-effect-link
+    right: 8px
+  .mt-star
+    right: 34px
+    &:hover
+      color: #f5b301
+  &:hover
+    .mt-effect-link, .mt-star
+      opacity: 1
+// 觸控裝置沒有 hover, 一直顯示
+@media (hover: none)
+  .gallery .item
+    .mt-effect-link, .mt-star
+      opacity: .8
+
+.mt-star-filter
+  margin-top: 8px
+  a
+    color: #999
+    &.active
+      color: #333
+      text-decoration: underline

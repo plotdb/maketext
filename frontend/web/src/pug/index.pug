@@ -6,8 +6,10 @@ block body
   include /modules/mt/footer.pug
 block script
   +script([
+    "/js/editor/util.js",
     "/js/editor/index.js",
     "/js/editor/palette.js",
     "/js/editor/font.js",
-    "/js/editor/download.js"
+    "/js/editor/download.js",
+    "/js/editor/star.js"
   ], {pack: true})

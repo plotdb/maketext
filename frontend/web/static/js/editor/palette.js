@@ -1,5 +1,5 @@
 $(document).ready(function(){
-  var pals, setPalette, palette, picker;
+  var pals, setPalette, palette, picker, getPicker;
   pals = palettes.map(function(arg$){
     var name, colors;
     name = arg$[0], colors = arg$[1];
@@ -34,16 +34,20 @@ $(document).ready(function(){
   palette = pals[Math.floor(Math.random() * pals.length)];
   setPalette(palette.colors, palette.name);
   picker = null;
+  getPicker = function(){
+    return picker || (picker = new ldpp({
+      root: document.querySelector('#palette-picker .ldpp'),
+      ldcv: true,
+      useVscroll: true,
+      palettes: pals
+    }));
+  };
+  idle(function(){
+    return getPicker();
+  }, 2000);
   window.pickPalette = function(){
-    if (!picker) {
-      picker = new ldpp({
-        root: document.querySelector('#palette-picker .ldpp'),
-        ldcv: true,
-        useVscroll: true,
-        palettes: pals
-      });
-    }
-    return picker.get().then(function(pal){
+    mtTrack('palette_picker_open');
+    return getPicker().get().then(function(pal){
       if (!(pal && pal.colors && pal.colors.length)) {
         return;
       }

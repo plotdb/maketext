@@ -100,23 +100,34 @@ editor.update = (name, value) ->
   # effects[type].watch ( watch 實際在 .js 底下 ) 而從未執行, 移植時拿掉, 行為不變.
   if name in <[fontSize background]> => gallery.set name, value
 
-list = [[k,v] for k,v of effects]
-html = []
-for i from 0 til list.length by 2 =>
-  code = ""
-  for j from 0 to 1 =>
-    d = list[i + j]
-    if !d => break
-    # 預設顯示預先 render 的縮圖 ( tool/maketext/build-thumbs.ls ), 改過文字 / 字級 / 背景 / 字型後
-    # 才載入效果本體, 切成即時 render 的 svg ( .live, 見 gallery.sync ). 縮圖缺漏時直接用 svg.
-    # 容器的背景色是效果 svg 的背景 ( build 時取出 ), 讓縮圖 object-fit: contain 多出來的邊同色.
-    thumb = """<img class="thumb" src="/assets/thumb/#{d.0}.webp" loading="lazy" alt="#{d.0}"
-    onerror="editor.gallery.fallback(this)">"""
-    # 各效果獨立頁的連結 ( 點格子本身仍是打開 editor )
-    link = """<a class="mt-effect-link" href="/effect/#{d.0}/" title="#{d.0} text effect">&#8599;</a>"""
-    code += """<div class="item" data-type="#{d.0}"><div class="inner" style="background:#{d.1.bk}">#thumb</div>#link</div>"""
-  html.push """<div class="line" style="visibility:hidden">#code</div>"""
+# gallery 的 html ( 每行兩個效果 ). keys: 要顯示的效果, 預設全部
+has-star = !!document.querySelector \#mt-core-scripts
+gallery-rows = (keys) ->
+  list = [[k, effects[k]] for k in (keys or [k for k of effects]) when effects[k]]
+  html = []
+  for i from 0 til list.length by 2 =>
+    code = ""
+    for j from 0 to 1 =>
+      d = list[i + j]
+      if !d => break
+      # 預設顯示預先 render 的縮圖 ( tool/maketext/build-thumbs.ls ), 改過文字 / 字級 / 背景 / 字型後
+      # 才載入效果本體, 切成即時 render 的 svg ( .live, 見 gallery.sync ). 縮圖缺漏時直接用 svg.
+      # 容器的背景色是效果 svg 的背景 ( build 時取出 ), 讓縮圖 object-fit: contain 多出來的邊同色.
+      thumb = """<img class="thumb" src="/assets/thumb/#{d.0}.webp" loading="lazy" alt="#{d.0}"
+      onerror="editor.gallery.fallback(this)">"""
+      # 各效果獨立頁的連結 ( 點格子本身仍是打開 editor ) 與收藏 ( star.ls ).
+      # 注意 LiveScript 字串內的 `#英文字母` 會被當成插值, html 字元碼要用十進位 ( &#8599; 而不是 &#x2197; )
+      link = """<a class="mt-effect-link" href="/effect/#{d.0}/" title="#{d.0} text effect">&#8599;</a>"""
+      # 沒有登入功能的頁面 ( /api/editor/0.1/ ) 不放收藏
+      star = if !has-star => '' else """<a class="mt-star" href="#" data-star="#{d.0}" title="star">&#9733;</a>"""
+      code += """<div class="item" data-type="#{d.0}"><div class="inner" style="background:#{d.1.bk}">#thumb</div>#star#link</div>"""
+    html.push """<div class="line" style="visibility:hidden">#code</div>"""
+  html
 
+# 只顯示指定的效果 ( 例: 收藏, star.ls ). 不給則顯示全部
+gallery.show = (keys) ->
+  clusterize.update gallery-rows(keys)
+  document.dispatchEvent new Event(\scroll)
 
 init-slider = (node, key, value) ->
   n = node.querySelector \.irs-input
@@ -142,6 +153,7 @@ document.querySelector \.gallery .addEventListener \click, (e) ->
   if !(target and target.classList  and target.classList.contains \item) => return
   type = target.getAttribute \data-type
   if !type => return
+  mt-track \effect_select, {effect: type, from: \gallery}
   mteffect.load type
     .then (e) -> open-effect type, e
     .catch (e) -> console.warn "[maketext] editor:", e
@@ -149,6 +161,7 @@ document.querySelector \.gallery .addEventListener \click, (e) ->
 # 效果獨立頁 ( /effect/<name>/ ) 的「Customize」: 套用輸入的文字, 以該效果打開 editor
 window.open-effect = (type) ->
   if (node = document.querySelector '#landing input').value => update-text node
+  mt-track \effect_select, {effect: type, from: \effect_page}
   mteffect.load type
     .then (e) -> open-effect type, e
     .catch (e) -> console.warn "[maketext] editor:", e
@@ -203,7 +216,7 @@ open-effect = (type, e) ->
 
 
 clusterize = new Clusterize do
-  rows: html
+  rows: gallery-rows!
   scrollElem: document.querySelector 'body'
   contentElem: document.querySelector '#gallery'
   rows_in_block: 10

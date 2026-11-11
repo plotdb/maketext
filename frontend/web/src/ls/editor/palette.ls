@@ -22,14 +22,19 @@ window.set-palette = set-palette = (colors, name = 'Palette') ->
 palette = pals[Math.floor(Math.random! * pals.length)]
 set-palette palette.colors, palette.name
 
+# 色盤面板在頁面載入後的空檔就先建立 ( 建立色盤清單較花時間 ), 打開時不用再等
 picker = null
+get-picker = -> picker or (picker := new ldpp do
+  root: document.querySelector('#palette-picker .ldpp')
+  ldcv: true
+  use-vscroll: true
+  palettes: pals
+)
+idle (-> get-picker!), 2000
+
 window.pick-palette = ->
-  if !picker => picker := new ldpp do
-    root: document.querySelector('#palette-picker .ldpp')
-    ldcv: true
-    use-vscroll: true
-    palettes: pals
-  picker.get!then (pal) ->
+  mt-track \palette_picker_open
+  get-picker!get!then (pal) ->
     if !(pal and pal.colors and pal.colors.length) => return
     set-palette pal.colors.map((c) -> c.value or c), pal.name
 

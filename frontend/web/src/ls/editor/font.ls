@@ -41,21 +41,30 @@ window.mt-font = mt-font = do
 
 window.reset-font = -> mt-font.set-override null
 
+# 字型面板在頁面載入後的空檔就先建立並 render ( 預載字型清單與預覽圖 ), 打開時不用再等.
+# 收起時用 visibility 而不是 display: none, xfc 需要有尺寸的容器才能算預覽的大小
 chooser = null
+get-chooser = ->
+  if chooser => return chooser
+  overlay = document.createElement \div
+  overlay.className = 'mt-xfc-overlay mt-xfc-hidden'
+  overlay.innerHTML = document.getElementById(\mt-xfc-tpl).innerHTML
+  document.body.appendChild overlay
+  hide = -> overlay.classList.add \mt-xfc-hidden
+  overlay.addEventListener \mousedown, (e) -> if e.target == overlay => hide!
+  chooser := {overlay, hide, xfc: new xfc do
+    root: overlay.querySelector(\.xfc), meta: "#XFL-BASE/meta", links: FONT-LINKS, init-render: false
+  }
+  # 取消時 font 為 null
+  chooser.xfc.on \choose, (font) ->
+    hide!
+    if font => mt-font.set-override font
+  chooser.rendered = chooser.xfc.init!then -> chooser.xfc.render!
+  chooser.rendered.catch (e) -> console.warn "[maketext] font chooser:", e
+  chooser
+
 window.choose-font = ->
-  if !chooser =>
-    overlay = document.createElement \div
-    overlay.className = 'mt-xfc-overlay d-none'
-    overlay.innerHTML = document.getElementById(\mt-xfc-tpl).innerHTML
-    document.body.appendChild overlay
-    hide = -> overlay.classList.add \d-none
-    overlay.addEventListener \mousedown, (e) -> if e.target == overlay => hide!
-    chooser := {overlay, hide, xfc: new xfc do
-      root: overlay.querySelector(\.xfc), meta: "#XFL-BASE/meta", links: FONT-LINKS, init-render: false
-    }
-    # 取消時 font 為 null
-    chooser.xfc.on \choose, (font) ->
-      hide!
-      if font => mt-font.set-override font
-  chooser.overlay.classList.remove \d-none
-  if !chooser.rendered => chooser.rendered = chooser.xfc.init!then -> chooser.xfc.render!
+  mt-track \font_chooser_open
+  get-chooser!overlay.classList.remove \mt-xfc-hidden
+
+idle (-> get-chooser!), 2000

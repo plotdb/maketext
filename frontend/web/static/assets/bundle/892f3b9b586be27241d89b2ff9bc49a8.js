@@ -1,6 +1,6 @@
 history.scrollRestoration = 'manual';
 $(document).ready(function(){
-  var svgHtml, editor, gallery, updateText, scrollto, list, res$, k, ref$, v, html, i$, to$, i, code, j$, j, d, thumb, link, initSlider, initColorpicker, openEffect, clusterize, maketext, queries;
+  var svgHtml, editor, gallery, updateText, scrollto, hasStar, galleryRows, initSlider, initColorpicker, openEffect, clusterize, maketext, queries;
   svgHtml = function(e){
     return e.html.replace("<svg", "<svg width='100%' height='100%'");
   };
@@ -172,28 +172,49 @@ $(document).ready(function(){
       return gallery.set(name, value);
     }
   };
-  res$ = [];
-  for (k in ref$ = effects) {
-    v = ref$[k];
-    res$.push([k, v]);
-  }
-  list = res$;
-  html = [];
-  for (i$ = 0, to$ = list.length; i$ < to$; i$ += 2) {
-    i = i$;
-    code = "";
-    for (j$ = 0; j$ <= 1; ++j$) {
-      j = j$;
-      d = list[i + j];
-      if (!d) {
-        break;
+  hasStar = !!document.querySelector('#mt-core-scripts');
+  galleryRows = function(keys){
+    var list, res$, i$, ref$, k, len$, html, to$, i, code, j$, j, d, thumb, link, star;
+    res$ = [];
+    for (i$ = 0, len$ = (ref$ = keys || (fn$())).length; i$ < len$; ++i$) {
+      k = ref$[i$];
+      if (effects[k]) {
+        res$.push([k, effects[k]]);
       }
-      thumb = "<img class=\"thumb\" src=\"/assets/thumb/" + d[0] + ".webp\" loading=\"lazy\" alt=\"" + d[0] + "\"\nonerror=\"editor.gallery.fallback(this)\">";
-      link = "<a class=\"mt-effect-link\" href=\"/effect/" + d[0] + "/\" title=\"" + d[0] + " text effect\">&#8599;</a>";
-      code += "<div class=\"item\" data-type=\"" + d[0] + "\"><div class=\"inner\" style=\"background:" + d[1].bk + "\">" + thumb + "</div>" + link + "</div>";
     }
-    html.push("<div class=\"line\" style=\"visibility:hidden\">" + code + "</div>");
-  }
+    list = res$;
+    html = [];
+    for (i$ = 0, to$ = list.length; i$ < to$; i$ += 2) {
+      i = i$;
+      code = "";
+      for (j$ = 0; j$ <= 1; ++j$) {
+        j = j$;
+        d = list[i + j];
+        if (!d) {
+          break;
+        }
+        thumb = "<img class=\"thumb\" src=\"/assets/thumb/" + d[0] + ".webp\" loading=\"lazy\" alt=\"" + d[0] + "\"\nonerror=\"editor.gallery.fallback(this)\">";
+        link = "<a class=\"mt-effect-link\" href=\"/effect/" + d[0] + "/\" title=\"" + d[0] + " text effect\">&#8599;</a>";
+        star = !hasStar
+          ? ''
+          : "<a class=\"mt-star\" href=\"#\" data-star=\"" + d[0] + "\" title=\"star\">&#9733;</a>";
+        code += "<div class=\"item\" data-type=\"" + d[0] + "\"><div class=\"inner\" style=\"background:" + d[1].bk + "\">" + thumb + "</div>" + star + link + "</div>";
+      }
+      html.push("<div class=\"line\" style=\"visibility:hidden\">" + code + "</div>");
+    }
+    return html;
+    function fn$(){
+      var results$ = [];
+      for (k in effects) {
+        results$.push(k);
+      }
+      return results$;
+    }
+  };
+  gallery.show = function(keys){
+    clusterize.update(galleryRows(keys));
+    return document.dispatchEvent(new Event('scroll'));
+  };
   initSlider = function(node, key, value){
     var n, x$;
     n = node.querySelector('.irs-input');
@@ -230,6 +251,10 @@ $(document).ready(function(){
     if (!type) {
       return;
     }
+    mtTrack('effect_select', {
+      effect: type,
+      from: 'gallery'
+    });
     return mteffect.load(type).then(function(e){
       return openEffect(type, e);
     })['catch'](function(e){
@@ -241,6 +266,10 @@ $(document).ready(function(){
     if ((node = document.querySelector('#landing input')).value) {
       updateText(node);
     }
+    mtTrack('effect_select', {
+      effect: type,
+      from: 'effect_page'
+    });
     return mteffect.load(type).then(function(e){
       return openEffect(type, e);
     })['catch'](function(e){
@@ -328,7 +357,7 @@ $(document).ready(function(){
     return results$;
   };
   clusterize = new Clusterize({
-    rows: html,
+    rows: galleryRows(),
     scrollElem: document.querySelector('body'),
     contentElem: document.querySelector('#gallery'),
     rows_in_block: 10
@@ -453,7 +482,7 @@ function in$(x, xs){
   return false;
 }
 $(document).ready(function(){
-  var pals, setPalette, palette, picker;
+  var pals, setPalette, palette, picker, getPicker;
   pals = palettes.map(function(arg$){
     var name, colors;
     name = arg$[0], colors = arg$[1];
@@ -488,16 +517,20 @@ $(document).ready(function(){
   palette = pals[Math.floor(Math.random() * pals.length)];
   setPalette(palette.colors, palette.name);
   picker = null;
+  getPicker = function(){
+    return picker || (picker = new ldpp({
+      root: document.querySelector('#palette-picker .ldpp'),
+      ldcv: true,
+      useVscroll: true,
+      palettes: pals
+    }));
+  };
+  idle(function(){
+    return getPicker();
+  }, 2000);
   window.pickPalette = function(){
-    if (!picker) {
-      picker = new ldpp({
-        root: document.querySelector('#palette-picker .ldpp'),
-        ldcv: true,
-        useVscroll: true,
-        palettes: pals
-      });
-    }
-    return picker.get().then(function(pal){
+    mtTrack('palette_picker_open');
+    return getPicker().get().then(function(pal){
       if (!(pal && pal.colors && pal.colors.length)) {
         return;
       }
@@ -518,7 +551,7 @@ $(document).ready(function(){
     });
   });
 });
-var XFLBASE, FONTLINKS, fontPath, loaded, load, mtFont, chooser;
+var XFLBASE, FONTLINKS, fontPath, loaded, load, mtFont, chooser, getChooser;
 XFLBASE = 'https://xlfont.maketext.io';
 FONTLINKS = XFLBASE + "/links";
 fontPath = function(name){
@@ -579,51 +612,60 @@ window.resetFont = function(){
   return mtFont.setOverride(null);
 };
 chooser = null;
-window.chooseFont = function(){
+getChooser = function(){
   var overlay, hide;
-  if (!chooser) {
-    overlay = document.createElement('div');
-    overlay.className = 'mt-xfc-overlay d-none';
-    overlay.innerHTML = document.getElementById('mt-xfc-tpl').innerHTML;
-    document.body.appendChild(overlay);
-    hide = function(){
-      return overlay.classList.add('d-none');
-    };
-    overlay.addEventListener('mousedown', function(e){
-      if (e.target === overlay) {
-        return hide();
-      }
-    });
-    chooser = {
-      overlay: overlay,
-      hide: hide,
-      xfc: new xfc({
-        root: overlay.querySelector('.xfc'),
-        meta: XFLBASE + "/meta",
-        links: FONTLINKS,
-        initRender: false
-      })
-    };
-    chooser.xfc.on('choose', function(font){
-      hide();
-      if (font) {
-        return mtFont.setOverride(font);
-      }
-    });
+  if (chooser) {
+    return chooser;
   }
-  chooser.overlay.classList.remove('d-none');
-  if (!chooser.rendered) {
-    return chooser.rendered = chooser.xfc.init().then(function(){
-      return chooser.xfc.render();
-    });
-  }
+  overlay = document.createElement('div');
+  overlay.className = 'mt-xfc-overlay mt-xfc-hidden';
+  overlay.innerHTML = document.getElementById('mt-xfc-tpl').innerHTML;
+  document.body.appendChild(overlay);
+  hide = function(){
+    return overlay.classList.add('mt-xfc-hidden');
+  };
+  overlay.addEventListener('mousedown', function(e){
+    if (e.target === overlay) {
+      return hide();
+    }
+  });
+  chooser = {
+    overlay: overlay,
+    hide: hide,
+    xfc: new xfc({
+      root: overlay.querySelector('.xfc'),
+      meta: XFLBASE + "/meta",
+      links: FONTLINKS,
+      initRender: false
+    })
+  };
+  chooser.xfc.on('choose', function(font){
+    hide();
+    if (font) {
+      return mtFont.setOverride(font);
+    }
+  });
+  chooser.rendered = chooser.xfc.init().then(function(){
+    return chooser.xfc.render();
+  });
+  chooser.rendered['catch'](function(e){
+    return console.warn("[maketext] font chooser:", e);
+  });
+  return chooser;
 };
+window.chooseFont = function(){
+  mtTrack('font_chooser_open');
+  return getChooser().overlay.classList.remove('mt-xfc-hidden');
+};
+idle(function(){
+  return getChooser();
+}, 2000);
 function in$(x, xs){
   var i = -1, l = xs.length >>> 0;
   while (++i < l) if (x === xs[i]) return true;
   return false;
 }
-var loadFont;
+var loadFont, RASTER, backgroundColor, blobToDataurl, gifenc, gifBlob;
 loadFont = function(){
   return mtFont.of(editor.effects.type).then(function(f){
     return f.getotf();
@@ -740,6 +782,10 @@ window.convert = {
   },
   svg: function(){
     var local, this$ = this;
+    mtTrack('download', {
+      format: 'svg',
+      effect: editor.effects.type
+    });
     local = {};
     return this.prepare().then(function(ret){
       ret == null && (ret = {});
@@ -760,35 +806,135 @@ window.convert = {
     });
   },
   png: function(){
-    var ref$, textValue, box, dataurl, this$ = this;
-    ref$ = [
-      '', {
-        width: 500,
-        height: 150
-      }, null
-    ], textValue = ref$[0], box = ref$[1], dataurl = ref$[2];
+    return this.raster('png');
+  },
+  raster: function(format){
+    var fmt, local, this$ = this;
+    format == null && (format = 'png');
+    if (!(fmt = RASTER[format])) {
+      return;
+    }
+    mtTrack('download', {
+      format: format,
+      effect: editor.effects.type
+    });
+    local = {};
     return this.prepare().then(function(arg$){
       var svg, text, width, height;
       svg = arg$.svg, text = arg$.text, width = arg$.width, height = arg$.height;
-      textValue = text;
-      box.width = width;
-      box.height = height;
+      local.text = text;
+      local.width = width;
+      local.height = height;
       return smiltool.svgToDataurl(svg.outerHTML);
-    }).then(function(it){
-      return smiltool.urlToDataurl(it, box.width, box.height);
-    }).then(function(it){
-      dataurl = it;
-      return smiltool.dataurlToBlob(it);
-    }).then(function(it){
-      return this$.download({
-        dataurl: dataurl,
-        width: box.width,
-        height: box.height,
-        blob: it,
-        name: textValue,
-        postfix: 'png',
-        type: 'image/png'
+    }).then(function(url){
+      return new Promise(function(res, rej){
+        var img;
+        img = new Image();
+        img.onload = function(){
+          return res(img);
+        };
+        img.onerror = rej;
+        return img.src = url;
+      }).then(function(img){
+        var canvas, ctx;
+        canvas = document.createElement('canvas');
+        canvas.width = local.width;
+        canvas.height = local.height;
+        ctx = canvas.getContext('2d');
+        if (fmt.opaque) {
+          ctx.fillStyle = backgroundColor();
+          ctx.fillRect(0, 0, local.width, local.height);
+        }
+        ctx.drawImage(img, 0, 0, local.width, local.height);
+        if (format === 'gif') {
+          return gifBlob(ctx, local.width, local.height);
+        }
+        return new Promise(function(res){
+          return canvas.toBlob(res, fmt.type, 0.92);
+        });
+      }).then(function(blob){
+        return blobToDataurl(blob).then(function(dataurl){
+          return {
+            blob: blob,
+            dataurl: dataurl
+          };
+        });
       });
+    }).then(function(arg$){
+      var blob, dataurl, ref$;
+      blob = arg$.blob, dataurl = arg$.dataurl;
+      return this$.download((ref$ = {
+        dataurl: dataurl,
+        blob: blob,
+        name: local.text,
+        postfix: fmt.ext,
+        type: fmt.type
+      }, ref$.width = local.width, ref$.height = local.height, ref$));
     });
   }
 };
+RASTER = {
+  png: {
+    type: 'image/png',
+    ext: 'png'
+  },
+  jpg: {
+    type: 'image/jpeg',
+    ext: 'jpg',
+    opaque: true
+  },
+  webp: {
+    type: 'image/webp',
+    ext: 'webp'
+  },
+  gif: {
+    type: 'image/gif',
+    ext: 'gif',
+    opaque: true
+  }
+};
+backgroundColor = function(){
+  var c;
+  c = getComputedStyle(document.querySelector('#cooltext svg')).backgroundColor;
+  if (!c || c === 'transparent' || /rgba\(.*,\s*0\)$/.exec(c)) {
+    return '#fff';
+  } else {
+    return c;
+  }
+};
+blobToDataurl = function(blob){
+  return new Promise(function(res, rej){
+    var fr;
+    fr = new FileReader();
+    fr.onload = function(){
+      return res(fr.result);
+    };
+    fr.onerror = rej;
+    return fr.readAsDataURL(blob);
+  });
+};
+gifenc = null;
+gifBlob = function(ctx, w, h){
+  gifenc = gifenc || new Function('u', 'return import(u)')('/assets/lib/gifenc/main/gifenc.esm.js');
+  return gifenc.then(function(arg$){
+    var GIFEncoder, quantize, applyPalette, data, palette, enc;
+    GIFEncoder = arg$.GIFEncoder, quantize = arg$.quantize, applyPalette = arg$.applyPalette;
+    data = ctx.getImageData(0, 0, w, h).data;
+    palette = quantize(data, 256);
+    enc = GIFEncoder();
+    enc.writeFrame(applyPalette(data, palette), w, h, {
+      palette: palette
+    });
+    enc.finish();
+    return new Blob([enc.bytes()], {
+      type: 'image/gif'
+    });
+  });
+};
+if (!/^data:image\/webp/.exec(document.createElement('canvas').toDataURL('image/webp'))) {
+  document.addEventListener('DOMContentLoaded', function(){
+    return Array.from(document.querySelectorAll('#editor-download-btn [data-type=webp]')).map(function(it){
+      return it.remove();
+    });
+  });
+}

@@ -1,0 +1,27 @@
+//- module
+//- servebase core ( 登入 ) 的 script, 只有要用到時 ( 例: 按收藏 ) 才由 src/ls/editor/star.ls 載入.
+//- 放在 template 內不會執行, star.ls 取出打包後的網址再動態載入, 不影響首頁的載入速度.
+//- 已在 /modules/mt/base.pug 載入的套件會被 +script 略過.
+template#mt-core-scripts
+  +script([
+    {name: "i18next", path: "dist/umd/i18next.min.js"},
+    {name: "i18next-browser-languagedetector", path: "/dist/umd/i18nextBrowserLanguageDetector.min.js"},
+    {name: "zmgr"},
+    {name: "@plotdb/httputil"},
+    {name: "@plotdb/semver"},
+    {name: "@plotdb/rescope"},
+    {name: "@plotdb/csscope"},
+    {name: "@plotdb/block"},
+    {name: "ldform"},
+    {name: "curegex", path: "curegex.min.js"},
+    {name: "lderror"},
+    {name: "ldnotify"},
+    {name: "ldcvmgr"},
+    {name: "@loadingio/ldc"},
+    {name: "@servebase/auth"},
+    {name: "@servebase/consent"},
+    {name: "@servebase/captcha"},
+    {name: "@servebase/erratum"},
+    {name: "@servebase/core"},
+    "/js/site.min.js"
+  ], {pack: true})

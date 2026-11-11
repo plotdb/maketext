@@ -57,8 +57,13 @@ include @/ldpalettepicker/ldpp.pug
       label Download As ...
       .block.mr-2(style="display:inline-block;width:300px")
         // NOTE: editor-download-btn will be queried with API users
-        #editor-download-btn.btn-group
+        //- 點陣格式由 dropup 選 ( 預設 PNG ), 見 src/ls/editor/download.ls 的 raster
+        #editor-download-btn.btn-group.dropup
           .btn.btn-outline-dark(data-type="svg", onclick="convert.svg()") SVG
           .btn.btn-outline-dark(data-type="png", onclick="convert.png()") PNG
+          .btn.btn-outline-dark.dropdown-toggle.dropdown-toggle-split(data-toggle="dropdown",style="flex-grow:0")
+          .dropdown-menu.dropdown-menu-right
+            each f in ["png", "jpg", "webp", "gif"]
+              a.dropdown-item(href="#",data-type=f,onclick="convert.raster('" + f + "');return false")= f.toUpperCase()
     .inline-block
       .btn.btn-outline-dark.mr-2(onclick="editor.toggle(false)") #[big(style="line-height:1em") &times;] Close

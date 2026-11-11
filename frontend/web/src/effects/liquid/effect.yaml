@@ -1,4 +1,5 @@
 # 效果描述 ( 名稱 / 排序 / 參數等 ), 欄位說明見 tool/maketext/build-effects.ls
+desc: "Wavy blue letters that ripple and smear as if seen through water."
 order: 190
 edit:
   color1:

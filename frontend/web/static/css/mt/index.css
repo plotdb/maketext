@@ -14,6 +14,9 @@ body {
   padding: 0;
   font-family: Abel, Helvetica, Arial;
 }
+html {
+  font-size: 18px;
+}
 h1,
 h2,
 h3,
@@ -2545,6 +2548,49 @@ h6.tag {
     border-radius: 5px;
   }
 }
+#landing.mt-effect-hero {
+  height: auto;
+}
+#landing.mt-effect-hero .inner {
+  position: relative;
+  height: auto;
+  padding: 40px 0 48px;
+}
+#landing.mt-effect-hero .subtitle {
+  text-transform: uppercase;
+  letter-spacing: 2px;
+}
+#landing.mt-effect-hero h1 {
+  margin-bottom: 8px;
+}
+#landing.mt-effect-hero .mt-effect-desc {
+  max-width: 640px;
+  margin: 0 auto 24px;
+  color: #777;
+}
+#landing.mt-effect-hero .mt-effect-thumb {
+  position: relative;
+  max-width: 640px;
+  margin: 0 auto 32px;
+}
+#landing.mt-effect-hero .mt-effect-thumb img {
+  display: block;
+  width: 100%;
+  border-radius: 6px;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.12);
+}
+#landing.mt-effect-hero .mt-effect-thumb .mt-star {
+  position: absolute;
+  top: 8px;
+  right: 12px;
+  font-size: 28px;
+  line-height: 1;
+  color: #ccc;
+  text-decoration: none;
+}
+#landing.mt-effect-hero .mt-effect-thumb .mt-star:hover {
+  color: #f5b301;
+}
 #info {
   background: linear-gradient(315deg, #e3fbfd, #f5fafa, #fff) fixed;
   border-top: 1px solid #ccc;
@@ -2577,7 +2623,6 @@ body.editing {
   height: 75px;
   z-index: 6;
   background: url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMCIgaGVpZ2h0PSIxMCIgdmlld0JveD0iMCAwIDEwIDEwIj48cGF0aCBkPSJNLTEwIC0xMEwyMCAyME0tMjAgLTEwTDEwIDIwTS0xMCAtMjBMMjAgMTAiIHN0cm9rZT0iI2ZhZmJmYyIgc3Ryb2tlLXdpZHRoPSIxIi8+PC9zdmc+) #fff;
-  font-size: 0.8em;
   padding: 0 0 10px;
   overflow: hidden;
   box-shadow: 0 1px 2px rgba(0,0,0,0.2);
@@ -2816,6 +2861,52 @@ body.editing #cooltext {
     height: 160px;
   }
 }
+.gallery .item .mt-effect-link,
+.gallery .item .mt-star {
+  position: absolute;
+  top: 4px;
+  z-index: 2;
+  font-size: 18px;
+  line-height: 1;
+  padding: 4px;
+  color: #999;
+  text-decoration: none;
+  opacity: 0;
+  -ms-transition: opacity 0.2s ease-in-out;
+  -moz-transition: opacity 0.2s ease-in-out;
+  -webkit-transition: opacity 0.2s ease-in-out;
+  -o-transition: opacity 0.2s ease-in-out;
+  transition: opacity 0.2s ease-in-out;
+}
+.gallery .item .mt-effect-link {
+  right: 8px;
+}
+.gallery .item .mt-star {
+  right: 34px;
+}
+.gallery .item .mt-star:hover {
+  color: #f5b301;
+}
+.gallery .item:hover .mt-effect-link,
+.gallery .item:hover .mt-star {
+  opacity: 1;
+}
+@media (hover: none) {
+  .gallery .item .mt-effect-link,
+  .gallery .item .mt-star {
+    opacity: 0.8;
+  }
+}
+.mt-star-filter {
+  margin-top: 8px;
+}
+.mt-star-filter a {
+  color: #999;
+}
+.mt-star-filter a.active {
+  color: #333;
+  text-decoration: underline;
+}
 text {
   dominant-baseline: central;
   text-anchor: middle;
@@ -2876,6 +2967,10 @@ text {
   align-items: center;
   justify-content: center;
   background: rgba(0,0,0,0.5);
+}
+.mt-xfc-overlay.mt-xfc-hidden {
+  visibility: hidden;
+  pointer-events: none;
 }
 .mt-xfc-panel {
   width: 760px;

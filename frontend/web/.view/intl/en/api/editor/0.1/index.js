@@ -10,7 +10,7 @@ function pug_merge(e,r){if(1===arguments.length){for(var t=e[0],g=1;g<e.length;g
 function pug_style(r){if(!r)return"";if("object"==typeof r){var t="";for(var e in r)pug_has_own_property.call(r,e)&&(t=t+e+":"+r[e]+";");return t}return r+""}function template(locals) {var pug_html = "", pug_mixins = {}, pug_interp;;
     var locals_for_with = (locals || {});
     
-    (function (Array, JSON, asseturl, b64img, blockLoader, bundleurl, c, cssLoader, debug, decache, defer, description, effect, escape, favicon, hashfile, isApi, libLoader, md5, scriptLoader, thumb, thumbnail, title, url, version) {
+    (function (Array, JSON, asseturl, b64img, blockLoader, bundleurl, c, cssLoader, debug, decache, defer, description, effect, escape, favicon, gaIds, hashfile, isApi, libLoader, md5, scriptLoader, thumb, thumbnail, title, url, version) {
       pug_html = pug_html + "\u003C!DOCTYPE html\u003E";
 if(!libLoader) {
   libLoader = {
@@ -256,9 +256,28 @@ pug_html = pug_html + "\u003Cdiv class=\"color\"\u003E\u003Cinput" + (pug_attr("
 url = "https://maketext.io/editor/0.1/"
 pug_html = pug_html + "\u003Chead prefix=\"og: http:\u002F\u002Fogp.me\u002Fns#\"\u003E";
 if (!debug) {
-pug_html = pug_html + "\u003C!-- Global site tag (gtag.js) - Google Analytics--\u003E\u003Cscript" + (pug_attr("async", true, true, true)+" src=\"https:\u002F\u002Fwww.googletagmanager.com\u002Fgtag\u002Fjs?id=UA-120719734-1\"") + "\u003E\u003C\u002Fscript\u003E\u003Cscript\u003Ewindow.dataLayer = window.dataLayer || [];\nfunction gtag(){dataLayer.push(arguments);}\ngtag('js', new Date());\ngtag('config', 'UA-120719734-1');\u003C\u002Fscript\u003E";
+var gaIds = ["UA-120719734-1"]
+pug_html = pug_html + "\u003Cscript" + (pug_attr("async", true, true, true)+pug_attr("src", "https://www.googletagmanager.com/gtag/js?id=" + gaIds[0], true, true)) + "\u003E\u003C\u002Fscript\u003E\u003Cscript\u003Ewindow.dataLayer = window.dataLayer || [];\nfunction gtag(){dataLayer.push(arguments);}\ngtag('js', new Date());\u003C\u002Fscript\u003E";
+// iterate gaIds
+;(function(){
+  var $$obj = gaIds;
+  if ('number' == typeof $$obj.length) {
+      for (var pug_index2 = 0, $$l = $$obj.length; pug_index2 < $$l; pug_index2++) {
+        var id = $$obj[pug_index2];
+pug_html = pug_html + "\u003Cscript\u003Egtag('config', '" + (pug_escape(null == (pug_interp = id) ? "" : pug_interp)) + "');\u003C\u002Fscript\u003E";
+      }
+  } else {
+    var $$l = 0;
+    for (var pug_index2 in $$obj) {
+      $$l++;
+      var id = $$obj[pug_index2];
+pug_html = pug_html + "\u003Cscript\u003Egtag('config', '" + (pug_escape(null == (pug_interp = id) ? "" : pug_interp)) + "');\u003C\u002Fscript\u003E";
+    }
+  }
+}).call(this);
+
 }
-pug_html = pug_html + "\u003Cmeta charset=\"utf-8\"\u003E\u003Cmeta name=\"viewport\" content=\"width=device-width, initial-scale=1.0, maximum-scale=1.0\"\u003E\u003Ctitle\u003E" + (pug_escape(null == (pug_interp = title) ? "" : pug_interp)) + "\u003C\u002Ftitle\u003E\u003Cmeta" + (" name=\"description\""+pug_attr("content", description, true, true)) + "\u003E\u003Cmeta property=\"og:locale\" content=\"en_US\"\u003E\u003Cmeta" + (" property=\"og:image\""+pug_attr("content", thumbnail, true, true)) + "\u003E\u003Cmeta" + (" property=\"og:image:type\""+pug_attr("content", thumb.type, true, true)) + "\u003E\u003Cmeta" + (" property=\"og:image:width\""+pug_attr("content", thumb.width, true, true)) + "\u003E\u003Cmeta" + (" property=\"og:image:height\""+pug_attr("content", thumb.height, true, true)) + "\u003E\u003Cmeta property=\"og:type\" content=\"website\"\u003E\u003Cmeta" + (" property=\"og:url\""+pug_attr("content", url, true, true)) + "\u003E\u003Cmeta" + (" property=\"og:title\""+pug_attr("content", title, true, true)) + "\u003E\u003Cmeta" + (" property=\"og:description\""+pug_attr("content", description, true, true)) + "\u003E\u003Cmeta name=\"twitter:card\" content=\"summary\"\u003E\u003Cmeta" + (" name=\"twitter:title\""+pug_attr("content", title, true, true)) + "\u003E\u003Cmeta" + (" name=\"twitter:description\""+pug_attr("content", description, true, true)) + "\u003E\u003Cmeta" + (" name=\"twitter:image\""+pug_attr("content", thumbnail, true, true)) + "\u003E\u003Clink" + (" rel=\"icon\" type=\"image\u002Fx-icon\""+pug_attr("href", favicon, true, true)) + "\u003E\u003Clink rel=\"preconnect\" href=\"https:\u002F\u002Fxlfont.maketext.io\"\u003E";
+pug_html = pug_html + "\u003Cmeta charset=\"utf-8\"\u003E\u003Cmeta name=\"viewport\" content=\"width=device-width, initial-scale=1.0, maximum-scale=1.0\"\u003E\u003Ctitle\u003E" + (pug_escape(null == (pug_interp = title) ? "" : pug_interp)) + "\u003C\u002Ftitle\u003E\u003Cmeta" + (" name=\"description\""+pug_attr("content", description, true, true)) + "\u003E\u003Cmeta property=\"og:locale\" content=\"en_US\"\u003E\u003Cmeta" + (" property=\"og:image\""+pug_attr("content", thumbnail, true, true)) + "\u003E\u003Cmeta" + (" property=\"og:image:type\""+pug_attr("content", thumb.type, true, true)) + "\u003E\u003Cmeta" + (" property=\"og:image:width\""+pug_attr("content", thumb.width, true, true)) + "\u003E\u003Cmeta" + (" property=\"og:image:height\""+pug_attr("content", thumb.height, true, true)) + "\u003E\u003Cmeta property=\"og:type\" content=\"website\"\u003E\u003Cmeta" + (" property=\"og:url\""+pug_attr("content", url, true, true)) + "\u003E\u003Cmeta" + (" property=\"og:title\""+pug_attr("content", title, true, true)) + "\u003E\u003Cmeta" + (" property=\"og:description\""+pug_attr("content", description, true, true)) + "\u003E\u003Cmeta name=\"twitter:card\" content=\"summary_large_image\"\u003E\u003Cmeta" + (" name=\"twitter:title\""+pug_attr("content", title, true, true)) + "\u003E\u003Cmeta" + (" name=\"twitter:description\""+pug_attr("content", description, true, true)) + "\u003E\u003Cmeta" + (" name=\"twitter:image\""+pug_attr("content", thumbnail, true, true)) + "\u003E\u003Clink" + (" rel=\"icon\" type=\"image\u002Fx-icon\""+pug_attr("href", favicon, true, true)) + "\u003E\u003Clink rel=\"preconnect\" href=\"https:\u002F\u002Fxlfont.maketext.io\"\u003E";
 pug_mixins["css"]([
       "/assets/vendor/bootstrap/4.0.0/css/bootstrap.min.css",
       "/assets/vendor/fontawesome/4.7.0/css/font-awesome.min.css",
@@ -348,15 +367,15 @@ var configs = [["Red", "Green", "Blue", "rgb", "active"], ["Hue", "Saturation", 
 ;(function(){
   var $$obj = configs;
   if ('number' == typeof $$obj.length) {
-      for (var pug_index4 = 0, $$l = $$obj.length; pug_index4 < $$l; pug_index4++) {
-        var config = $$obj[pug_index4];
+      for (var pug_index5 = 0, $$l = $$obj.length; pug_index5 < $$l; pug_index5++) {
+        var config = $$obj[pug_index5];
 pug_html = pug_html + "\u003Cdiv" + (pug_attr("class", pug_classes(["config","g-2",config[4]], [false,false,true]), false, true)+pug_attr("data-tag", config[3], true, true)) + "\u003E\u003Cdiv class=\"w-100\"\u003E\u003Cdiv class=\"label-group\"\u003E\u003Cspan\u003E" + (pug_escape(null == (pug_interp = config[0]) ? "" : pug_interp)) + "\u003C\u002Fspan\u003E\u003C\u002Fdiv\u003E\u003Cinput" + (" class=\"ldrs sm auto\""+pug_attr("data-tag", config[3] + "-" + config[0][0].toLowerCase(), true, true)) + "\u003E\u003Cdiv class=\"label-group\"\u003E\u003Cspan\u003E" + (pug_escape(null == (pug_interp = config[1]) ? "" : pug_interp)) + "\u003C\u002Fspan\u003E\u003C\u002Fdiv\u003E\u003Cinput" + (" class=\"ldrs sm auto\""+pug_attr("data-tag", config[3] + "-" + config[1][0].toLowerCase(), true, true)) + "\u003E\u003Cdiv class=\"label-group\"\u003E\u003Cspan\u003E" + (pug_escape(null == (pug_interp = config[2]) ? "" : pug_interp)) + "\u003C\u002Fspan\u003E\u003C\u002Fdiv\u003E\u003Cinput" + (" class=\"ldrs sm auto\""+pug_attr("data-tag", config[3] + "-" + config[2][0].toLowerCase(), true, true)) + "\u003E\u003C\u002Fdiv\u003E\u003Cdiv class=\"w-50\"\u003E\u003Cinput" + (" class=\"value form-control form-control-local-sm\""+pug_attr("data-tag", config[3] + "-" + config[0][0].toLowerCase(), true, true)) + "\u003E\u003Cinput" + (" class=\"value form-control form-control-local-sm\""+pug_attr("data-tag", config[3] + "-" + config[1][0].toLowerCase(), true, true)) + "\u003E\u003Cinput" + (" class=\"value form-control form-control-local-sm\""+pug_attr("data-tag", config[3] + "-" + config[2][0].toLowerCase(), true, true)) + "\u003E\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E";
       }
   } else {
     var $$l = 0;
-    for (var pug_index4 in $$obj) {
+    for (var pug_index5 in $$obj) {
       $$l++;
-      var config = $$obj[pug_index4];
+      var config = $$obj[pug_index5];
 pug_html = pug_html + "\u003Cdiv" + (pug_attr("class", pug_classes(["config","g-2",config[4]], [false,false,true]), false, true)+pug_attr("data-tag", config[3], true, true)) + "\u003E\u003Cdiv class=\"w-100\"\u003E\u003Cdiv class=\"label-group\"\u003E\u003Cspan\u003E" + (pug_escape(null == (pug_interp = config[0]) ? "" : pug_interp)) + "\u003C\u002Fspan\u003E\u003C\u002Fdiv\u003E\u003Cinput" + (" class=\"ldrs sm auto\""+pug_attr("data-tag", config[3] + "-" + config[0][0].toLowerCase(), true, true)) + "\u003E\u003Cdiv class=\"label-group\"\u003E\u003Cspan\u003E" + (pug_escape(null == (pug_interp = config[1]) ? "" : pug_interp)) + "\u003C\u002Fspan\u003E\u003C\u002Fdiv\u003E\u003Cinput" + (" class=\"ldrs sm auto\""+pug_attr("data-tag", config[3] + "-" + config[1][0].toLowerCase(), true, true)) + "\u003E\u003Cdiv class=\"label-group\"\u003E\u003Cspan\u003E" + (pug_escape(null == (pug_interp = config[2]) ? "" : pug_interp)) + "\u003C\u002Fspan\u003E\u003C\u002Fdiv\u003E\u003Cinput" + (" class=\"ldrs sm auto\""+pug_attr("data-tag", config[3] + "-" + config[2][0].toLowerCase(), true, true)) + "\u003E\u003C\u002Fdiv\u003E\u003Cdiv class=\"w-50\"\u003E\u003Cinput" + (" class=\"value form-control form-control-local-sm\""+pug_attr("data-tag", config[3] + "-" + config[0][0].toLowerCase(), true, true)) + "\u003E\u003Cinput" + (" class=\"value form-control form-control-local-sm\""+pug_attr("data-tag", config[3] + "-" + config[1][0].toLowerCase(), true, true)) + "\u003E\u003Cinput" + (" class=\"value form-control form-control-local-sm\""+pug_attr("data-tag", config[3] + "-" + config[2][0].toLowerCase(), true, true)) + "\u003E\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E";
     }
   }
@@ -385,23 +404,73 @@ pug_html = pug_html + "\u003C\u002Fdiv\u003E\u003Cdiv class=\"col-sm-3 col-4 adv
 ;(function(){
   var $$obj = ['#f00','#0f0','#00f','#0ff'];
   if ('number' == typeof $$obj.length) {
-      for (var pug_index5 = 0, $$l = $$obj.length; pug_index5 < $$l; pug_index5++) {
-        var i = $$obj[pug_index5];
+      for (var pug_index6 = 0, $$l = $$obj.length; pug_index6 < $$l; pug_index6++) {
+        var i = $$obj[pug_index6];
 pug_html = pug_html + "\u003Cdiv" + (" class=\"color\""+pug_attr("style", pug_style("background:" + i), true, true)) + "\u003E\u003C\u002Fdiv\u003E";
       }
   } else {
     var $$l = 0;
-    for (var pug_index5 in $$obj) {
+    for (var pug_index6 in $$obj) {
       $$l++;
-      var i = $$obj[pug_index5];
+      var i = $$obj[pug_index6];
 pug_html = pug_html + "\u003Cdiv" + (" class=\"color\""+pug_attr("style", pug_style("background:" + i), true, true)) + "\u003E\u003C\u002Fdiv\u003E";
     }
   }
 }).call(this);
 
-pug_html = pug_html + "\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E\u003Cdiv class=\"col-12 col-sm-9 row adv\" id=\"editor-custom-options\" style=\"margin-left:0;padding:0\"\u003E\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E\u003Cbr\u003E\u003Cdiv id=\"cooltext\"\u003E\u003C\u002Fdiv\u003E\u003Cdiv class=\"footer text-center\"\u003E\u003Cdiv class=\"inline-block text-left\"\u003E\u003Clabel\u003EDownload As ...\u003C\u002Flabel\u003E\u003Cdiv class=\"block mr-2\" style=\"display:inline-block;width:300px\"\u003E\u003C!-- NOTE: editor-download-btn will be queried with API users--\u003E\u003Cdiv class=\"btn-group\" id=\"editor-download-btn\"\u003E\u003Cdiv class=\"btn btn-outline-dark\" data-type=\"svg\" onclick=\"convert.svg()\"\u003ESVG\u003C\u002Fdiv\u003E\u003Cdiv class=\"btn btn-outline-dark\" data-type=\"png\" onclick=\"convert.png()\"\u003EPNG\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E\u003Cdiv class=\"inline-block\"\u003E\u003Cdiv class=\"btn btn-outline-dark mr-2\" onclick=\"editor.toggle(false)\"\u003E\u003Cbig style=\"line-height:1em\"\u003E&times;\u003C\u002Fbig\u003E Close\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E\u003Csvg style=\"height:0;display:inline;display:none\"\u003E\u003Cdefs\u003E\u003Cfilter id=\"cool\" x=\"-100%\" y=\"-100%\" width=\"300%\" height=\"300%\"\u003E\u003CfeGaussianBlur in=\"SourceGraphic\" stdDeviation=\"6\"\u003E\u003C\u002FfeGaussianBlur\u003E\u003CfeComponentTransfer\u003E\u003CfeFuncA type=\"linear\" slope=\"30\" intercept=\"-2\"\u003E\u003C\u002FfeFuncA\u003E\u003C\u002FfeComponentTransfer\u003E\u003CfeComposite operator=\"out\" in2=\"SourceAlpha\"\u003E\u003C\u002FfeComposite\u003E\u003C\u002Ffilter\u003E\u003Cfilter id=\"landing-h1\" x=\"-100%\" y=\"-100%\" width=\"300%\" height=\"300%\"\u003E\u003CfeMorphology operator=\"dilate\" radius=\"1\" result=\"dilate\"\u003E\u003C\u002FfeMorphology\u003E\u003CfeComposite operator=\"out\" in=\"dilate\" in2=\"SourceAlpha\" result=\"border\"\u003E\u003C\u002FfeComposite\u003E\u003CfeOffset dx=\"-3\" dy=\"-2\" result=\"offset\"\u003E\u003C\u002FfeOffset\u003E\u003CfeMerge\u003E\u003CfeMergeNode in=\"SourceGraphic\"\u003E\u003C\u002FfeMergeNode\u003E\u003CfeMergeNode in=\"offset\"\u003E\u003C\u002FfeMergeNode\u003E\u003C\u002FfeMerge\u003E\u003C\u002Ffilter\u003E\u003C\u002Fdefs\u003E\u003C\u002Fsvg\u003E";
+pug_html = pug_html + "\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E\u003Cdiv class=\"col-12 col-sm-9 row adv\" id=\"editor-custom-options\" style=\"margin-left:0;padding:0\"\u003E\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E\u003Cbr\u003E\u003Cdiv id=\"cooltext\"\u003E\u003C\u002Fdiv\u003E\u003Cdiv class=\"footer text-center\"\u003E\u003Cdiv class=\"inline-block text-left\"\u003E\u003Clabel\u003EDownload As ...\u003C\u002Flabel\u003E\u003Cdiv class=\"block mr-2\" style=\"display:inline-block;width:300px\"\u003E\u003C!-- NOTE: editor-download-btn will be queried with API users--\u003E\u003Cdiv class=\"btn-group dropup\" id=\"editor-download-btn\"\u003E\u003Cdiv class=\"btn btn-outline-dark\" data-type=\"svg\" onclick=\"convert.svg()\"\u003ESVG\u003C\u002Fdiv\u003E\u003Cdiv class=\"btn btn-outline-dark\" data-type=\"png\" onclick=\"convert.png()\"\u003EPNG\u003C\u002Fdiv\u003E\u003Cdiv class=\"btn btn-outline-dark dropdown-toggle dropdown-toggle-split\" data-toggle=\"dropdown\" style=\"flex-grow:0\"\u003E\u003C\u002Fdiv\u003E\u003Cdiv class=\"dropdown-menu dropdown-menu-right\"\u003E";
+// iterate ["png", "jpg", "webp", "gif"]
+;(function(){
+  var $$obj = ["png", "jpg", "webp", "gif"];
+  if ('number' == typeof $$obj.length) {
+      for (var pug_index7 = 0, $$l = $$obj.length; pug_index7 < $$l; pug_index7++) {
+        var f = $$obj[pug_index7];
+pug_html = pug_html + "\u003Ca" + (" class=\"dropdown-item\""+" href=\"#\""+pug_attr("data-type", f, true, true)+pug_attr("onclick", "convert.raster('" + f + "');return false", true, true)) + "\u003E" + (pug_escape(null == (pug_interp = f.toUpperCase()) ? "" : pug_interp)) + "\u003C\u002Fa\u003E";
+      }
+  } else {
+    var $$l = 0;
+    for (var pug_index7 in $$obj) {
+      $$l++;
+      var f = $$obj[pug_index7];
+pug_html = pug_html + "\u003Ca" + (" class=\"dropdown-item\""+" href=\"#\""+pug_attr("data-type", f, true, true)+pug_attr("onclick", "convert.raster('" + f + "');return false", true, true)) + "\u003E" + (pug_escape(null == (pug_interp = f.toUpperCase()) ? "" : pug_interp)) + "\u003C\u002Fa\u003E";
+    }
+  }
+}).call(this);
+
+pug_html = pug_html + "\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E\u003Cdiv class=\"inline-block\"\u003E\u003Cdiv class=\"btn btn-outline-dark mr-2\" onclick=\"editor.toggle(false)\"\u003E\u003Cbig style=\"line-height:1em\"\u003E&times;\u003C\u002Fbig\u003E Close\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E";
+if (!isApi) {
+pug_html = pug_html + "\u003Ctemplate id=\"mt-core-scripts\"\u003E";
+pug_mixins["script"]([
+    {name: "i18next", path: "dist/umd/i18next.min.js"},
+    {name: "i18next-browser-languagedetector", path: "/dist/umd/i18nextBrowserLanguageDetector.min.js"},
+    {name: "zmgr"},
+    {name: "@plotdb/httputil"},
+    {name: "@plotdb/semver"},
+    {name: "@plotdb/rescope"},
+    {name: "@plotdb/csscope"},
+    {name: "@plotdb/block"},
+    {name: "ldform"},
+    {name: "curegex", path: "curegex.min.js"},
+    {name: "lderror"},
+    {name: "ldnotify"},
+    {name: "ldcvmgr"},
+    {name: "@loadingio/ldc"},
+    {name: "@servebase/auth"},
+    {name: "@servebase/consent"},
+    {name: "@servebase/captcha"},
+    {name: "@servebase/erratum"},
+    {name: "@servebase/core"},
+    "/js/site.min.js"
+  ], {pack: true});
+pug_html = pug_html + "\u003C\u002Ftemplate\u003E";
+}
+pug_html = pug_html + "\u003Csvg style=\"height:0;display:inline;display:none\"\u003E\u003Cdefs\u003E\u003Cfilter id=\"cool\" x=\"-100%\" y=\"-100%\" width=\"300%\" height=\"300%\"\u003E\u003CfeGaussianBlur in=\"SourceGraphic\" stdDeviation=\"6\"\u003E\u003C\u002FfeGaussianBlur\u003E\u003CfeComponentTransfer\u003E\u003CfeFuncA type=\"linear\" slope=\"30\" intercept=\"-2\"\u003E\u003C\u002FfeFuncA\u003E\u003C\u002FfeComponentTransfer\u003E\u003CfeComposite operator=\"out\" in2=\"SourceAlpha\"\u003E\u003C\u002FfeComposite\u003E\u003C\u002Ffilter\u003E\u003Cfilter id=\"landing-h1\" x=\"-100%\" y=\"-100%\" width=\"300%\" height=\"300%\"\u003E\u003CfeMorphology operator=\"dilate\" radius=\"1\" result=\"dilate\"\u003E\u003C\u002FfeMorphology\u003E\u003CfeComposite operator=\"out\" in=\"dilate\" in2=\"SourceAlpha\" result=\"border\"\u003E\u003C\u002FfeComposite\u003E\u003CfeOffset dx=\"-3\" dy=\"-2\" result=\"offset\"\u003E\u003C\u002FfeOffset\u003E\u003CfeMerge\u003E\u003CfeMergeNode in=\"SourceGraphic\"\u003E\u003C\u002FfeMergeNode\u003E\u003CfeMergeNode in=\"offset\"\u003E\u003C\u002FfeMergeNode\u003E\u003C\u002FfeMerge\u003E\u003C\u002Ffilter\u003E\u003C\u002Fdefs\u003E\u003C\u002Fsvg\u003E";
 if (effect) {
-pug_html = pug_html + "\u003Cdiv class=\"text-center mt-effect-hero\" id=\"landing\"\u003E\u003Cdiv class=\"cbad\"\u003E\u003Cscript" + (" id=\"_carbonads_js\""+pug_attr("async", true, true, true)+" type=\"text\u002Fjavascript\" src=\"\u002F\u002Fcdn.carbonads.com\u002Fcarbon.js?serve=CK7I453J&amp;placement=maketextio\"") + "\u003E\u003C\u002Fscript\u003E\u003C\u002Fdiv\u003E\u003Cdiv class=\"inner\"\u003E\u003Cdiv class=\"subtitle\"\u003Etext effect\u003C\u002Fdiv\u003E\u003Ch1\u003E" + (pug_escape(null == (pug_interp = effect.label) ? "" : pug_interp)) + "\u003C\u002Fh1\u003E\u003Cdiv class=\"mt-effect-thumb\"\u003E\u003Cimg" + (pug_attr("src", "/assets/thumb/" + effect.key + ".webp", true, true)+pug_attr("alt", effect.label + " text effect", true, true)) + "\u003E\u003C\u002Fdiv\u003E\u003Cdiv class=\"widget\"\u003E\u003Cdiv class=\"input-group\"\u003E\u003Cinput class=\"form-control input-lg\" type=\"text\" placeholder=\"type your text here\"\u003E\u003Cdiv class=\"input-group-append\"\u003E\u003Cdiv" + (" class=\"btn btn-action btn-block\""+pug_attr("onclick", "openEffect(" + JSON.stringify(effect.key) + ")", true, true)) + "\u003ECustomize\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E\u003Cbr\u003E\u003Ca href=\"\u002F\"\u003Eor, browse all cool text effects\u003C\u002Fa\u003E\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E";
+pug_html = pug_html + "\u003Cdiv class=\"text-center mt-effect-hero\" id=\"landing\"\u003E\u003Cdiv class=\"cbad\"\u003E\u003Cscript" + (" id=\"_carbonads_js\""+pug_attr("async", true, true, true)+" type=\"text\u002Fjavascript\" src=\"\u002F\u002Fcdn.carbonads.com\u002Fcarbon.js?serve=CK7I453J&amp;placement=maketextio\"") + "\u003E\u003C\u002Fscript\u003E\u003C\u002Fdiv\u003E\u003Cdiv class=\"inner\"\u003E\u003Cdiv class=\"subtitle\"\u003Etext effect\u003C\u002Fdiv\u003E\u003Ch1\u003E" + (pug_escape(null == (pug_interp = effect.label) ? "" : pug_interp)) + "\u003C\u002Fh1\u003E";
+if (effect.desc) {
+pug_html = pug_html + "\u003Cdiv class=\"mt-effect-desc\"\u003E" + (pug_escape(null == (pug_interp = effect.desc) ? "" : pug_interp)) + "\u003C\u002Fdiv\u003E";
+}
+pug_html = pug_html + "\u003Cdiv class=\"mt-effect-thumb\"\u003E\u003Cimg" + (pug_attr("src", "/assets/thumb/" + effect.key + ".webp", true, true)+pug_attr("alt", effect.label + " text effect", true, true)) + "\u003E\u003Ca" + (" class=\"mt-star\""+" href=\"#\""+pug_attr("data-star", effect.key, true, true)+" title=\"star this effect\"") + "\u003E&#9733;\u003C\u002Fa\u003E\u003C\u002Fdiv\u003E\u003Cdiv class=\"widget\"\u003E\u003Cdiv class=\"input-group\"\u003E\u003Cinput class=\"form-control input-lg\" type=\"text\" placeholder=\"type your text here\"\u003E\u003Cdiv class=\"input-group-append\"\u003E\u003Cdiv" + (" class=\"btn btn-action btn-block\""+pug_attr("onclick", "openEffect(" + JSON.stringify(effect.key) + ")", true, true)) + "\u003ECustomize\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E\u003Cbr\u003E\u003Ca href=\"\u002F\"\u003Eor, browse all cool text effects\u003C\u002Fa\u003E\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E";
 }
 else {
 pug_html = pug_html + "\u003Cdiv class=\"text-center\" id=\"landing\"\u003E";
@@ -415,6 +484,9 @@ pug_mixins["nbr"](2);
 pug_html = pug_html + "\u003Cdiv class=\"input-group\"\u003E\u003Cinput class=\"form-control input-lg\" type=\"text\" placeholder=\"for example, 'Cool Text!'\"\u003E\u003Cdiv class=\"input-group-append\"\u003E\u003Cdiv class=\"btn btn-action btn-block\" onclick=\"scrollto('#top')\"\u003EMake Text \u003Cspan class=\"cool\"\u003ECooler\u003C\u002Fspan\u003E\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E\u003Cbr\u003E\u003Ca href=\"\u002Ffancy\u002F\"\u003Eor, show me more copyable 𝕗𝕒𝕟𝕔𝕪 𝕥𝕖𝕩𝕥!!\u003C\u002Fa\u003E\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E";
 }
 pug_html = pug_html + "\u003Cdiv id=\"top\" style=\"transform:translate(0,-80px)\"\u003E\u003C\u002Fdiv\u003E\u003Cbr\u003E\u003Cdiv class=\"text-center\"\u003E\u003Cdiv class=\"big\"\u003EThen, pick an effect you'd like to use\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E";
+if (!isApi) {
+pug_html = pug_html + "\u003Cdiv class=\"text-center mt-star-filter d-none\"\u003E\u003Ca class=\"active\" href=\"#\" data-star-filter=\"all\"\u003Eall effects\u003C\u002Fa\u003E\u003Cspan class=\"mx-2\"\u003E\u002F\u003C\u002Fspan\u003E\u003Ca href=\"#\" data-star-filter=\"starred\"\u003E&#9733; starred\u003C\u002Fa\u003E\u003C\u002Fdiv\u003E";
+}
 pug_mixins["nbr"](2);
 pug_html = pug_html + "\u003Cdiv class=\"gallery\" id=\"gallery\"\u003E\u003C\u002Fdiv\u003E";
 pug_mixins["nbr"](2);
@@ -441,6 +513,7 @@ pug_html = pug_html + "\u003Cdiv id=\"footer\"\u003E\u003Cdiv class=\"row\"\u003
 pug_mixins["nbr"](2);
 pug_html = pug_html + "\u003C\u002Fdiv\u003E";
 pug_mixins["script"]([
+    "/js/editor/util.js",
     "/js/editor/index.js",
     "/js/editor/palette.js",
     "/js/editor/font.js",
@@ -477,7 +550,9 @@ pug_html = pug_html + "\u003C\u002Fbody\u003E\u003C\u002Fhtml\u003E";
         locals_for_with.escape :
         typeof escape !== 'undefined' ? escape : undefined, "favicon" in locals_for_with ?
         locals_for_with.favicon :
-        typeof favicon !== 'undefined' ? favicon : undefined, "hashfile" in locals_for_with ?
+        typeof favicon !== 'undefined' ? favicon : undefined, "gaIds" in locals_for_with ?
+        locals_for_with.gaIds :
+        typeof gaIds !== 'undefined' ? gaIds : undefined, "hashfile" in locals_for_with ?
         locals_for_with.hashfile :
         typeof hashfile !== 'undefined' ? hashfile : undefined, "isApi" in locals_for_with ?
         locals_for_with.isApi :

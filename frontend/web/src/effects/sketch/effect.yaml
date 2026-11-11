@@ -1,4 +1,5 @@
 # 效果描述 ( 名稱 / 排序 / 參數等 ), 欄位說明見 tool/maketext/build-effects.ls
+desc: "Hand-drawn pencil outline letters on cream paper."
 order: 450
 font: Permanent Marker
 edit:

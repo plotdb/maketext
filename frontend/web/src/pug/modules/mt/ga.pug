@@ -1,8 +1,12 @@
 //- module
-// Global site tag (gtag.js) - Google Analytics
-script(async,src="https://www.googletagmanager.com/gtag/js?id=UA-120719734-1")
+//- Google Analytics ( gtag.js ). 事件由 src/ls/editor/util.ls 的 mt-track 送出.
+//- 注意: UA-* ( Universal Analytics ) 已在 2023 年停止處理資料, 事件要送到 GA4 的 G-* 才看得到. 拿到 GA4 的 ID 後加進 gaIds
+- var gaIds = ["UA-120719734-1"]
+script(async,src="https://www.googletagmanager.com/gtag/js?id=" + gaIds[0])
 script.
   window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
   gtag('js', new Date());
-  gtag('config', 'UA-120719734-1');
+each id in gaIds
+  script.
+    gtag('config', '#{id}');

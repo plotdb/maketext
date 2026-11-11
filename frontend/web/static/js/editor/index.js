@@ -1,6 +1,6 @@
 history.scrollRestoration = 'manual';
 $(document).ready(function(){
-  var svgHtml, editor, gallery, updateText, scrollto, list, res$, k, ref$, v, html, i$, to$, i, code, j$, j, d, thumb, link, initSlider, initColorpicker, openEffect, clusterize, maketext, queries;
+  var svgHtml, editor, gallery, updateText, scrollto, hasStar, galleryRows, initSlider, initColorpicker, openEffect, clusterize, maketext, queries;
   svgHtml = function(e){
     return e.html.replace("<svg", "<svg width='100%' height='100%'");
   };
@@ -172,28 +172,49 @@ $(document).ready(function(){
       return gallery.set(name, value);
     }
   };
-  res$ = [];
-  for (k in ref$ = effects) {
-    v = ref$[k];
-    res$.push([k, v]);
-  }
-  list = res$;
-  html = [];
-  for (i$ = 0, to$ = list.length; i$ < to$; i$ += 2) {
-    i = i$;
-    code = "";
-    for (j$ = 0; j$ <= 1; ++j$) {
-      j = j$;
-      d = list[i + j];
-      if (!d) {
-        break;
+  hasStar = !!document.querySelector('#mt-core-scripts');
+  galleryRows = function(keys){
+    var list, res$, i$, ref$, k, len$, html, to$, i, code, j$, j, d, thumb, link, star;
+    res$ = [];
+    for (i$ = 0, len$ = (ref$ = keys || (fn$())).length; i$ < len$; ++i$) {
+      k = ref$[i$];
+      if (effects[k]) {
+        res$.push([k, effects[k]]);
       }
-      thumb = "<img class=\"thumb\" src=\"/assets/thumb/" + d[0] + ".webp\" loading=\"lazy\" alt=\"" + d[0] + "\"\nonerror=\"editor.gallery.fallback(this)\">";
-      link = "<a class=\"mt-effect-link\" href=\"/effect/" + d[0] + "/\" title=\"" + d[0] + " text effect\">&#8599;</a>";
-      code += "<div class=\"item\" data-type=\"" + d[0] + "\"><div class=\"inner\" style=\"background:" + d[1].bk + "\">" + thumb + "</div>" + link + "</div>";
     }
-    html.push("<div class=\"line\" style=\"visibility:hidden\">" + code + "</div>");
-  }
+    list = res$;
+    html = [];
+    for (i$ = 0, to$ = list.length; i$ < to$; i$ += 2) {
+      i = i$;
+      code = "";
+      for (j$ = 0; j$ <= 1; ++j$) {
+        j = j$;
+        d = list[i + j];
+        if (!d) {
+          break;
+        }
+        thumb = "<img class=\"thumb\" src=\"/assets/thumb/" + d[0] + ".webp\" loading=\"lazy\" alt=\"" + d[0] + "\"\nonerror=\"editor.gallery.fallback(this)\">";
+        link = "<a class=\"mt-effect-link\" href=\"/effect/" + d[0] + "/\" title=\"" + d[0] + " text effect\">&#8599;</a>";
+        star = !hasStar
+          ? ''
+          : "<a class=\"mt-star\" href=\"#\" data-star=\"" + d[0] + "\" title=\"star\">&#9733;</a>";
+        code += "<div class=\"item\" data-type=\"" + d[0] + "\"><div class=\"inner\" style=\"background:" + d[1].bk + "\">" + thumb + "</div>" + star + link + "</div>";
+      }
+      html.push("<div class=\"line\" style=\"visibility:hidden\">" + code + "</div>");
+    }
+    return html;
+    function fn$(){
+      var results$ = [];
+      for (k in effects) {
+        results$.push(k);
+      }
+      return results$;
+    }
+  };
+  gallery.show = function(keys){
+    clusterize.update(galleryRows(keys));
+    return document.dispatchEvent(new Event('scroll'));
+  };
   initSlider = function(node, key, value){
     var n, x$;
     n = node.querySelector('.irs-input');
@@ -230,6 +251,10 @@ $(document).ready(function(){
     if (!type) {
       return;
     }
+    mtTrack('effect_select', {
+      effect: type,
+      from: 'gallery'
+    });
     return mteffect.load(type).then(function(e){
       return openEffect(type, e);
     })['catch'](function(e){
@@ -241,6 +266,10 @@ $(document).ready(function(){
     if ((node = document.querySelector('#landing input')).value) {
       updateText(node);
     }
+    mtTrack('effect_select', {
+      effect: type,
+      from: 'effect_page'
+    });
     return mteffect.load(type).then(function(e){
       return openEffect(type, e);
     })['catch'](function(e){
@@ -328,7 +357,7 @@ $(document).ready(function(){
     return results$;
   };
   clusterize = new Clusterize({
-    rows: html,
+    rows: galleryRows(),
     scrollElem: document.querySelector('body'),
     contentElem: document.querySelector('#gallery'),
     rows_in_block: 10

@@ -1,4 +1,4 @@
-var loadFont;
+var loadFont, RASTER, backgroundColor, blobToDataurl, gifenc, gifBlob;
 loadFont = function(){
   return mtFont.of(editor.effects.type).then(function(f){
     return f.getotf();
@@ -115,6 +115,10 @@ window.convert = {
   },
   svg: function(){
     var local, this$ = this;
+    mtTrack('download', {
+      format: 'svg',
+      effect: editor.effects.type
+    });
     local = {};
     return this.prepare().then(function(ret){
       ret == null && (ret = {});
@@ -135,35 +139,135 @@ window.convert = {
     });
   },
   png: function(){
-    var ref$, textValue, box, dataurl, this$ = this;
-    ref$ = [
-      '', {
-        width: 500,
-        height: 150
-      }, null
-    ], textValue = ref$[0], box = ref$[1], dataurl = ref$[2];
+    return this.raster('png');
+  },
+  raster: function(format){
+    var fmt, local, this$ = this;
+    format == null && (format = 'png');
+    if (!(fmt = RASTER[format])) {
+      return;
+    }
+    mtTrack('download', {
+      format: format,
+      effect: editor.effects.type
+    });
+    local = {};
     return this.prepare().then(function(arg$){
       var svg, text, width, height;
       svg = arg$.svg, text = arg$.text, width = arg$.width, height = arg$.height;
-      textValue = text;
-      box.width = width;
-      box.height = height;
+      local.text = text;
+      local.width = width;
+      local.height = height;
       return smiltool.svgToDataurl(svg.outerHTML);
-    }).then(function(it){
-      return smiltool.urlToDataurl(it, box.width, box.height);
-    }).then(function(it){
-      dataurl = it;
-      return smiltool.dataurlToBlob(it);
-    }).then(function(it){
-      return this$.download({
-        dataurl: dataurl,
-        width: box.width,
-        height: box.height,
-        blob: it,
-        name: textValue,
-        postfix: 'png',
-        type: 'image/png'
+    }).then(function(url){
+      return new Promise(function(res, rej){
+        var img;
+        img = new Image();
+        img.onload = function(){
+          return res(img);
+        };
+        img.onerror = rej;
+        return img.src = url;
+      }).then(function(img){
+        var canvas, ctx;
+        canvas = document.createElement('canvas');
+        canvas.width = local.width;
+        canvas.height = local.height;
+        ctx = canvas.getContext('2d');
+        if (fmt.opaque) {
+          ctx.fillStyle = backgroundColor();
+          ctx.fillRect(0, 0, local.width, local.height);
+        }
+        ctx.drawImage(img, 0, 0, local.width, local.height);
+        if (format === 'gif') {
+          return gifBlob(ctx, local.width, local.height);
+        }
+        return new Promise(function(res){
+          return canvas.toBlob(res, fmt.type, 0.92);
+        });
+      }).then(function(blob){
+        return blobToDataurl(blob).then(function(dataurl){
+          return {
+            blob: blob,
+            dataurl: dataurl
+          };
+        });
       });
+    }).then(function(arg$){
+      var blob, dataurl, ref$;
+      blob = arg$.blob, dataurl = arg$.dataurl;
+      return this$.download((ref$ = {
+        dataurl: dataurl,
+        blob: blob,
+        name: local.text,
+        postfix: fmt.ext,
+        type: fmt.type
+      }, ref$.width = local.width, ref$.height = local.height, ref$));
     });
   }
 };
+RASTER = {
+  png: {
+    type: 'image/png',
+    ext: 'png'
+  },
+  jpg: {
+    type: 'image/jpeg',
+    ext: 'jpg',
+    opaque: true
+  },
+  webp: {
+    type: 'image/webp',
+    ext: 'webp'
+  },
+  gif: {
+    type: 'image/gif',
+    ext: 'gif',
+    opaque: true
+  }
+};
+backgroundColor = function(){
+  var c;
+  c = getComputedStyle(document.querySelector('#cooltext svg')).backgroundColor;
+  if (!c || c === 'transparent' || /rgba\(.*,\s*0\)$/.exec(c)) {
+    return '#fff';
+  } else {
+    return c;
+  }
+};
+blobToDataurl = function(blob){
+  return new Promise(function(res, rej){
+    var fr;
+    fr = new FileReader();
+    fr.onload = function(){
+      return res(fr.result);
+    };
+    fr.onerror = rej;
+    return fr.readAsDataURL(blob);
+  });
+};
+gifenc = null;
+gifBlob = function(ctx, w, h){
+  gifenc = gifenc || new Function('u', 'return import(u)')('/assets/lib/gifenc/main/gifenc.esm.js');
+  return gifenc.then(function(arg$){
+    var GIFEncoder, quantize, applyPalette, data, palette, enc;
+    GIFEncoder = arg$.GIFEncoder, quantize = arg$.quantize, applyPalette = arg$.applyPalette;
+    data = ctx.getImageData(0, 0, w, h).data;
+    palette = quantize(data, 256);
+    enc = GIFEncoder();
+    enc.writeFrame(applyPalette(data, palette), w, h, {
+      palette: palette
+    });
+    enc.finish();
+    return new Blob([enc.bytes()], {
+      type: 'image/gif'
+    });
+  });
+};
+if (!/^data:image\/webp/.exec(document.createElement('canvas').toDataURL('image/webp'))) {
+  document.addEventListener('DOMContentLoaded', function(){
+    return Array.from(document.querySelectorAll('#editor-download-btn [data-type=webp]')).map(function(it){
+      return it.remove();
+    });
+  });
+}

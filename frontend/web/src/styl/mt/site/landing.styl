@@ -131,14 +131,24 @@
         border-radius: 5px
 
 
-// 效果獨立頁 ( /effect/<name>/ ) 的頂部
+// 效果獨立頁 ( /effect/<name>/ ) 的頂部. 多了效果預覽, 內容比首頁高, 不用首頁的置中定位, 改為由上往下排
 #landing.mt-effect-hero
+  height: auto
+  .inner
+    position: relative
+    height: auto
+    padding: 40px 0 48px
   .subtitle
     text-transform: uppercase
     letter-spacing: 2px
   h1
-    margin-bottom: 24px
+    margin-bottom: 8px
+  .mt-effect-desc
+    max-width: 640px
+    margin: 0 auto 24px
+    color: #777
   .mt-effect-thumb
+    position: relative
     max-width: 640px
     margin: 0 auto 32px
     img
@@ -146,3 +156,13 @@
       width: 100%
       border-radius: 6px
       box-shadow: 0 2px 12px rgba(0,0,0,.12)
+    .mt-star
+      position: absolute
+      top: 8px
+      right: 12px
+      font-size: 28px
+      line-height: 1
+      color: #ccc
+      text-decoration: none
+      &:hover
+        color: #f5b301

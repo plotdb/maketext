@@ -10,7 +10,7 @@ function pug_merge(e,r){if(1===arguments.length){for(var t=e[0],g=1;g<e.length;g
 function pug_style(r){if(!r)return"";if("object"==typeof r){var t="";for(var e in r)pug_has_own_property.call(r,e)&&(t=t+e+":"+r[e]+";");return t}return r+""}function template(locals) {var pug_html = "", pug_mixins = {}, pug_interp;;
     var locals_for_with = (locals || {});
     
-    (function (Array, JSON, asseturl, b64img, blockLoader, bundleurl, c, cssLoader, debug, decache, defer, description, escape, favicon, hashfile, libLoader, md5, scriptLoader, thumb, thumbnail, title, url, version) {
+    (function (Array, JSON, asseturl, b64img, blockLoader, bundleurl, c, cssLoader, debug, decache, defer, description, escape, favicon, gaIds, hashfile, libLoader, md5, scriptLoader, thumb, thumbnail, title, url, version) {
       pug_html = pug_html + "\u003C!DOCTYPE html\u003E";
 if(!libLoader) {
   libLoader = {
@@ -256,9 +256,28 @@ var loremtext = {
 url = "https://maketext.io/fancy/"
 pug_html = pug_html + "\u003Chead prefix=\"og: http:\u002F\u002Fogp.me\u002Fns#\"\u003E";
 if (!debug) {
-pug_html = pug_html + "\u003C!-- Global site tag (gtag.js) - Google Analytics--\u003E\u003Cscript" + (pug_attr("async", true, true, true)+" src=\"https:\u002F\u002Fwww.googletagmanager.com\u002Fgtag\u002Fjs?id=UA-120719734-1\"") + "\u003E\u003C\u002Fscript\u003E\u003Cscript\u003Ewindow.dataLayer = window.dataLayer || [];\nfunction gtag(){dataLayer.push(arguments);}\ngtag('js', new Date());\ngtag('config', 'UA-120719734-1');\u003C\u002Fscript\u003E";
+var gaIds = ["UA-120719734-1"]
+pug_html = pug_html + "\u003Cscript" + (pug_attr("async", true, true, true)+pug_attr("src", "https://www.googletagmanager.com/gtag/js?id=" + gaIds[0], true, true)) + "\u003E\u003C\u002Fscript\u003E\u003Cscript\u003Ewindow.dataLayer = window.dataLayer || [];\nfunction gtag(){dataLayer.push(arguments);}\ngtag('js', new Date());\u003C\u002Fscript\u003E";
+// iterate gaIds
+;(function(){
+  var $$obj = gaIds;
+  if ('number' == typeof $$obj.length) {
+      for (var pug_index2 = 0, $$l = $$obj.length; pug_index2 < $$l; pug_index2++) {
+        var id = $$obj[pug_index2];
+pug_html = pug_html + "\u003Cscript\u003Egtag('config', '" + (pug_escape(null == (pug_interp = id) ? "" : pug_interp)) + "');\u003C\u002Fscript\u003E";
+      }
+  } else {
+    var $$l = 0;
+    for (var pug_index2 in $$obj) {
+      $$l++;
+      var id = $$obj[pug_index2];
+pug_html = pug_html + "\u003Cscript\u003Egtag('config', '" + (pug_escape(null == (pug_interp = id) ? "" : pug_interp)) + "');\u003C\u002Fscript\u003E";
+    }
+  }
+}).call(this);
+
 }
-pug_html = pug_html + "\u003Cmeta charset=\"utf-8\"\u003E\u003Cmeta name=\"viewport\" content=\"width=device-width, initial-scale=1.0, maximum-scale=1.0\"\u003E\u003Ctitle\u003E" + (pug_escape(null == (pug_interp = title) ? "" : pug_interp)) + "\u003C\u002Ftitle\u003E\u003Cmeta" + (" name=\"description\""+pug_attr("content", description, true, true)) + "\u003E\u003Cmeta property=\"og:locale\" content=\"en_US\"\u003E\u003Cmeta" + (" property=\"og:image\""+pug_attr("content", thumbnail, true, true)) + "\u003E\u003Cmeta" + (" property=\"og:image:type\""+pug_attr("content", thumb.type, true, true)) + "\u003E\u003Cmeta" + (" property=\"og:image:width\""+pug_attr("content", thumb.width, true, true)) + "\u003E\u003Cmeta" + (" property=\"og:image:height\""+pug_attr("content", thumb.height, true, true)) + "\u003E\u003Cmeta property=\"og:type\" content=\"website\"\u003E\u003Cmeta" + (" property=\"og:url\""+pug_attr("content", url, true, true)) + "\u003E\u003Cmeta" + (" property=\"og:title\""+pug_attr("content", title, true, true)) + "\u003E\u003Cmeta" + (" property=\"og:description\""+pug_attr("content", description, true, true)) + "\u003E\u003Cmeta name=\"twitter:card\" content=\"summary\"\u003E\u003Cmeta" + (" name=\"twitter:title\""+pug_attr("content", title, true, true)) + "\u003E\u003Cmeta" + (" name=\"twitter:description\""+pug_attr("content", description, true, true)) + "\u003E\u003Cmeta" + (" name=\"twitter:image\""+pug_attr("content", thumbnail, true, true)) + "\u003E\u003Clink" + (" rel=\"icon\" type=\"image\u002Fx-icon\""+pug_attr("href", favicon, true, true)) + "\u003E\u003Clink rel=\"preconnect\" href=\"https:\u002F\u002Fxlfont.maketext.io\"\u003E";
+pug_html = pug_html + "\u003Cmeta charset=\"utf-8\"\u003E\u003Cmeta name=\"viewport\" content=\"width=device-width, initial-scale=1.0, maximum-scale=1.0\"\u003E\u003Ctitle\u003E" + (pug_escape(null == (pug_interp = title) ? "" : pug_interp)) + "\u003C\u002Ftitle\u003E\u003Cmeta" + (" name=\"description\""+pug_attr("content", description, true, true)) + "\u003E\u003Cmeta property=\"og:locale\" content=\"en_US\"\u003E\u003Cmeta" + (" property=\"og:image\""+pug_attr("content", thumbnail, true, true)) + "\u003E\u003Cmeta" + (" property=\"og:image:type\""+pug_attr("content", thumb.type, true, true)) + "\u003E\u003Cmeta" + (" property=\"og:image:width\""+pug_attr("content", thumb.width, true, true)) + "\u003E\u003Cmeta" + (" property=\"og:image:height\""+pug_attr("content", thumb.height, true, true)) + "\u003E\u003Cmeta property=\"og:type\" content=\"website\"\u003E\u003Cmeta" + (" property=\"og:url\""+pug_attr("content", url, true, true)) + "\u003E\u003Cmeta" + (" property=\"og:title\""+pug_attr("content", title, true, true)) + "\u003E\u003Cmeta" + (" property=\"og:description\""+pug_attr("content", description, true, true)) + "\u003E\u003Cmeta name=\"twitter:card\" content=\"summary_large_image\"\u003E\u003Cmeta" + (" name=\"twitter:title\""+pug_attr("content", title, true, true)) + "\u003E\u003Cmeta" + (" name=\"twitter:description\""+pug_attr("content", description, true, true)) + "\u003E\u003Cmeta" + (" name=\"twitter:image\""+pug_attr("content", thumbnail, true, true)) + "\u003E\u003Clink" + (" rel=\"icon\" type=\"image\u002Fx-icon\""+pug_attr("href", favicon, true, true)) + "\u003E\u003Clink rel=\"preconnect\" href=\"https:\u002F\u002Fxlfont.maketext.io\"\u003E";
 pug_mixins["css"]([
       "/assets/vendor/bootstrap/4.0.0/css/bootstrap.min.css",
       "/assets/vendor/fontawesome/4.7.0/css/font-awesome.min.css",
@@ -314,15 +333,15 @@ pug_html = pug_html + "\u003Cdiv class=\"gallery\" id=\"gallery\" style=\"text-a
 ;(function(){
   var $$obj = [1,2,3,4,5,6,7,8];
   if ('number' == typeof $$obj.length) {
-      for (var pug_index2 = 0, $$l = $$obj.length; pug_index2 < $$l; pug_index2++) {
-        var i = $$obj[pug_index2];
+      for (var pug_index3 = 0, $$l = $$obj.length; pug_index3 < $$l; pug_index3++) {
+        var i = $$obj[pug_index3];
 pug_html = pug_html + "\u003Cdiv class=\"line\"\u003E\u003Cdiv class=\"item\"\u003E𝕗𝕒𝕟𝕔𝕪 𝕥𝕖𝕩𝕥!\u003C\u002Fdiv\u003E\u003Cdiv class=\"item\"\u003E𝕗𝕒𝕟𝕔𝕪 𝕥𝕖𝕩𝕥!\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E";
       }
   } else {
     var $$l = 0;
-    for (var pug_index2 in $$obj) {
+    for (var pug_index3 in $$obj) {
       $$l++;
-      var i = $$obj[pug_index2];
+      var i = $$obj[pug_index3];
 pug_html = pug_html + "\u003Cdiv class=\"line\"\u003E\u003Cdiv class=\"item\"\u003E𝕗𝕒𝕟𝕔𝕪 𝕥𝕖𝕩𝕥!\u003C\u002Fdiv\u003E\u003Cdiv class=\"item\"\u003E𝕗𝕒𝕟𝕔𝕪 𝕥𝕖𝕩𝕥!\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E";
     }
   }
@@ -367,7 +386,9 @@ pug_html = pug_html + "\u003C\u002Fbody\u003E\u003C\u002Fhtml\u003E";
         locals_for_with.escape :
         typeof escape !== 'undefined' ? escape : undefined, "favicon" in locals_for_with ?
         locals_for_with.favicon :
-        typeof favicon !== 'undefined' ? favicon : undefined, "hashfile" in locals_for_with ?
+        typeof favicon !== 'undefined' ? favicon : undefined, "gaIds" in locals_for_with ?
+        locals_for_with.gaIds :
+        typeof gaIds !== 'undefined' ? gaIds : undefined, "hashfile" in locals_for_with ?
         locals_for_with.hashfile :
         typeof hashfile !== 'undefined' ? hashfile : undefined, "libLoader" in locals_for_with ?
         locals_for_with.libLoader :

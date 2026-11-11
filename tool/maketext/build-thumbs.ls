@@ -1,6 +1,7 @@
 #!/usr/bin/env lsc
 # 以固定文字與各效果的預設字型 ( effect.yaml 的 font ) 預先 render 每個效果的 gallery 縮圖,
-# 輸出到 frontend/web/static/assets/thumb/<name>.webp
+# 輸出到 frontend/web/static/assets/thumb/<name>.webp, 以及效果獨立頁的分享圖 ( og:image )
+# frontend/web/static/assets/og/<name>.jpg ( 1200 x 630, 部分平台不支援 webp )
 #
 #   lsc tool/maketext/build-thumbs.ls [name ...]   # 不給名稱就全部重產
 #
@@ -13,7 +14,10 @@ require! <[fs path http puppeteer]>
 
 root = path.resolve __dirname, '../../frontend/web/static'
 des = path.join root, 'assets/thumb'
+og-des = path.join root, 'assets/og'
 [W, H, SCALE] = [490, 160, 2]
+# 分享圖以 SCALE 倍輸出成 1200 x 630
+[OW, OH] = [600, 315]
 FONT-LINKS = 'https://xlfont.maketext.io/links'
 
 mime = '.js': 'text/javascript', '.css': 'text/css', '.svg': 'image/svg+xml', '.png': 'image/png', '.jpg': 'image/jpeg', '.gif': 'image/gif'
@@ -32,21 +36,25 @@ page-html = (url) -> """
 html, body { margin: 0; background: transparent; }
 \#box { width: #{W}px; height: #{H}px; }
 \#box svg { display: block; }
+\#og { width: #{OW}px; height: #{OH}px; position: relative; display: flex; align-items: center; justify-content: center; }
+\#og svg { display: block; width: 570px; height: 186px; }
+\#og .brand { position: absolute; right: 14px; bottom: 10px; font: 11px Helvetica, Arial, sans-serif; color: #999; letter-spacing: 1px; }
 </style>
 <script src="#url/js/effects/index.js"></script>
-</head><body><div id="box"></div></body></html>
+</head><body><div id="box"></div><div id="og"><div class="brand">maketext.io</div></div></body></html>
 """
 
 main = ->>
   # 以 lsc 執行時 argv[2] 是這支腳本本身
   names = process.argv.slice(2).filter -> !/\.ls$/.test(it)
   fs.mkdir-sync des, {recursive: true}
+  fs.mkdir-sync og-des, {recursive: true}
   server = await serve!
   url = "http://127.0.0.1:#{server.address!port}"
   browser = await puppeteer.launch!
   try
     page = await browser.new-page!
-    await page.set-viewport {width: W, height: H, device-scale-factor: SCALE}
+    await page.set-viewport {width: OW, height: H + OH, device-scale-factor: SCALE}
     # 以 goto 取得同源, 讓 feImage 等相對網址可以載入
     await page.goto "#url/"
     await page.set-content page-html(url), {wait-until: \networkidle0}
@@ -70,6 +78,16 @@ main = ->>
       await new Promise -> set-timeout it, 100
       box = await page.$ '#box'
       await box.screenshot {path: path.join(des, "#name.webp"), type: \webp, quality: 85, omit-background: true}
+      # 分享圖: 把同一個 svg 移到分享圖的版面 ( 不複製, 避免 filter id 重複 ). jpg 沒有透明, 底色用效果的背景色
+      await page.evaluate (name) ->
+        og = document.querySelector('#og')
+        Array.from(og.querySelectorAll 'svg').map -> it.remove!
+        og.style.background = effects[name].bk or '#fff'
+        og.appendChild document.querySelector('#box svg')
+      , name
+      await new Promise -> set-timeout it, 100
+      og = await page.$ '#og'
+      await og.screenshot {path: path.join(og-des, "#name.jpg"), type: \jpeg, quality: 85}
       console.log "[build-thumbs] #name"
   finally
     await browser.close!

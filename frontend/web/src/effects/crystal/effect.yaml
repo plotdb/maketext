@@ -1,4 +1,5 @@
 # 效果描述 ( 名稱 / 排序 / 參數等 ), 欄位說明見 tool/maketext/build-effects.ls
+desc: "Icy translucent letters with a cool glow on a dark background."
 order: 170
 edit:
   fill:

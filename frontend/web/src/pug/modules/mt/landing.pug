@@ -3,6 +3,8 @@
 //- 需先設定 isApi; 效果獨立頁另有 effect ( static/js/effects/meta.json 的一筆 ), 頂部改為該效果的介紹
 
 include /modules/mt/editor.pug
+if !isApi
+  include /modules/mt/core.pug
 svg(style="height:0;display:inline;display:none")
   defs
     filter#cool(x="-100%",y="-100%",width="300%",height="300%")
@@ -24,7 +26,11 @@ if effect
     .inner
       .subtitle text effect
       h1= effect.label
-      .mt-effect-thumb: img(src="/assets/thumb/" + effect.key + ".webp",alt=effect.label + " text effect")
+      if effect.desc
+        .mt-effect-desc= effect.desc
+      .mt-effect-thumb
+        img(src="/assets/thumb/" + effect.key + ".webp",alt=effect.label + " text effect")
+        a.mt-star(href="#",data-star=effect.key,title="star this effect") &#9733;
       .widget
         .input-group
           input.form-control.input-lg(type="text", placeholder="type your text here")
@@ -57,6 +63,12 @@ else
 #top(style="transform:translate(0,-80px)")
 br
 .text-center: .big Then, pick an effect you'd like to use
+//- 收藏篩選, 有收藏時才出現 ( src/ls/editor/star.ls )
+if !isApi
+  .text-center.mt-star-filter.d-none
+    a(href="#",data-star-filter="all").active all effects
+    span.mx-2 /
+    a(href="#",data-star-filter="starred") &#9733; starred
 +nbr(2)
 #gallery.gallery
 +nbr(2)
