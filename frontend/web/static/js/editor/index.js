@@ -1,6 +1,6 @@
 history.scrollRestoration = 'manual';
 $(document).ready(function(){
-  var k, ref$, v, ret, editor, updateText, scrollto, list, res$, html, i$, to$, i, code, j$, j, d, initSlider, initColorpicker, clusterize, maketext, queries;
+  var k, ref$, v, ret, editor, gallery, updateText, scrollto, list, res$, html, i$, to$, i, code, j$, j, d, initSlider, initColorpicker, clusterize, maketext, queries;
   for (k in ref$ = effects) {
     v = ref$[k];
     ret = null;
@@ -29,14 +29,80 @@ $(document).ready(function(){
       old: {}
     }
   };
+  gallery = {
+    state: {},
+    ver: 0,
+    queue: [],
+    timer: null,
+    running: false
+  };
+  gallery.stale = function(item){
+    return +(item.dataset.v || 0) !== this.ver;
+  };
+  gallery.sync = function(item){
+    var ref$, text, fontSize, background, svg;
+    ref$ = this.state, text = ref$.text, fontSize = ref$.fontSize, background = ref$.background;
+    if (text != null) {
+      Array.from(item.querySelectorAll('text')).map(function(it){
+        return it.textContent = text;
+      });
+    }
+    if (fontSize != null) {
+      Array.from(item.querySelectorAll('text')).map(function(it){
+        return it.style.fontSize = fontSize + "px";
+      });
+    }
+    if (background != null && (svg = item.querySelector('svg'))) {
+      svg.style.background = background;
+    }
+    return item.dataset.v = this.ver;
+  };
+  gallery.enqueue = function(line){
+    var i$, ref$, len$, item;
+    for (i$ = 0, len$ = (ref$ = Array.from(line.querySelectorAll('.item'))).length; i$ < len$; ++i$) {
+      item = ref$[i$];
+      if (this.stale(item) && !in$(item, this.queue)) {
+        this.queue.push(item);
+      }
+    }
+    return this.run();
+  };
+  gallery.run = function(){
+    var step, this$ = this;
+    if (this.running) {
+      return;
+    }
+    this.running = true;
+    step = function(){
+      var item;
+      while ((item = this$.queue.shift()) && !this$.stale(item)) {}
+      if (!item) {
+        return this$.running = false;
+      }
+      this$.sync(item);
+      return requestAnimationFrame(step);
+    };
+    return requestAnimationFrame(step);
+  };
+  gallery.set = function(k, v){
+    var this$ = this;
+    this.state[k] = v;
+    this.ver++;
+    clearTimeout(this.timer);
+    return this.timer = setTimeout(function(){
+      return Array.from(document.querySelectorAll('.gallery .line')).filter(function(it){
+        return it.style.visibility === 'visible';
+      }).map(function(it){
+        return this$.enqueue(it);
+      });
+    }, 120);
+  };
   updateText = function(node){
     var textInput, value;
     node = node || document.querySelector('#text-input');
     textInput = document.querySelector('#text-input');
     value = node.value || 'Hello World!';
-    Array.from(document.querySelectorAll('.gallery text')).map(function(d, i){
-      return d.textContent = value;
-    });
+    gallery.set('text', value);
     Array.from(document.querySelectorAll('#cooltext text')).map(function(it){
       return it.textContent = value;
     });
@@ -57,7 +123,7 @@ $(document).ready(function(){
     return updateText(this);
   });
   editor.update = function(name, value){
-    var svg, this$ = this;
+    var svg;
     this.config.old = JSON.parse(JSON.stringify(this.config.cur));
     this.config.cur[name] = value;
     svg = document.querySelector('#cooltext svg');
@@ -73,26 +139,8 @@ $(document).ready(function(){
       }
       return;
     }
-    if (name === 'fontSize') {
-      Array.from(document.querySelectorAll('.gallery text')).map(function(node, i){
-        return node.style.fontSize = value + "px";
-      });
-    }
-    Array.from(document.querySelectorAll('.gallery .item')).map(function(d, i){
-      var type;
-      if (!d.parentNode.style.opacity) {
-        return;
-      }
-      type = d.getAttribute('data-type');
-      if (!(this$.effects[type].js && this$.effects[type].watch)) {
-        return;
-      }
-      return this$.effects[type].js.watch(this$.config.cur, this$.config.old, d);
-    });
-    if (name === 'background') {
-      return Array.from(document.querySelectorAll('.gallery svg')).map(function(d, i){
-        return d.style.background = value;
-      });
+    if (name === 'fontSize' || name === 'background') {
+      return gallery.set(name, value);
     }
   };
   res$ = [];
@@ -249,6 +297,7 @@ $(document).ready(function(){
         d.style.visibility = 'hidden';
       } else {
         d.style.visibility = 'visible';
+        gallery.enqueue(d);
       }
       if (box.y + box.height < 0 || box.y + box.height / 3 > height) {
         d.style.opacity = 0;
@@ -345,3 +394,8 @@ $(document).ready(function(){
     return x$;
   });
 });
+function in$(x, xs){
+  var i = -1, l = xs.length >>> 0;
+  while (++i < l) if (x === xs[i]) return true;
+  return false;
+}

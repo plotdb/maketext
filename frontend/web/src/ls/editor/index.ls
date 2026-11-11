@@ -18,11 +18,46 @@ window.editor = editor = do
       svg.parentNode.removeChild svg
   config: cur: {fontSize: 64}, old: {}
 
+# gallery 的分段更新:
+# 每個效果都是帶 svg filter 的 svg, 一次改動全部同步更新會讓畫面內 ~10 個 filter 一起重畫 ( 每打一個字卡 ~250ms ).
+# 改成: 改動只記在 gallery.state 並遞增版本, debounce 後只更新畫面內的項目, 每個 frame 一個;
+# 畫面外的等捲進畫面時 ( scroll handler ) 再補. 項目以 data-v 記錄已套用的版本,
+# 因此被 clusterize 用原始 html 重建的項目也會被視為過期而補上.
+gallery = state: {}, ver: 0, queue: [], timer: null, running: false
+gallery.stale = (item) -> +(item.dataset.v or 0) != @ver
+gallery.sync = (item) ->
+  {text, font-size, background} = @state
+  if text? => Array.from(item.querySelectorAll \text).map -> it.textContent = text
+  if font-size? => Array.from(item.querySelectorAll \text).map -> it.style.fontSize = "#{font-size}px"
+  if background? and (svg = item.querySelector \svg) => svg.style.background = background
+  item.dataset.v = @ver
+gallery.enqueue = (line) ->
+  for item in Array.from(line.querySelectorAll \.item) => if @stale(item) and !(item in @queue) => @queue.push item
+  @run!
+gallery.run = ->
+  if @running => return
+  @running = true
+  step = ~>
+    while (item = @queue.shift!) and !@stale(item) => continue
+    if !item => return @running = false
+    @sync item
+    requestAnimationFrame step
+  requestAnimationFrame step
+gallery.set = (k, v) ->
+  @state[k] = v
+  @ver++
+  clearTimeout @timer
+  @timer = setTimeout (~>
+    Array.from(document.querySelectorAll '.gallery .line')
+      .filter -> it.style.visibility == \visible
+      .map ~> @enqueue it
+  ), 120
+
 update-text = (node) ->
   node = node or document.querySelector('#text-input')
   text-input = document.querySelector('#text-input')
   value = node.value or 'Hello World!'
-  Array.from(document.querySelectorAll('.gallery text')).map (d,i) -> d.textContent = value
+  gallery.set \text, value
   Array.from(document.querySelectorAll('#cooltext text')).map -> it.textContent = value
   text-input.value = value
 
@@ -42,15 +77,9 @@ editor.update = (name, value) ->
     if name == \background => svg.style.background = value
     if name == \fontSize => Array.from(svg.querySelectorAll(\text)).map -> it.style.fontSize = "#{value}px"
     return
-  if name == \fontSize => Array.from(document.querySelectorAll('.gallery text')).map (node,i) ->
-    node.style.fontSize = "#{value}px"
-  Array.from(document.querySelectorAll '.gallery .item').map (d,i) ~>
-    if !d.parentNode.style.opacity => return
-    type = d.getAttribute('data-type')
-    if !(@effects[type].js and @effects[type].watch) => return
-    @effects[type].js.watch @config.cur, @config.old, d
-  if name == \background =>
-    Array.from(document.querySelectorAll '.gallery svg').map (d,i) -> d.style.background = value
+  # gallery 只同步字級與背景. 舊版這裡另有一段呼叫各效果 watch 的迴圈, 但條件檢查的是
+  # effects[type].watch ( watch 實際在 .js 底下 ) 而從未執行, 移植時拿掉, 行為不變.
+  if name in <[fontSize background]> => gallery.set name, value
 
 list = [[k,v] for k,v of effects]
 html = []
@@ -149,7 +178,10 @@ document.addEventListener \scroll, (e) ->
   Array.from(document.querySelectorAll('.gallery .line')).map (d,i) ->
     box = d.getBoundingClientRect!
     if box.y + box.height < 0 or box.y > height => d.style.visibility = \hidden
-    else d.style.visibility = \visible
+    else
+      d.style.visibility = \visible
+      # 捲進畫面時補上過期的項目
+      gallery.enqueue d
     if box.y + box.height < 0 or box.y + box.height / 3 > height =>
       d.style.opacity = 0
       d.style.transform = "scale(0.9)"

@@ -34,6 +34,17 @@ servebase 移植 ( `model/v2` ) 完成後，逐項討論。
  - 延遲 + 分段更新：輸入 debounce，只更新畫面內的項目，每個 frame 更新一個，畫面外的等捲到再更新
  - 點陣快取：每個效果 render 完就轉成 img ( smiltool 已有 svg → dataurl )，之後捲動與動畫只動圖片，不再重畫 filter
 
+### 分段更新 ( 2026-11-12，已實作，src/ls/editor/index.ls 的 gallery )
+
+輸入 debounce 120ms 後只更新畫面內的項目，每個 frame 一個；畫面外的捲進畫面時再補。同樣條件下量測：
+
+ - 打字：max 267 → 100ms、p95 250 → 67ms
+ - 調字級：max 317 → 99ms
+ - 捲動：不變 ( p95 32ms )
+
+剩下 ~100ms 的 frame 是 vintage2、liquid 這類重效果單獨重畫一次的成本，分段無法再降，需要點陣快取。
+換字型仍是一次全部重畫 ( 以 css rule 套用 )，尚未處理。
+
 
 ## 2. 效果的維護方式
 
