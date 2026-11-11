@@ -1,14 +1,5 @@
-ret = do
-  debug: true
-  name: ''
-  desc: ''
-  tags: ''
-  slug: ''
-  init: ->
-  edit: do
-    fill: name: \fill, type: \color, default: \#663300
-    stroke: name: \stroke, type: \color, default: \#D7A500
-    inner-fill: name: "Inner Fill", type: \color, default: \#9f6b00
+# 參數 ( effect.yaml 的 edit ) 變化時更新 svg. n: 新的參數值, o: 舊的參數值, node: 效果的 svg 容器
+module.exports = do
   watch: (n,o, node) ->
     flood = Array.from(node.querySelectorAll('feFlood'))
     if n.fill? => flood.0.setAttribute \flood-color, n.fill
@@ -20,7 +11,3 @@ ret = do
       <rect fill="#{n.inner-fill}" width="1000" height="2"/>
       </svg> 
       """)
-
-  dom: (config) ->
-
-if module? => module.exports = ret

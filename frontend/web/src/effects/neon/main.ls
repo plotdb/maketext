@@ -1,12 +1,5 @@
-ret = do
-  name: ''
-  desc: ''
-  tags: ''
-  slug: ''
-  init: ->
-  edit: do
-    color: name: \color, type: \color, default: \#00ff2f
-    stroke: name: \stroke, type: \number, default: 1, min: 0.1, max: 10, step: 0.1
+# 參數 ( effect.yaml 的 edit ) 變化時更新 svg. n: 新的參數值, o: 舊的參數值, node: 效果的 svg 容器
+module.exports = do
   watch: (n,o, node) ->
     if n.color? =>
       c2 = d3.hcl(n.color).brighter(3).hex!
@@ -16,7 +9,3 @@ ret = do
       )
     if n.stroke? =>
       node.querySelector(\text).setAttribute(\stroke-width, n.stroke)
-
-  dom: (config) ->
-
-if module? => module.exports = ret

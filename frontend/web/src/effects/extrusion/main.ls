@@ -1,13 +1,5 @@
-ret = do
-  name: 'Extrusion'
-  desc: ''
-  tags: ''
-  slug: ''
-  init: ->
-  edit: do
-    fill: name: \fill, type: \color, default: \#ccc
-    extrusion: name: \extrusion, type: \color, default: \#444
-    offset: name: \offset, type: \number, default: 8, min: 0, max: 16
+# 參數 ( effect.yaml 的 edit ) 變化時更新 svg. n: 新的參數值, o: 舊的參數值, node: 效果的 svg 容器
+module.exports = do
   watch: (n,o, node) ->
     if n.fill != o.fill => node.querySelector('text').setAttribute \fill, n.fill
     if n.extrusion? => node.querySelector('feFlood').setAttribute \flood-color, n.extrusion
@@ -20,7 +12,3 @@ ret = do
       conv.setAttribute(\kernelMatrix, [i for i from 0 til n.offset].map((i)-> 
         [j for j from 0 til n.offset].map((j)-> if i == j => 1 else 0).join(' ')
       ).join(' '))
-      
-  dom: (config) ->
-
-if module? => module.exports = ret

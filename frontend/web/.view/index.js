@@ -299,7 +299,7 @@ pug_mixins["script"]([
       {name: "@plotdb/opentype.js", path: "dist/opentype.min.js"},
       {name: "@xlfont/load"},
       {name: "@xlfont/choose"},
-      "/js/effects.js"
+      "/js/effects/index.js"
     ], {pack: true});
 var isApi = false
 pug_mixins["xfc"] = pug_interp = function(){

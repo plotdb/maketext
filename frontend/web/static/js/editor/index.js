@@ -1,14 +1,9 @@
 history.scrollRestoration = 'manual';
 $(document).ready(function(){
-  var k, ref$, v, ret, editor, gallery, updateText, scrollto, list, res$, html, i$, to$, i, code, j$, j, d, bk, thumb, initSlider, initColorpicker, clusterize, maketext, queries;
-  for (k in ref$ = effects) {
-    v = ref$[k];
-    ret = null;
-    eval(v.js);
-    if (ret) {
-      v.js = ret;
-    }
-  }
+  var svgHtml, editor, gallery, updateText, scrollto, list, res$, k, ref$, v, html, i$, to$, i, code, j$, j, d, thumb, initSlider, initColorpicker, openEffect, clusterize, maketext, queries;
+  svgHtml = function(e){
+    return e.html.replace("<svg", "<svg width='100%' height='100%'");
+  };
   window.editor = editor = {
     effects: effects,
     toggle: function(v){
@@ -43,23 +38,39 @@ $(document).ready(function(){
     return +(item.dataset.v || 0) !== this.ver;
   };
   gallery.sync = function(item){
-    var ref$, text, fontSize, background, svg;
-    item.classList.add('live');
-    ref$ = this.state, text = ref$.text, fontSize = ref$.fontSize, background = ref$.background;
-    if (text != null) {
-      Array.from(item.querySelectorAll('text')).map(function(it){
-        return it.textContent = text;
-      });
-    }
-    if (fontSize != null) {
-      Array.from(item.querySelectorAll('text')).map(function(it){
-        return it.style.fontSize = fontSize + "px";
-      });
-    }
-    if (background != null && (svg = item.querySelector('svg'))) {
-      svg.style.background = background;
-    }
-    return item.dataset.v = this.ver;
+    var ver, this$ = this;
+    ver = this.ver;
+    return mteffect.load(item.dataset.type).then(function(e){
+      var inner, ref$, text, fontSize, background;
+      inner = item.querySelector('.inner');
+      if (!inner.querySelector('svg')) {
+        inner.insertAdjacentHTML('beforeend', svgHtml(e));
+      }
+      item.classList.add('live');
+      ref$ = this$.state, text = ref$.text, fontSize = ref$.fontSize, background = ref$.background;
+      if (text != null) {
+        Array.from(item.querySelectorAll('text')).map(function(it){
+          return it.textContent = text;
+        });
+      }
+      if (fontSize != null) {
+        Array.from(item.querySelectorAll('text')).map(function(it){
+          return it.style.fontSize = fontSize + "px";
+        });
+      }
+      if (background != null) {
+        item.querySelector('svg').style.background = background;
+      }
+      return item.dataset.v = ver;
+    })['catch'](function(e){
+      return console.warn("[maketext] gallery:", e);
+    });
+  };
+  gallery.fallback = function(img){
+    var item;
+    item = img.closest('.item');
+    item.dataset.v = -1;
+    return this.enqueue(item.closest('.line'));
   };
   gallery.enqueue = function(line){
     var i$, ref$, len$, item;
@@ -83,8 +94,9 @@ $(document).ready(function(){
       if (!item) {
         return this$.running = false;
       }
-      this$.sync(item);
-      return requestAnimationFrame(step);
+      return this$.sync(item).then(function(){
+        return requestAnimationFrame(step);
+      });
     };
     return requestAnimationFrame(step);
   };
@@ -167,11 +179,8 @@ $(document).ready(function(){
       if (!d) {
         break;
       }
-      d[1].html = d[1].html.replace("<svg", "<svg width='100%' height='100%'");
-      d[1].html = d[1].html.replace("0 0 500 150", "0 0 500 150");
-      bk = (/^<svg[^>]*style="background:\s*([^;"]+)/.exec(d[1].html) || [])[1] || '';
-      thumb = "<img class=\"thumb\" src=\"/assets/thumb/" + d[0] + ".webp\" loading=\"lazy\" alt=\"" + d[0] + "\"\nonerror=\"this.closest('.item').classList.add('live')\">";
-      code += "<div class=\"item\" data-type=\"" + d[0] + "\"><div class=\"inner\" style=\"background:" + bk + "\">" + thumb + d[1].html + "</div></div>";
+      thumb = "<img class=\"thumb\" src=\"/assets/thumb/" + d[0] + ".webp\" loading=\"lazy\" alt=\"" + d[0] + "\"\nonerror=\"editor.gallery.fallback(this)\">";
+      code += "<div class=\"item\" data-type=\"" + d[0] + "\"><div class=\"inner\" style=\"background:" + d[1].bk + "\">" + thumb + "</div></div>";
     }
     html.push("<div class=\"line\" style=\"visibility:hidden\">" + code + "</div>");
   }
@@ -202,7 +211,7 @@ $(document).ready(function(){
     });
   };
   document.querySelector('.gallery').addEventListener('click', function(e){
-    var target, type, html, svg, bkcolor, effect, options, colors, k, v, ref$, node, ref1$, results$ = [];
+    var target, type;
     target = e.target;
     if (!(target && target.classList && target.classList.contains('item'))) {
       return;
@@ -211,7 +220,15 @@ $(document).ready(function(){
     if (!type) {
       return;
     }
-    html = effects[type].html;
+    return mteffect.load(type).then(function(e){
+      return openEffect(type, e);
+    })['catch'](function(e){
+      return console.warn("[maketext] editor:", e);
+    });
+  });
+  openEffect = function(type, e){
+    var html, svg, bkcolor, effect, options, colors, k, v, ref$, node, ref1$, results$ = [];
+    html = svgHtml(e);
     html = html.replace(/id="([^"]+)"/g, 'id="editing-$1"');
     html = html.replace(/url\(#([^)]+)\)/g, 'url(#editing-$1)');
     document.querySelector('#cooltext').innerHTML = html;
@@ -283,7 +300,7 @@ $(document).ready(function(){
       results$.push(editor.update(k, v));
     }
     return results$;
-  });
+  };
   clusterize = new Clusterize({
     rows: html,
     scrollElem: document.querySelector('body'),

@@ -1,0 +1,22 @@
+# 效果描述 ( 名稱 / 排序 / 參數等 ), 欄位說明見 tool/maketext/build-effects.ls
+order: 190
+edit:
+  color1:
+    name: shadow
+    type: color
+    default: '#a0d5ff'
+  color2:
+    name: sparkling
+    type: color
+    default: 'rgba(100%,100%,100%,0.34)'
+  color3:
+    name: fill
+    type: color
+    default: '#0067ff'
+  seed:
+    name: Random Seed
+    type: number
+    default: 1
+    min: 1
+    max: 100
+    step: 1

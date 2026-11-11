@@ -35,7 +35,7 @@ html, body { margin: 0; background: transparent; }
 \#box { width: #{W}px; height: #{H}px; }
 \#box svg { display: block; }
 </style>
-<script src="#url/js/effects.js"></script>
+<script src="#url/js/effects/index.js"></script>
 </head><body><div id="box"></div></body></html>
 """
 
@@ -57,8 +57,8 @@ main = ->>
     if names.length => list = list.filter -> it in names
     for name in list =>
       render = (name) ->
-        html = effects[name].html.replace '<svg', "<svg width='100%' height='100%'"
-        document.querySelector('#box').innerHTML = html
+        mteffect.load(name).then (e) ->
+          document.querySelector('#box').innerHTML = e.html.replace '<svg', "<svg width='100%' height='100%'"
       await page.evaluate render, name
       # 等 feImage 等資源載入與 filter render
       await page.wait-for-network-idle {idle-time: 100}

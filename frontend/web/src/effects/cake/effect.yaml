@@ -1,0 +1,15 @@
+# 效果描述 ( 名稱 / 排序 / 參數等 ), 欄位說明見 tool/maketext/build-effects.ls
+order: 350
+edit:
+  fill:
+    name: fill
+    type: color
+    default: '#ffd800'
+  shadow:
+    name: shadow
+    type: color
+    default: '#2d1500'
+  side:
+    name: side color
+    type: color
+    default: '#894619'

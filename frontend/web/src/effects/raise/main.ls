@@ -1,15 +1,5 @@
-ret = do
-  name: ''
-  desc: ''
-  tags: ''
-  slug: ''
-  init: ->
-  edit: do
-    color1: name: \color1, type: \color, default: \#ccc
-    color2: name: \color2, type: \color, default: \#777
+# 參數 ( effect.yaml 的 edit ) 變化時更新 svg. n: 新的參數值, o: 舊的參數值, node: 效果的 svg 容器
+module.exports = do
   watch: (n,o, node) ->
     node.querySelectorAll('feFlood').0.setAttribute \flood-color, n.color1
     node.querySelectorAll('feFlood').1.setAttribute \flood-color, n.color2
-  dom: (config) ->
-
-if module? => module.exports = ret

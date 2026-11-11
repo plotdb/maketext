@@ -1,0 +1,19 @@
+# 效果描述 ( 名稱 / 排序 / 參數等 ), 欄位說明見 tool/maketext/build-effects.ls
+order: 170
+edit:
+  fill:
+    name: fill
+    type: color
+    default: '#000000'
+  stroke:
+    name: stroke
+    type: color
+    default: '#88e0eb'
+  innerShadow:
+    name: inner shadow
+    type: color
+    default: '#fff'
+  reflect:
+    name: reflect
+    type: color
+    default: '#fff'

@@ -1,0 +1,25 @@
+# 效果描述 ( 名稱 / 排序 / 參數等 ), 欄位說明見 tool/maketext/build-effects.ls
+order: 50
+edit:
+  color1:
+    name: color1
+    type: color
+    default: '#f92'
+  color2:
+    name: color2
+    type: color
+    default: '#e00'
+  direction:
+    name: direction
+    type: number
+    default: 24
+    min: 0
+    max: 360
+    step: 1
+  density:
+    name: density
+    type: number
+    default: 4
+    min: 1
+    max: 10
+    step: 0.1

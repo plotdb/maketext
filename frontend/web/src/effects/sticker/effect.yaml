@@ -1,0 +1,28 @@
+# 效果描述 ( 名稱 / 排序 / 參數等 ), 欄位說明見 tool/maketext/build-effects.ls
+order: 110
+edit:
+  color1:
+    name: color1
+    type: color
+    default: '#fd9'
+  color2:
+    name: color2
+    type: color
+    default: '#9df'
+  color3:
+    name: stroke color
+    type: color
+    default: '#000'
+  stroke:
+    name: stroke width
+    type: number
+    default: '2.5'
+    min: 0
+    max: 10
+  direction:
+    name: direction
+    type: number
+    default: 90
+    min: 0
+    max: 360
+    step: 1

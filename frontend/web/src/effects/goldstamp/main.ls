@@ -1,18 +1,6 @@
-ret = do
-  name: ''
-  desc: ''
-  tags: ''
-  slug: ''
-  init: ->
-  edit: do
-    fill: name: \fill, type: \color, default: \#999569
-    outline: name: \outline, type: \color, default: \#797549
-    width: name: "outline width", type: \number, default: 2, min: 1, max: 5
+# 參數 ( effect.yaml 的 edit ) 變化時更新 svg. n: 新的參數值, o: 舊的參數值, node: 效果的 svg 容器
+module.exports = do
   watch: (n,o, node) ->
     if n.fill != o.fill => node.querySelector('text').setAttribute('fill', n.fill)
     if n.outline? => node.querySelector('feFlood').setAttribute('flood-color', n.outline)
     if n.width? => node.querySelector('feMorphology').setAttribute('radius', n.width)
-
-  dom: (config) ->
-
-if module? => module.exports = ret

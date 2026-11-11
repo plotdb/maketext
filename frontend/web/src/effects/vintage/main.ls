@@ -1,16 +1,5 @@
-ret = do
-  name: ''
-  desc: ''
-  tags: ''
-  slug: ''
-  init: ->
-  edit: do
-    fill: name: \fill, type: \color, default: \#f00
-    stroke: name: \stroke, type: \color, default: \#fff
-    extrusion: name: \extrusion, type: \color, default: \#900
-    inner-shadow: name: 'inner shadow', type: \color, default: \#000
-    shadow: name: \shadow, type: \color, default: \#444
-    depth: name: \depth, type: \number, default: 9, min: 1, max: 13
+# 參數 ( effect.yaml 的 edit ) 變化時更新 svg. n: 新的參數值, o: 舊的參數值, node: 效果的 svg 容器
+module.exports = do
   watch: (n,o, node) ->
     floods = node.querySelectorAll('feFlood')
     if n.extrusion? => floods.0.setAttribute \flood-color, n.extrusion # extrude color
@@ -32,8 +21,3 @@ ret = do
           ..setAttribute \dy, Math.ceil(n.depth * 0.5) * (it + 1)
       d = n.depth * -1
       node.querySelector(\g).setAttribute \transform, "translate(#d,#d)"
-
-
-  dom: (config) ->
-
-if module? => module.exports = ret

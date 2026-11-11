@@ -62,6 +62,17 @@ gallery 一開始顯示 build 時以固定文字、預設字型 render 的 webp 
 
 目標是擴充到上百組，需要評估能撐到這個規模的結構與工具。
 
+### 描述檔與拆分 ( 2026-11-12，已實作 )
+
+ - 每個效果：`effect.yaml` ( 名稱 / 標籤 / order / debug / edit 參數 ) + `index.pug` ( svg ) + `main.ls` ( 只有 watch )。
+   原本 main.ls 的 `ret = do` 裡 name / desc / tags / slug 幾乎全空、init / dom 全空，只搬了有內容的欄位；
+   `config.json` 的排序改為各效果的 `order` ( 依當時線上順序，間隔 10 )
+ - build-effects.ls 輸出 `static/js/effects/index.js` ( 清單 4KB，隨頁面載入 ) 與 `<name>.js` ( 效果本體，共 160KB )，
+   本體在第一次需要即時 render 或打開 editor 時才以 `mteffect.load` 載入，前端不再 eval
+ - 轉換後與舊輸出比對：順序、html、edit、watch 編譯結果全部相同；縮圖重產結果與之前逐位元相同
+
+尚未做：開發用的效果預覽頁 ( 新增 / 調整效果時用 )。
+
 
 ## 3. 效果自帶預設字型
 

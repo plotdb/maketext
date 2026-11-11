@@ -1,15 +1,5 @@
-ret = do
-  name: ''
-  desc: ''
-  tags: ''
-  slug: ''
-  init: ->
-  edit: do
-    fill: name: \fill, type: \color, default: \#444
-    redfilter: name: 'Red Filter', type: \color, default: \#f00
-    bluefilter: name: 'Blue Filter', type: \color, default: \#00f
-    offsetX: name: 'offset X', type: \number, default: 5, min: -20, max: 20
-    offsetY: name: 'offset Y', type: \number, default: 1, min: -20, max: 20
+# 參數 ( effect.yaml 的 edit ) 變化時更新 svg. n: 新的參數值, o: 舊的參數值, node: 效果的 svg 容器
+module.exports = do
   watch: (n, o, node) ->
     if n.fill != o.fill => node.querySelector('text').setAttribute \fill, n.fill
     node.querySelectorAll('feFlood').0.setAttribute \flood-color, n.redfilter
@@ -21,7 +11,3 @@ ret = do
     if n.offsetY =>
       offsets.0.setAttribute \dy, -n.offsetY
       offsets.1.setAttribute \dy, n.offsetY
-
-  dom: (config) ->
-
-if module? => module.exports = ret

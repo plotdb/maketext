@@ -1,14 +1,5 @@
-ret = do
-  name: ''
-  desc: ''
-  tags: ''
-  slug: ''
-  init: ->
-  edit: do
-    color1: name: "color1", type: \color, default: \#f92
-    color2: name: "color2", type: \color, default: \#e00
-    direction: name: \direction, type: \number, default: 24, min: 0, max: 360, step: 1
-    density: name: \density, type: \number, default: 4, min: 1, max: 10, step: 0.1
+# 參數 ( effect.yaml 的 edit ) 變化時更新 svg. n: 新的參數值, o: 舊的參數值, node: 效果的 svg 容器
+module.exports = do
   watch: (n,o, node) ->
     stop = node.querySelectorAll('stop')
     if n.color1? => stop.0.setAttribute \stop-color, n.color1
@@ -33,7 +24,3 @@ ret = do
       code = btoa """<svg xmlns="http://www.w3.org/2000/svg" width="2000px" height="1000px"><defs><pattern id="pattern" patternUnits="userSpaceOnUse" x="0" y="0" width="#w" height="#w"><path d="#d" stroke="#000" stroke-width="#s"/></pattern></defs><rect x="0" y="0" width="100%" height="100%" fill="url(\#pattern)"/></svg>"""
       node.querySelector \feImage
         .setAttributeNS \http://www.w3.org/1999/xlink, \href, "data:image/svg+xml;base64,#code"
-
-  dom: (config) ->
-
-if module? => module.exports = ret

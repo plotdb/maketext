@@ -1,18 +1,5 @@
-ret = do
-  name: ''
-  desc: ''
-  tags: ''
-  slug: ''
-  init: ->
-  edit: do
-    color1: name: \color1, type: \color, default: \#ffffff
-    color2: name: \color2, type: \color, default: \#fec918
-    shadow: name: \shadow, type: \color, default: \#000000
-    direction: name: \direction, type: \number, default: 41, min: 0, max: 360, step: 1
-    offsetx: name: 'shadow dx', type: \number, default: -1.2, min: -10, max: 10, step: 0.1
-    offsety: name: 'shadow dy', type: \number, default: -1.2, min: -10, max: 10, step: 0.1
-    stddev: name: 'shadow spread', type: \number, default: 2, min: 0, max: 20, step: 0.01
-    background: default: \#1db593
+# 參數 ( effect.yaml 的 edit ) 變化時更新 svg. n: 新的參數值, o: 舊的參數值, node: 效果的 svg 容器
+module.exports = do
   watch: (n,o, node) ->
     gradients = node.querySelectorAll('linearGradient')
     Array.from(gradients.0.querySelectorAll('stop')).map (d,i) -> d.setAttribute \stop-color, n.shadow
@@ -33,6 +20,3 @@ ret = do
     node.querySelectorAll \g .1 .setAttribute \transform, "translate(#dx, #dy)"
     Array.from(node.querySelectorAll \feGaussianBlur).map (d,i) ->
       d.setAttribute \stdDeviation, n.stddev / (i + 1)
-  dom: (config) ->
-
-if module? => module.exports = ret

@@ -1,40 +1,82 @@
 #!/usr/bin/env lsc
-# 把 frontend/web/src/effects/<name>/{index.pug,main.ls} 打包成 static/js/effects.js
+# 打包 frontend/web/src/effects/<name>/ 下的效果
 #
 #   lsc tool/maketext/build-effects.ls        # build 一次
 #   lsc tool/maketext/build-effects.ls -w     # 監看變更並重 build
 #
-# 輸出格式沿用舊站 ( engine/watch.ls ): `var effects = {<name>: {html, js}}`,
-# js 是編譯後的原始碼字串, 前端以 eval 取得 `ret` ( 見 src/pug/editor/index.ls ).
-require! <[fs path pug livescript chokidar]>
+# 每個效果一個資料夾:
+#
+#  - effect.yaml: 效果描述
+#    - name: 顯示名稱 ( 選用 )
+#    - desc, tags: 說明與標籤 ( 選用 )
+#    - order: 排序, 小的在前. 以 10 為間隔, 方便插入
+#    - debug: true 時不打包
+#    - edit: 可調參數, { <key>: {name, type: color | number, default, min, max, step} }
+#  - index.pug: 效果的 svg ( viewBox 0 0 500 150 ), 可 include 同目錄的檔案
+#  - main.ls: `module.exports = watch: (n, o, node) -> ...`, 參數變化時更新 svg
+#
+# 輸出到 frontend/web/static/js/effects/:
+#
+#  - index.js: 效果清單 `effects` ( 依 order 排序, 含背景色與版本 hash ) 與載入器 `mteffect`.
+#    清單很小, 隨頁面載入; gallery 一開始只顯示縮圖 ( build-thumbs.ls ), 不需要效果本體
+#  - <name>.js: 效果本體 ( svg 與 watch ), 第一次需要即時 render 時才以 mteffect.load(name) 載入
+require! <[fs path crypto pug livescript js-yaml chokidar]>
 
 root = path.resolve __dirname, '../../frontend/web'
 src = path.join root, 'src/effects'
-des = path.join root, 'static/js/effects.js'
+des = path.join root, 'static/js/effects'
+
+# 載入器: 效果本體以 script 載入, 檔案內呼叫 mteffect.register 把 html / edit / watch 掛回 effects[name]
+loader = '''
+var mteffect = {
+  _p: {},
+  register: function(name, data, fn) {
+    var m = {exports: {}}, e = effects[name] || (effects[name] = {});
+    fn(m);
+    e.html = data.html;
+    e.js = {edit: data.edit, watch: m.exports.watch};
+  },
+  load: function(name) {
+    var e = effects[name];
+    if (!e) { return Promise.reject(new Error("effect not found: " + name)); }
+    if (e.html) { return Promise.resolve(e); }
+    if (this._p[name]) { return this._p[name]; }
+    return this._p[name] = new Promise(function(res, rej) {
+      var s = document.createElement("script");
+      s.src = "/js/effects/" + name + ".js?v=" + e.v;
+      s.onload = function() { res(e); };
+      s.onerror = function() { delete mteffect._p[name]; rej(new Error("failed to load effect: " + name)); };
+      document.head.appendChild(s);
+    });
+  }
+};
+'''
 
 build = ->
-  config = JSON.parse(fs.read-file-sync path.join(src, 'config.json'))
-  order = config.order or []
-  names = fs.readdir-sync src
-    .filter -> fs.stat-sync(path.join src, it).is-directory!
-  # 沿用舊站排序: 不在 order 內的排最前面 ( indexOf = -1 ), order 越後面越前面
-  names.sort (a, b) -> order.indexOf(b) - order.indexOf(a)
-  obj = {}
-  for name in names =>
-    dir = path.join src, name
-    item = {}
-    if fs.exists-sync(f = path.join dir, 'main.ls') =>
-      code = livescript.compile fs.read-file-sync(f).toString!, {bare: true}
-      ret = null
-      eval code
-      if ret and ret.debug => continue
-      item.js = code
-    if fs.exists-sync(f = path.join dir, 'index.pug') =>
-      item.html = pug.render-file f
-    obj[name] = item
-  fs.mkdir-sync path.dirname(des), {recursive: true}
-  fs.write-file-sync des, "var effects = #{JSON.stringify(obj)}"
-  console.log "[build-effects] #{Object.keys(obj).length} effects -> #{path.relative process.cwd!, des}"
+  list = fs.readdir-sync src
+    .filter -> fs.exists-sync path.join(src, it, 'effect.yaml')
+    .map (name) ->
+      dir = path.join src, name
+      {name, dir, meta: js-yaml.safe-load(fs.read-file-sync path.join(dir, 'effect.yaml')) or {}}
+    .filter -> !it.meta.debug
+  list.sort (a, b) -> (a.meta.order ? 0) - (b.meta.order ? 0) or (if a.name > b.name => 1 else -1)
+  fs.mkdir-sync des, {recursive: true}
+  index = {}
+  for {name, dir, meta} in list =>
+    html = pug.render-file path.join(dir, 'index.pug')
+    code = if fs.exists-sync(f = path.join dir, 'main.ls') =>
+      livescript.compile fs.read-file-sync(f).toString!, {bare: true}
+    else ''
+    body = "mteffect.register(#{JSON.stringify name}, #{JSON.stringify {html, edit: meta.edit or {}}}, function(module) {\n#code\n});\n"
+    fs.write-file-sync path.join(des, "#name.js"), body
+    # 背景色: 縮圖 object-fit: contain 時容器補同色 ( src/ls/editor/index.ls )
+    bk = (/^<svg[^>]*style="background:\s*([^;"]+)/.exec(html) or [])[1] or ''
+    index[name] = {bk, v: crypto.create-hash(\md5).update(body).digest(\hex).slice(0, 8)}
+    for k in <[name tags]> => if meta[k] => index[name][k] = meta[k]
+  # 清掉已移除或改為 debug 的效果
+  for f in fs.readdir-sync(des) => if f != 'index.js' and !index[f.replace(/\.js$/, '')] => fs.unlink-sync path.join(des, f)
+  fs.write-file-sync path.join(des, 'index.js'), "var effects = #{JSON.stringify index};\n#loader"
+  console.log "[build-effects] #{list.length} effects -> #{path.relative process.cwd!, des}"
 
 run = -> try build! catch e => console.error "[build-effects] failed:", e.message
 run!

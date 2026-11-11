@@ -3,10 +3,9 @@ history.scrollRestoration = \manual
 
 <- $ document .ready
 
-for k,v of effects =>
-  ret = null
-  eval(v.js)
-  if ret => v.js = ret
+# 效果清單 ( effects ) 與載入器 ( mteffect ) 來自 /js/effects/index.js ( tool/maketext/build-effects.ls ).
+# 效果本體 ( svg 與 watch ) 在需要即時 render 時才以 mteffect.load 載入.
+svg-html = (e) -> e.html.replace "<svg", "<svg width='100%' height='100%'"
 
 window.editor = editor = do
   effects: effects
@@ -28,12 +27,23 @@ window.editor = editor = do
 gallery = state: {fontSize: 64, font: 'Sansita One'}, ver: 0, queue: [], timer: null, running: false
 gallery.stale = (item) -> +(item.dataset.v or 0) != @ver
 gallery.sync = (item) ->
-  item.classList.add \live
-  {text, font-size, background} = @state
-  if text? => Array.from(item.querySelectorAll \text).map -> it.textContent = text
-  if font-size? => Array.from(item.querySelectorAll \text).map -> it.style.fontSize = "#{font-size}px"
-  if background? and (svg = item.querySelector \svg) => svg.style.background = background
-  item.dataset.v = @ver
+  ver = @ver
+  mteffect.load item.dataset.type
+    .then (e) ~>
+      inner = item.querySelector \.inner
+      if !inner.querySelector(\svg) => inner.insertAdjacentHTML \beforeend, svg-html(e)
+      item.classList.add \live
+      {text, font-size, background} = @state
+      if text? => Array.from(item.querySelectorAll \text).map -> it.textContent = text
+      if font-size? => Array.from(item.querySelectorAll \text).map -> it.style.fontSize = "#{font-size}px"
+      if background? => item.querySelector(\svg).style.background = background
+      item.dataset.v = ver
+    .catch (e) -> console.warn "[maketext] gallery:", e
+# 縮圖載入失敗 ( 例: 新效果還沒產縮圖 ) 時改用即時 render
+gallery.fallback = (img) ->
+  item = img.closest \.item
+  item.dataset.v = -1
+  @enqueue item.closest(\.line)
 gallery.enqueue = (line) ->
   for item in Array.from(line.querySelectorAll \.item) => if @stale(item) and !(item in @queue) => @queue.push item
   @run!
@@ -43,8 +53,7 @@ gallery.run = ->
   step = ~>
     while (item = @queue.shift!) and !@stale(item) => continue
     if !item => return @running = false
-    @sync item
-    requestAnimationFrame step
+    @sync(item).then -> requestAnimationFrame step
   requestAnimationFrame step
 gallery.set = (k, v) ->
   if @state[k] == v => return
@@ -95,16 +104,12 @@ for i from 0 til list.length by 2 =>
   for j from 0 to 1 =>
     d = list[i + j]
     if !d => break
-    d.1.html = d.1.html.replace "<svg", "<svg width='100%' height='100%'"
-    #d.1.html = d.1.html.replace "0 0 500 150", "-10 -10 520 170"
-    d.1.html = d.1.html.replace "0 0 500 150", "0 0 500 150"
     # 預設顯示預先 render 的縮圖 ( tool/maketext/build-thumbs.ls ), 改過文字 / 字級 / 背景 / 字型後
-    # 才切成即時 render 的 svg ( .live, 見 gallery.sync ). 縮圖缺漏時直接用 svg.
-    # 容器的背景色取自效果 svg 的背景, 讓縮圖 object-fit: contain 多出來的邊同色.
-    bk = (/^<svg[^>]*style="background:\s*([^;"]+)/.exec(d.1.html) or [])[1] or ''
+    # 才載入效果本體, 切成即時 render 的 svg ( .live, 見 gallery.sync ). 縮圖缺漏時直接用 svg.
+    # 容器的背景色是效果 svg 的背景 ( build 時取出 ), 讓縮圖 object-fit: contain 多出來的邊同色.
     thumb = """<img class="thumb" src="/assets/thumb/#{d.0}.webp" loading="lazy" alt="#{d.0}"
-    onerror="this.closest('.item').classList.add('live')">"""
-    code += """<div class="item" data-type="#{d.0}"><div class="inner" style="background:#{bk}">#thumb#{d.1.html}</div></div>"""
+    onerror="editor.gallery.fallback(this)">"""
+    code += """<div class="item" data-type="#{d.0}"><div class="inner" style="background:#{d.1.bk}">#thumb</div></div>"""
   html.push """<div class="line" style="visibility:hidden">#code</div>"""
 
 
@@ -132,7 +137,13 @@ document.querySelector \.gallery .addEventListener \click, (e) ->
   if !(target and target.classList  and target.classList.contains \item) => return
   type = target.getAttribute \data-type
   if !type => return
-  html = effects[type].html
+  mteffect.load type
+    .then (e) -> open-effect type, e
+    .catch (e) -> console.warn "[maketext] editor:", e
+
+# 打開 editor 編輯指定的效果 ( e: 已載入的效果 )
+open-effect = (type, e) ->
+  html = svg-html e
   # for Safari: duplicate id makes effect gone, so we rename them.
   html = html.replace /id="([^"]+)"/g, 'id="editing-$1"'
   html = html.replace /url\(#([^)]+)\)/g, 'url(#editing-$1)'

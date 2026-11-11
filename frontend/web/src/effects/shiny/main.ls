@@ -1,14 +1,5 @@
-ret = do
-  name: ''
-  desc: ''
-  tags: ''
-  slug: ''
-  init: ->
-  edit: do
-    color1: name: \color1, type: \color, default: \#ffb200
-    color2: name: \color2, type: \color, default: \#e10057
-    color3: name: \color3, type: \color, default: \#5A1A80
-    direction: name: \direction, type: \number, default: 24, min: 0, max: 360, step: 1
+# 參數 ( effect.yaml 的 edit ) 變化時更新 svg. n: 新的參數值, o: 舊的參數值, node: 效果的 svg 容器
+module.exports = do
   watch: (n,o, node) ->
     Array.from(node.querySelectorAll 'linearGradient stop').map (d,i) ->
       if i > 2 => return
@@ -27,7 +18,3 @@ ret = do
       ..setAttribute \y1, y1
       ..setAttribute \x2, x2
       ..setAttribute \y2, y2
-
-  dom: (config) ->
-
-if module? => module.exports = ret

@@ -1,15 +1,5 @@
-ret = do
-  name: ''
-  desc: ''
-  tags: ''
-  slug: ''
-  init: ->
-  edit: do
-    color1: name: \color1, type: \color, default: \#ee4208
-    color2: name: \color2, type: \color, default: \#4139ff
-    stroke: name: \stroke, type: \color, default: \#000000
-    shadow: name: \shadow, type: \color, default: \#000000
-    direction: name: \direction, type: \number, default: 90, min: 0, max: 360, step: 1
+# 參數 ( effect.yaml 的 edit ) 變化時更新 svg. n: 新的參數值, o: 舊的參數值, node: 效果的 svg 容器
+module.exports = do
   watch: (n,o, node) ->
     Array.from(node.querySelectorAll('stop')).map (d,i) ->
       if n["color#{i + 1}"]? => d.setAttribute \stop-color, n["color#{i + 1}"]
@@ -26,6 +16,3 @@ ret = do
       ..setAttribute \y1, y1
       ..setAttribute \x2, x2
       ..setAttribute \y2, y2
-  dom: (config) ->
-
-if module? => module.exports = ret
