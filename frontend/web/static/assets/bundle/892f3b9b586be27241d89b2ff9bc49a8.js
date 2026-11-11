@@ -1,6 +1,6 @@
 history.scrollRestoration = 'manual';
 $(document).ready(function(){
-  var svgHtml, editor, gallery, updateText, scrollto, list, res$, k, ref$, v, html, i$, to$, i, code, j$, j, d, thumb, initSlider, initColorpicker, openEffect, clusterize, maketext, queries;
+  var svgHtml, editor, gallery, updateText, scrollto, list, res$, k, ref$, v, html, i$, to$, i, code, j$, j, d, thumb, link, initSlider, initColorpicker, openEffect, clusterize, maketext, queries;
   svgHtml = function(e){
     return e.html.replace("<svg", "<svg width='100%' height='100%'");
   };
@@ -189,7 +189,8 @@ $(document).ready(function(){
         break;
       }
       thumb = "<img class=\"thumb\" src=\"/assets/thumb/" + d[0] + ".webp\" loading=\"lazy\" alt=\"" + d[0] + "\"\nonerror=\"editor.gallery.fallback(this)\">";
-      code += "<div class=\"item\" data-type=\"" + d[0] + "\"><div class=\"inner\" style=\"background:" + d[1].bk + "\">" + thumb + "</div></div>";
+      link = "<a class=\"mt-effect-link\" href=\"/effect/" + d[0] + "/\" title=\"" + d[0] + " text effect\">&#8599;</a>";
+      code += "<div class=\"item\" data-type=\"" + d[0] + "\"><div class=\"inner\" style=\"background:" + d[1].bk + "\">" + thumb + "</div>" + link + "</div>";
     }
     html.push("<div class=\"line\" style=\"visibility:hidden\">" + code + "</div>");
   }
@@ -235,6 +236,17 @@ $(document).ready(function(){
       return console.warn("[maketext] editor:", e);
     });
   });
+  window.openEffect = function(type){
+    var node;
+    if ((node = document.querySelector('#landing input')).value) {
+      updateText(node);
+    }
+    return mteffect.load(type).then(function(e){
+      return openEffect(type, e);
+    })['catch'](function(e){
+      return console.warn("[maketext] editor:", e);
+    });
+  };
   openEffect = function(type, e){
     var html, svg, bkcolor, effect, options, colors, k, v, ref$, node, ref1$, results$ = [];
     html = svgHtml(e);

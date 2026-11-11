@@ -4,6 +4,7 @@
 doctype html
 - var debug = false
 - var thumbnail = "https://maketext.io/assets/img/thumbnail.png"
+- var thumb = {type: "image/png", width: "1200", height: "630"}
 - var favicon = "/assets/img/favicon.png"
 - var title = "Cool Texts Generator in SVG / PNG with 30+ Effects x 800+ Fonts · maketext.io"
 - var description = "style your words and logos with tons of fonts and customizable effects within seconds."
@@ -21,9 +22,9 @@ html(lang="en")
     meta(name="description", content=description)
     meta(property="og:locale", content="en_US")
     meta(property="og:image", content=thumbnail)
-    meta(property="og:image:type", content="image/png")
-    meta(property="og:image:width", content="1200")
-    meta(property="og:image:height", content="630")
+    meta(property="og:image:type", content=thumb.type)
+    meta(property="og:image:width", content=thumb.width)
+    meta(property="og:image:height", content=thumb.height)
     meta(property="og:type", content="website")
     meta(property="og:url", content=url)
     meta(property="og:title", content=title)

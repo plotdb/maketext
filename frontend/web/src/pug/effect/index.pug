@@ -1,0 +1,23 @@
+//- view
+//- 單一效果的獨立頁 /effect/<name>/ ( backend/maketext/index.ls ).
+//- locals: effect ( static/js/effects/meta.json 的一筆: key, label, desc, tags, font )
+extends /modules/mt/base.pug
+block vars
+  -
+    title = effect.label + " Text Effect - Free Online Generator in SVG / PNG · maketext.io";
+    description = effect.desc || ("make " + effect.label.toLowerCase() + " text effect online and download it as SVG or PNG. customize colors and fonts within seconds.");
+    url = "https://maketext.io/effect/" + effect.key + "/";
+    thumbnail = "https://maketext.io/assets/thumb/" + effect.key + ".webp";
+    thumb = {type: "image/webp", width: "980", height: "320"};
+block body
+  - var isApi = false
+  include /modules/mt/landing.pug
+  +nbr(5)
+  include /modules/mt/footer.pug
+block script
+  +script([
+    "/js/editor/index.js",
+    "/js/editor/palette.js",
+    "/js/editor/font.js",
+    "/js/editor/download.js"
+  ], {pack: true})

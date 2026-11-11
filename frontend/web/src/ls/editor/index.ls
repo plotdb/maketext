@@ -112,7 +112,9 @@ for i from 0 til list.length by 2 =>
     # 容器的背景色是效果 svg 的背景 ( build 時取出 ), 讓縮圖 object-fit: contain 多出來的邊同色.
     thumb = """<img class="thumb" src="/assets/thumb/#{d.0}.webp" loading="lazy" alt="#{d.0}"
     onerror="editor.gallery.fallback(this)">"""
-    code += """<div class="item" data-type="#{d.0}"><div class="inner" style="background:#{d.1.bk}">#thumb</div></div>"""
+    # 各效果獨立頁的連結 ( 點格子本身仍是打開 editor )
+    link = """<a class="mt-effect-link" href="/effect/#{d.0}/" title="#{d.0} text effect">&#8599;</a>"""
+    code += """<div class="item" data-type="#{d.0}"><div class="inner" style="background:#{d.1.bk}">#thumb</div>#link</div>"""
   html.push """<div class="line" style="visibility:hidden">#code</div>"""
 
 
@@ -140,6 +142,13 @@ document.querySelector \.gallery .addEventListener \click, (e) ->
   if !(target and target.classList  and target.classList.contains \item) => return
   type = target.getAttribute \data-type
   if !type => return
+  mteffect.load type
+    .then (e) -> open-effect type, e
+    .catch (e) -> console.warn "[maketext] editor:", e
+
+# 效果獨立頁 ( /effect/<name>/ ) 的「Customize」: 套用輸入的文字, 以該效果打開 editor
+window.open-effect = (type) ->
+  if (node = document.querySelector '#landing input').value => update-text node
   mteffect.load type
     .then (e) -> open-effect type, e
     .catch (e) -> console.warn "[maketext] editor:", e

@@ -10,7 +10,7 @@ function pug_merge(e,r){if(1===arguments.length){for(var t=e[0],g=1;g<e.length;g
 function pug_style(r){if(!r)return"";if("object"==typeof r){var t="";for(var e in r)pug_has_own_property.call(r,e)&&(t=t+e+":"+r[e]+";");return t}return r+""}function template(locals) {var pug_html = "", pug_mixins = {}, pug_interp;;
     var locals_for_with = (locals || {});
     
-    (function (Array, JSON, asseturl, b64img, blockLoader, bundleurl, c, cssLoader, debug, decache, defer, description, escape, favicon, hashfile, libLoader, md5, scriptLoader, thumbnail, title, url, version) {
+    (function (Array, JSON, asseturl, b64img, blockLoader, bundleurl, c, cssLoader, debug, decache, defer, description, escape, favicon, hashfile, libLoader, md5, scriptLoader, thumb, thumbnail, title, url, version) {
       pug_html = pug_html + "\u003C!DOCTYPE html\u003E";
 if(!libLoader) {
   libLoader = {
@@ -165,6 +165,7 @@ pug_html = pug_html + "\u003Clink" + (" rel=\"stylesheet\" type=\"text\u002Fcss\
 };
 var debug = false
 var thumbnail = "https://maketext.io/assets/img/thumbnail.png"
+var thumb = {type: "image/png", width: "1200", height: "630"}
 var favicon = "/assets/img/favicon.png"
 var title = "Cool Texts Generator in SVG / PNG with 30+ Effects x 800+ Fonts · maketext.io"
 var description = "style your words and logos with tons of fonts and customizable effects within seconds."
@@ -257,7 +258,7 @@ pug_html = pug_html + "\u003Chead prefix=\"og: http:\u002F\u002Fogp.me\u002Fns#\
 if (!debug) {
 pug_html = pug_html + "\u003C!-- Global site tag (gtag.js) - Google Analytics--\u003E\u003Cscript" + (pug_attr("async", true, true, true)+" src=\"https:\u002F\u002Fwww.googletagmanager.com\u002Fgtag\u002Fjs?id=UA-120719734-1\"") + "\u003E\u003C\u002Fscript\u003E\u003Cscript\u003Ewindow.dataLayer = window.dataLayer || [];\nfunction gtag(){dataLayer.push(arguments);}\ngtag('js', new Date());\ngtag('config', 'UA-120719734-1');\u003C\u002Fscript\u003E";
 }
-pug_html = pug_html + "\u003Cmeta charset=\"utf-8\"\u003E\u003Cmeta name=\"viewport\" content=\"width=device-width, initial-scale=1.0, maximum-scale=1.0\"\u003E\u003Ctitle\u003E" + (pug_escape(null == (pug_interp = title) ? "" : pug_interp)) + "\u003C\u002Ftitle\u003E\u003Cmeta" + (" name=\"description\""+pug_attr("content", description, true, true)) + "\u003E\u003Cmeta property=\"og:locale\" content=\"en_US\"\u003E\u003Cmeta" + (" property=\"og:image\""+pug_attr("content", thumbnail, true, true)) + "\u003E\u003Cmeta property=\"og:image:type\" content=\"image\u002Fpng\"\u003E\u003Cmeta property=\"og:image:width\" content=\"1200\"\u003E\u003Cmeta property=\"og:image:height\" content=\"630\"\u003E\u003Cmeta property=\"og:type\" content=\"website\"\u003E\u003Cmeta" + (" property=\"og:url\""+pug_attr("content", url, true, true)) + "\u003E\u003Cmeta" + (" property=\"og:title\""+pug_attr("content", title, true, true)) + "\u003E\u003Cmeta" + (" property=\"og:description\""+pug_attr("content", description, true, true)) + "\u003E\u003Cmeta name=\"twitter:card\" content=\"summary\"\u003E\u003Cmeta" + (" name=\"twitter:title\""+pug_attr("content", title, true, true)) + "\u003E\u003Cmeta" + (" name=\"twitter:description\""+pug_attr("content", description, true, true)) + "\u003E\u003Cmeta" + (" name=\"twitter:image\""+pug_attr("content", thumbnail, true, true)) + "\u003E\u003Clink" + (" rel=\"icon\" type=\"image\u002Fx-icon\""+pug_attr("href", favicon, true, true)) + "\u003E\u003Clink rel=\"preconnect\" href=\"https:\u002F\u002Fxlfont.maketext.io\"\u003E";
+pug_html = pug_html + "\u003Cmeta charset=\"utf-8\"\u003E\u003Cmeta name=\"viewport\" content=\"width=device-width, initial-scale=1.0, maximum-scale=1.0\"\u003E\u003Ctitle\u003E" + (pug_escape(null == (pug_interp = title) ? "" : pug_interp)) + "\u003C\u002Ftitle\u003E\u003Cmeta" + (" name=\"description\""+pug_attr("content", description, true, true)) + "\u003E\u003Cmeta property=\"og:locale\" content=\"en_US\"\u003E\u003Cmeta" + (" property=\"og:image\""+pug_attr("content", thumbnail, true, true)) + "\u003E\u003Cmeta" + (" property=\"og:image:type\""+pug_attr("content", thumb.type, true, true)) + "\u003E\u003Cmeta" + (" property=\"og:image:width\""+pug_attr("content", thumb.width, true, true)) + "\u003E\u003Cmeta" + (" property=\"og:image:height\""+pug_attr("content", thumb.height, true, true)) + "\u003E\u003Cmeta property=\"og:type\" content=\"website\"\u003E\u003Cmeta" + (" property=\"og:url\""+pug_attr("content", url, true, true)) + "\u003E\u003Cmeta" + (" property=\"og:title\""+pug_attr("content", title, true, true)) + "\u003E\u003Cmeta" + (" property=\"og:description\""+pug_attr("content", description, true, true)) + "\u003E\u003Cmeta name=\"twitter:card\" content=\"summary\"\u003E\u003Cmeta" + (" name=\"twitter:title\""+pug_attr("content", title, true, true)) + "\u003E\u003Cmeta" + (" name=\"twitter:description\""+pug_attr("content", description, true, true)) + "\u003E\u003Cmeta" + (" name=\"twitter:image\""+pug_attr("content", thumbnail, true, true)) + "\u003E\u003Clink" + (" rel=\"icon\" type=\"image\u002Fx-icon\""+pug_attr("href", favicon, true, true)) + "\u003E\u003Clink rel=\"preconnect\" href=\"https:\u002F\u002Fxlfont.maketext.io\"\u003E";
 pug_mixins["css"]([
       "/assets/vendor/bootstrap/4.0.0/css/bootstrap.min.css",
       "/assets/vendor/fontawesome/4.7.0/css/font-awesome.min.css",
@@ -374,7 +375,9 @@ pug_html = pug_html + "\u003C\u002Fbody\u003E\u003C\u002Fhtml\u003E";
         locals_for_with.md5 :
         typeof md5 !== 'undefined' ? md5 : undefined, "scriptLoader" in locals_for_with ?
         locals_for_with.scriptLoader :
-        typeof scriptLoader !== 'undefined' ? scriptLoader : undefined, "thumbnail" in locals_for_with ?
+        typeof scriptLoader !== 'undefined' ? scriptLoader : undefined, "thumb" in locals_for_with ?
+        locals_for_with.thumb :
+        typeof thumb !== 'undefined' ? thumb : undefined, "thumbnail" in locals_for_with ?
         locals_for_with.thumbnail :
         typeof thumbnail !== 'undefined' ? thumbnail : undefined, "title" in locals_for_with ?
         locals_for_with.title :

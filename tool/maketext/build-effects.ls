@@ -22,6 +22,7 @@
 #  - index.js: 效果清單 `effects` ( 依 order 排序, 含字型 / 背景色 / 版本 hash ) 與載入器 `mteffect`.
 #    清單很小, 隨頁面載入; gallery 一開始只顯示縮圖 ( build-thumbs.ls ), 不需要效果本體
 #  - <name>.js: 效果本體 ( svg 與 watch ), 第一次需要即時 render 時才以 mteffect.load(name) 載入
+#  - meta.json: 給後端的效果資料 ( 獨立頁 /effect/<name>/, 見 backend/maketext/index.ls ), 依 order 排序
 require! <[fs path crypto pug livescript js-yaml chokidar]>
 
 root = path.resolve __dirname, '../../frontend/web'
@@ -65,6 +66,7 @@ build = ->
   list.sort (a, b) -> (a.meta.order ? 0) - (b.meta.order ? 0) or (if a.name > b.name => 1 else -1)
   fs.mkdir-sync des, {recursive: true}
   index = {}
+  meta-out = {}
   for {name, dir, meta} in list =>
     html = pug.render-file path.join(dir, 'index.pug')
     code = if fs.exists-sync(f = path.join dir, 'main.ls') =>
@@ -76,8 +78,12 @@ build = ->
     bk = (/^<svg[^>]*style="background:\s*([^;"]+)/.exec(html) or [])[1] or ''
     index[name] = {bk, font: meta.font or DEFAULT-FONT, v: crypto.create-hash(\md5).update(body).digest(\hex).slice(0, 8)}
     for k in <[name tags]> => if meta[k] => index[name][k] = meta[k]
+    # 顯示名稱: 沒寫 name 時由資料夾名稱轉, 例: retro-chrome -> Retro Chrome
+    label = meta.name or name.split('-').map(-> it.0.toUpperCase! + it.slice 1).join(' ')
+    meta-out[name] = {key: name, label, desc: meta.desc or '', tags: meta.tags or [], font: index[name].font}
   # 清掉已移除或改為 debug 的效果
-  for f in fs.readdir-sync(des) => if f != 'index.js' and !index[f.replace(/\.js$/, '')] => fs.unlink-sync path.join(des, f)
+  for f in fs.readdir-sync(des) => if !(f in <[index.js meta.json]>) and !index[f.replace(/\.js$/, '')] => fs.unlink-sync path.join(des, f)
+  fs.write-file-sync path.join(des, 'meta.json'), JSON.stringify(meta-out)
   fs.write-file-sync path.join(des, 'index.js'), "var effects = #{JSON.stringify index};\n#loader"
   console.log "[build-effects] #{list.length} effects -> #{path.relative process.cwd!, des}"
 

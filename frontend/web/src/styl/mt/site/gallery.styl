@@ -69,3 +69,19 @@
     .item
       max-width: 490px
       height: 160px
+
+// 各效果獨立頁的連結 ( src/ls/editor/index.ls ), 滑過格子時出現; 要在 .item:after 的遮罩之上才點得到
+.gallery .item .mt-effect-link
+  position: absolute
+  top: 4px
+  right: 8px
+  z-index: 2
+  font-size: 16px
+  line-height: 1
+  padding: 4px
+  color: #999
+  text-decoration: none
+  opacity: 0
+  transition: opacity .2s ease-in-out
+.gallery .item:hover .mt-effect-link
+  opacity: 1

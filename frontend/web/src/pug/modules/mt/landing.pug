@@ -1,5 +1,6 @@
 //- module
-//- 首頁與 /api/editor/0.1/ 共用的內容. 需先設定 isApi
+//- 首頁、/api/editor/0.1/ 與效果獨立頁 ( /effect/<name>/ ) 共用的內容.
+//- 需先設定 isApi; 效果獨立頁另有 effect ( static/js/effects/meta.json 的一筆 ), 頂部改為該效果的介紹
 
 include /modules/mt/editor.pug
 svg(style="height:0;display:inline;display:none")
@@ -17,27 +18,42 @@ svg(style="height:0;display:inline;display:none")
         feMergeNode(in="SourceGraphic")
         feMergeNode(in="offset")
 
-#landing.text-center
-  if !isApi
+if effect
+  #landing.text-center.mt-effect-hero
     include /modules/mt/carbon.pug
-  .share
-    span.mr-2 share with
-    a.mr-2(href="https://www.facebook.com/sharer/sharer.php?u=https://maketext.io",style="font-size:0.9em;margin-top:-3px",target="_blank") facebook
-    span.mr-2 /
-    a(href="https://twitter.com/share?url=https://maketext.io&text=super-fast%20cool%20text%20generator%20for%20modern%20age",target="_blank") twitter
-  .inner
-    .subtitle Let's make text cool again
-    h1 #[span Cool Text] #[span Generator]#[img(src="/assets/img/landing/cool.png")]
-    +nbr(2)
-    .widget
-      big First, type some texts to start with:
+    .inner
+      .subtitle text effect
+      h1= effect.label
+      .mt-effect-thumb: img(src="/assets/thumb/" + effect.key + ".webp",alt=effect.label + " text effect")
+      .widget
+        .input-group
+          input.form-control.input-lg(type="text", placeholder="type your text here")
+          .input-group-append
+            .btn.btn-action.btn-block(onclick="openEffect(" + JSON.stringify(effect.key) + ")") Customize
+        br
+        a(href="/") or, browse all cool text effects
+else
+  #landing.text-center
+    if !isApi
+      include /modules/mt/carbon.pug
+    .share
+      span.mr-2 share with
+      a.mr-2(href="https://www.facebook.com/sharer/sharer.php?u=https://maketext.io",style="font-size:0.9em;margin-top:-3px",target="_blank") facebook
+      span.mr-2 /
+      a(href="https://twitter.com/share?url=https://maketext.io&text=super-fast%20cool%20text%20generator%20for%20modern%20age",target="_blank") twitter
+    .inner
+      .subtitle Let's make text cool again
+      h1 #[span Cool Text] #[span Generator]#[img(src="/assets/img/landing/cool.png")]
       +nbr(2)
-      .input-group
-        input.form-control.input-lg(type="text", placeholder="for example, 'Cool Text!'")
-        .input-group-append
-          .btn.btn-action.btn-block(onclick="scrollto('#top')") Make Text #[span.cool Cooler]
-      br
-      a(href="/fancy/") or, show me more copyable 𝕗𝕒𝕟𝕔𝕪 𝕥𝕖𝕩𝕥!!
+      .widget
+        big First, type some texts to start with:
+        +nbr(2)
+        .input-group
+          input.form-control.input-lg(type="text", placeholder="for example, 'Cool Text!'")
+          .input-group-append
+            .btn.btn-action.btn-block(onclick="scrollto('#top')") Make Text #[span.cool Cooler]
+        br
+        a(href="/fancy/") or, show me more copyable 𝕗𝕒𝕟𝕔𝕪 𝕥𝕖𝕩𝕥!!
 #top(style="transform:translate(0,-80px)")
 br
 .text-center: .big Then, pick an effect you'd like to use
