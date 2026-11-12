@@ -985,7 +985,7 @@ function in$(x, xs){
   while (++i < l) if (x === xs[i]) return true;
   return false;
 }
-var SVGNS, ID, pattern, decode;
+var SVGNS, ID, pattern, gifFrames;
 SVGNS = 'http://www.w3.org/2000/svg';
 ID = 'editing-mt-pattern';
 window.mtPattern = pattern = {
@@ -1084,7 +1084,8 @@ window.mtPattern = pattern = {
     if (!(cur && window.ImageDecoder)) {
       return;
     }
-    (this._frames = this._frames || {})[cur.url] = this._frames[cur.url] || decode(cur.url)['catch'](function(){
+    (this._frames = this._frames || {})[cur.url] = this._frames[cur.url] || gifFrames(cur.url)['catch'](function(e){
+      console.warn("[maketext] pattern frames:", e);
       return [];
     });
     return this._frames[cur.url].then(function(frames){
@@ -1179,7 +1180,7 @@ window.mtPattern = pattern = {
     return fr.readAsDataURL(file);
   }
 };
-decode = function(url){
+gifFrames = function(url){
   return fetch(url).then(function(r){
     return r.blob();
   }).then(function(blob){
@@ -1253,7 +1254,7 @@ document.addEventListener('DOMContentLoaded', function(){
     return this.value = '';
   });
 });
-var b64url, unb64url, pipe, encode, decode, settings, shareUrl, share, setColor;
+var b64url, unb64url, pipe, shareEncode, shareDecode, settings, shareUrl, share, setColor;
 b64url = function(bytes){
   var s, i$, to$, i;
   s = '';
@@ -1275,7 +1276,7 @@ pipe = function(bytes, stream){
     return new Uint8Array(it);
   });
 };
-encode = function(obj){
+shareEncode = function(obj){
   var bytes;
   bytes = new TextEncoder().encode(JSON.stringify(obj));
   if (!window.CompressionStream) {
@@ -1285,7 +1286,7 @@ encode = function(obj){
     return '1' + b64url(it);
   });
 };
-decode = function(d){
+shareDecode = function(d){
   return Promise.resolve().then(function(){
     var bytes;
     bytes = unb64url(d.substring(1));
@@ -1331,7 +1332,7 @@ settings = function(){
   return o;
 };
 shareUrl = function(){
-  return encode(settings()).then(function(d){
+  return shareEncode(settings()).then(function(d){
     return location.origin + "/effect/" + editor.effects.type + "/?d=" + d;
   });
 };
@@ -1371,7 +1372,7 @@ window.mtShare = share = {
   },
   parse: function(q){
     if (q.d) {
-      return decode(q.d).then(function(o){
+      return shareDecode(q.d).then(function(o){
         var ret, k, ref$, v;
         ret = import$({}, o);
         delete ret.p;

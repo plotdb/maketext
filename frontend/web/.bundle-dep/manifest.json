@@ -468,24 +468,24 @@
     "generations": []
   },
   "/js/editor/pattern.js": {
-    "url": "/js/editor/pattern.js?v=9eb4ae379aaf",
+    "url": "/js/editor/pattern.js?v=da6ea9d9aaeb",
     "refs": [],
     "generations": []
   },
   "/js/editor/pattern.min.js": {
-    "url": "/js/editor/pattern.min.js?v=01644159a971",
+    "url": "/js/editor/pattern.min.js?v=e11f0db20558",
     "refs": [],
     "generations": []
   },
   "/assets/bundle/4afce53d34d9bc08d41dbae87dcd2c6d.min.js": {
-    "url": "/assets/bundle/4afce53d34d9bc08d41dbae87dcd2c6d.min.js?v=57aa83cf64ed",
+    "url": "/assets/bundle/4afce53d34d9bc08d41dbae87dcd2c6d.min.js?v=b0af303f1ed8",
     "refs": [
       "frontend/web/src/pug/api/editor/0.1/index.pug"
     ],
     "generations": []
   },
   "/assets/bundle/68a0587ca442d67d5714724de10ef366.min.js": {
-    "url": "/assets/bundle/68a0587ca442d67d5714724de10ef366.min.js?v=efa7e90db851",
+    "url": "/assets/bundle/68a0587ca442d67d5714724de10ef366.min.js?v=83b4d393b5f6",
     "refs": [
       "frontend/web/src/pug/index.pug",
       "/Users/tkirby/workspace/maketext/server/frontend/web/src/pug/effect/index.pug"
@@ -493,34 +493,34 @@
     "generations": []
   },
   "/assets/bundle/4afce53d34d9bc08d41dbae87dcd2c6d.js": {
-    "url": "/assets/bundle/4afce53d34d9bc08d41dbae87dcd2c6d.js?v=7a9030cb655f",
+    "url": "/assets/bundle/4afce53d34d9bc08d41dbae87dcd2c6d.js?v=77b39b2e9abc",
     "refs": [],
     "generations": []
   },
   "/assets/bundle/68a0587ca442d67d5714724de10ef366.js": {
-    "url": "/assets/bundle/68a0587ca442d67d5714724de10ef366.js?v=24a09a7f4607",
+    "url": "/assets/bundle/68a0587ca442d67d5714724de10ef366.js?v=2b2277e8ae8c",
     "refs": [],
     "generations": []
   },
   "/js/editor/share.js": {
-    "url": "/js/editor/share.js?v=124a48729c86",
+    "url": "/js/editor/share.js?v=8c31a4889578",
     "refs": [],
     "generations": []
   },
   "/js/editor/share.min.js": {
-    "url": "/js/editor/share.min.js?v=55332a9a1c56",
+    "url": "/js/editor/share.min.js?v=d02631e04ef1",
     "refs": [],
     "generations": []
   },
   "/assets/bundle/5731fd83e63ba3e248fa2c4d6504d5a8.min.js": {
-    "url": "/assets/bundle/5731fd83e63ba3e248fa2c4d6504d5a8.min.js?v=aab54ee419c4",
+    "url": "/assets/bundle/5731fd83e63ba3e248fa2c4d6504d5a8.min.js?v=8b0d3ecca019",
     "refs": [
       "frontend/web/src/pug/api/editor/0.1/index.pug"
     ],
     "generations": []
   },
   "/assets/bundle/bdbd1949e80f72b0f2641ff91a2007ad.min.js": {
-    "url": "/assets/bundle/bdbd1949e80f72b0f2641ff91a2007ad.min.js?v=5a72fcd325a2",
+    "url": "/assets/bundle/bdbd1949e80f72b0f2641ff91a2007ad.min.js?v=5786266c7f7c",
     "refs": [
       "frontend/web/src/pug/index.pug",
       "/Users/tkirby/workspace/maketext/server/frontend/web/src/pug/effect/index.pug"
@@ -528,12 +528,12 @@
     "generations": []
   },
   "/assets/bundle/5731fd83e63ba3e248fa2c4d6504d5a8.js": {
-    "url": "/assets/bundle/5731fd83e63ba3e248fa2c4d6504d5a8.js?v=bbd15ad7ff7d",
+    "url": "/assets/bundle/5731fd83e63ba3e248fa2c4d6504d5a8.js?v=bdd203e977b0",
     "refs": [],
     "generations": []
   },
   "/assets/bundle/bdbd1949e80f72b0f2641ff91a2007ad.js": {
-    "url": "/assets/bundle/bdbd1949e80f72b0f2641ff91a2007ad.js?v=0b0ae7de47f6",
+    "url": "/assets/bundle/bdbd1949e80f72b0f2641ff91a2007ad.js?v=afa4b1cd66e6",
     "refs": [],
     "generations": []
   }

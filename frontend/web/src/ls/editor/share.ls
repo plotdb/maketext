@@ -21,11 +21,11 @@ unb64url = (str) ->
 pipe = (bytes, stream) -> new Response(new Blob([bytes]).stream!pipeThrough(stream)).arrayBuffer!then -> new Uint8Array it
 
 # 設定 ( object ) <-> d 參數
-encode = (obj) ->
+share-encode = (obj) ->
   bytes = new TextEncoder!encode JSON.stringify(obj)
   if !window.CompressionStream => return Promise.resolve('0' + b64url bytes)
   pipe(bytes, new CompressionStream \deflate-raw).then -> '1' + b64url it
-decode = (d) ->
+share-decode = (d) ->
   Promise.resolve!
     .then ->
       bytes = unb64url d.substring(1)
@@ -47,7 +47,7 @@ settings = ->
   for k of ((e and e.js and e.js.edit) or {}) when cur[k]? => o.p[k] = cur[k]
   o
 
-share-url = -> encode(settings!).then (d) -> "#{location.origin}/effect/#{editor.effects.type}/?d=#d"
+share-url = -> share-encode(settings!).then (d) -> "#{location.origin}/effect/#{editor.effects.type}/?d=#d"
 
 window.mt-share = share = do
   open: -> share-url!then (url) ~>
@@ -71,7 +71,7 @@ window.mt-share = share = do
   # 網址的 query ( 已 decodeURIComponent 的 object ) -> 明碼格式的設定 ( 同舊格式的 key ); 不是分享的網址則為 null
   parse: (q) ->
     if q.d =>
-      decode(q.d).then (o) ->
+      share-decode(q.d).then (o) ->
         ret = {} <<< o
         delete ret.p
         for k, v of (o.p or {}) => ret["p.#k"] = v

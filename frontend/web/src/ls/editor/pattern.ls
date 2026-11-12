@@ -65,7 +65,9 @@ window.mt-pattern = pattern = do
     clearTimeout @_timer
     cur = @cur
     if !(cur and window.ImageDecoder) => return
-    (@_frames = @_frames or {})[cur.url] = @_frames[cur.url] or decode(cur.url).catch(-> [])
+    (@_frames = @_frames or {})[cur.url] = @_frames[cur.url] or gif-frames(cur.url).catch (e) ->
+      console.warn "[maketext] pattern frames:", e
+      []
     @_frames[cur.url].then (frames) ~>
       if @cur != cur or frames.length < 2 => return
       i = 0
@@ -125,7 +127,8 @@ window.mt-pattern = pattern = do
     fr.readAsDataURL file
 
 # gif 逐格解碼成 blob url 與每格的時間 ( ms ). 最多 60 格
-decode = (url) ->
+# ( 各檔最上層的名稱編譯後是全域的, 不要取 decode 這類通用名稱, 會被其它檔案蓋掉 )
+gif-frames = (url) ->
   # 整個檔案讀完再解碼: 給 stream 的話 frameCount 會是當下已收到的格數
   fetch(url).then (r) -> r.blob!
   .then (blob) -> blob.arrayBuffer!then (data) -> {data, type: blob.type or 'image/gif'}

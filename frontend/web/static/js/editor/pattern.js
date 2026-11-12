@@ -1,4 +1,4 @@
-var SVGNS, ID, pattern, decode;
+var SVGNS, ID, pattern, gifFrames;
 SVGNS = 'http://www.w3.org/2000/svg';
 ID = 'editing-mt-pattern';
 window.mtPattern = pattern = {
@@ -97,7 +97,8 @@ window.mtPattern = pattern = {
     if (!(cur && window.ImageDecoder)) {
       return;
     }
-    (this._frames = this._frames || {})[cur.url] = this._frames[cur.url] || decode(cur.url)['catch'](function(){
+    (this._frames = this._frames || {})[cur.url] = this._frames[cur.url] || gifFrames(cur.url)['catch'](function(e){
+      console.warn("[maketext] pattern frames:", e);
       return [];
     });
     return this._frames[cur.url].then(function(frames){
@@ -192,7 +193,7 @@ window.mtPattern = pattern = {
     return fr.readAsDataURL(file);
   }
 };
-decode = function(url){
+gifFrames = function(url){
   return fetch(url).then(function(r){
     return r.blob();
   }).then(function(blob){

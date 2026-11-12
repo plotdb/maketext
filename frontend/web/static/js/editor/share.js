@@ -1,4 +1,4 @@
-var b64url, unb64url, pipe, encode, decode, settings, shareUrl, share, setColor;
+var b64url, unb64url, pipe, shareEncode, shareDecode, settings, shareUrl, share, setColor;
 b64url = function(bytes){
   var s, i$, to$, i;
   s = '';
@@ -20,7 +20,7 @@ pipe = function(bytes, stream){
     return new Uint8Array(it);
   });
 };
-encode = function(obj){
+shareEncode = function(obj){
   var bytes;
   bytes = new TextEncoder().encode(JSON.stringify(obj));
   if (!window.CompressionStream) {
@@ -30,7 +30,7 @@ encode = function(obj){
     return '1' + b64url(it);
   });
 };
-decode = function(d){
+shareDecode = function(d){
   return Promise.resolve().then(function(){
     var bytes;
     bytes = unb64url(d.substring(1));
@@ -76,7 +76,7 @@ settings = function(){
   return o;
 };
 shareUrl = function(){
-  return encode(settings()).then(function(d){
+  return shareEncode(settings()).then(function(d){
     return location.origin + "/effect/" + editor.effects.type + "/?d=" + d;
   });
 };
@@ -116,7 +116,7 @@ window.mtShare = share = {
   },
   parse: function(q){
     if (q.d) {
-      return decode(q.d).then(function(o){
+      return shareDecode(q.d).then(function(o){
         var ret, k, ref$, v;
         ret = import$({}, o);
         delete ret.p;
