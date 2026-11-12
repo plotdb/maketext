@@ -1,6 +1,6 @@
 # 效果描述 ( 名稱 / 排序 / 參數等 ), 欄位說明見 tool/maketext/build-effects.ls
 desc: "Grainy white chalk letters written on a green chalkboard."
-order: 510
+no: 48
 font: Kalam
 edit:
   chalk:

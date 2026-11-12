@@ -1,3 +1,3 @@
 # 效果描述 ( 名稱 / 排序 / 參數等 ), 欄位說明見 tool/maketext/build-effects.ls
 desc: "Gray metallic letters pressed into a matching metal plate."
-order: 240
+no: 25

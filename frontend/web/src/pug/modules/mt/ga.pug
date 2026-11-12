@@ -1,7 +1,7 @@
 //- module
 //- Google Analytics ( gtag.js ). 事件由 src/ls/editor/util.ls 的 mt-track 送出.
-//- 注意: UA-* ( Universal Analytics ) 已在 2023 年停止處理資料, 事件要送到 GA4 的 G-* 才看得到. 拿到 GA4 的 ID 後加進 gaIds
-- var gaIds = ["UA-120719734-1"]
+//- GA4 串流 "maketext.io - GA4". 舊的 UA-120719734-1 ( Universal Analytics ) 已在 2023 年停止處理資料, 不再送
+- var gaIds = ["G-9220DQ9M90"]
 script(async,src="https://www.googletagmanager.com/gtag/js?id=" + gaIds[0])
 script.
   window.dataLayer = window.dataLayer || [];

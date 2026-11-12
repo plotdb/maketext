@@ -1,6 +1,6 @@
 # 效果描述 ( 名稱 / 排序 / 參數等 ), 欄位說明見 tool/maketext/build-effects.ls
 desc: "Letters filled with a warm orange marble texture."
-order: 250
+no: 26
 edit:
   base:
     name: base

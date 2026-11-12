@@ -107,6 +107,12 @@ gallery 一開始顯示 build 時以固定文字、預設字型 render 的 webp 
 
 待處理：
 
- - GA 仍是 UA-120719734-1，UA 已在 2023 年停止處理資料，需要 GA4 的 `G-*` ID ( 加到 `modules/mt/ga.pug` 的 gaIds )
  - srcbuild：改 `//- module` 的 styl / pug 時，引用它的頁面不會重 build，要 touch 頁面 ( 例：`styl/mt/index.styl`、`pug/index.pug` )
- - HTML 沒有 Cache-Control，瀏覽器會依 Last-Modified 推測快取，改版後可能看到舊頁面 ( nginx 設定來自 servebase )
+ - HTML 沒有 Cache-Control 的問題已在 `config/web/nginx/config.ngx` 補上 no-cache，servebase 的範本也需要同樣的調整
+
+
+## 效果編號 ( 2026-11-12 )
+
+ - `effect.yaml` 的 `order` 改為 `no` ( 效果編號，頁面上顯示為 #37 )。舊站原有的 36 個為 1 ~ 36 ( 依原順序 )，之後新增的從 37 起
+ - 列表：新效果 ( no > 36，build-effects.ls 的 LEGACY ) 在前、編號大的在最上面，接著是舊效果依原順序。新增效果時用目前最大編號 + 1
+ - GA 改送 GA4 ( G-9220DQ9M90 )，不再送已停用的 UA

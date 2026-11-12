@@ -174,7 +174,7 @@ $(document).ready(function(){
   };
   hasStar = !!document.querySelector('#mt-core-scripts');
   galleryRows = function(keys){
-    var list, res$, i$, ref$, k, len$, html, to$, i, code, j$, j, d, thumb, link, star;
+    var list, res$, i$, ref$, k, len$, html, to$, i, code, j$, j, d, thumb, link, star, num;
     res$ = [];
     for (i$ = 0, len$ = (ref$ = keys || (fn$())).length; i$ < len$; ++i$) {
       k = ref$[i$];
@@ -198,7 +198,8 @@ $(document).ready(function(){
         star = !hasStar
           ? ''
           : "<a class=\"mt-star\" href=\"#\" data-star=\"" + d[0] + "\" title=\"star\">&#9733;</a>";
-        code += "<div class=\"item\" data-type=\"" + d[0] + "\"><div class=\"inner\" style=\"background:" + d[1].bk + "\">" + thumb + "</div>" + star + link + "</div>";
+        num = "<span class=\"mt-effect-no\">&#35;" + d[1].no + "</span>";
+        code += "<div class=\"item\" data-type=\"" + d[0] + "\"><div class=\"inner\" style=\"background:" + d[1].bk + "\">" + thumb + "</div>" + num + star + link + "</div>";
       }
       html.push("<div class=\"line\" style=\"visibility:hidden\">" + code + "</div>");
     }

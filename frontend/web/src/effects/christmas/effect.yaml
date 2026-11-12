@@ -1,6 +1,6 @@
 # 效果描述 ( 名稱 / 排序 / 參數等 ), 欄位說明見 tool/maketext/build-effects.ls
 desc: "Red and white candy cane stripes for a festive holiday look."
-order: 340
+no: 35
 edit:
   color1:
     name: color1

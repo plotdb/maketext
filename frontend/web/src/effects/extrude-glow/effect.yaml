@@ -1,6 +1,6 @@
 # 效果描述 ( 名稱 / 排序 / 參數等 ), 欄位說明見 tool/maketext/build-effects.ls
 desc: "Bold letters with a solid 3D extrusion and a soft glowing shadow behind them."
-order: 0
+no: 1
 edit:
   fill:
     name: fill

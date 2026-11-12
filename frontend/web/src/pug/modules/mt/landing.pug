@@ -24,7 +24,7 @@ if effect
   #landing.text-center.mt-effect-hero
     include /modules/mt/carbon.pug
     .inner
-      .subtitle text effect
+      .subtitle text effect ##{effect.no}
       h1= effect.label
       if effect.desc
         .mt-effect-desc= effect.desc
@@ -46,7 +46,7 @@ else
       span.mr-2 share with
       a.mr-2(href="https://www.facebook.com/sharer/sharer.php?u=https://maketext.io",style="font-size:0.9em;margin-top:-3px",target="_blank") facebook
       span.mr-2 /
-      a(href="https://twitter.com/share?url=https://maketext.io&text=super-fast%20cool%20text%20generator%20for%20modern%20age",target="_blank") twitter
+      a(href="https://x.com/intent/post?url=https://maketext.io&text=super-fast%20cool%20text%20generator%20for%20modern%20age",target="_blank") x
     .inner
       .subtitle Let's make text cool again
       h1 #[span Cool Text] #[span Generator]#[img(src="/assets/img/landing/cool.png")]

@@ -1,6 +1,6 @@
 # 效果描述 ( 名稱 / 排序 / 參數等 ), 欄位說明見 tool/maketext/build-effects.ls
 desc: "Digital glitch letters with RGB splits and sliced scan lines."
-order: 420
+no: 39
 font: Bebas Neue
 edit:
   fill:

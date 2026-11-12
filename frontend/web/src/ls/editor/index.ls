@@ -120,7 +120,9 @@ gallery-rows = (keys) ->
       link = """<a class="mt-effect-link" href="/effect/#{d.0}/" title="#{d.0} text effect">&#8599;</a>"""
       # 沒有登入功能的頁面 ( /api/editor/0.1/ ) 不放收藏
       star = if !has-star => '' else """<a class="mt-star" href="#" data-star="#{d.0}" title="star">&#9733;</a>"""
-      code += """<div class="item" data-type="#{d.0}"><div class="inner" style="background:#{d.1.bk}">#thumb</div>#star#link</div>"""
+      # 效果編號 ( effect.yaml 的 no ). &#35; 是 `#`. 變數不能叫 no ( LiveScript 的 false )
+      num = """<span class="mt-effect-no">&#35;#{d.1.no}</span>"""
+      code += """<div class="item" data-type="#{d.0}"><div class="inner" style="background:#{d.1.bk}">#thumb</div>#num#star#link</div>"""
     html.push """<div class="line" style="visibility:hidden">#code</div>"""
   html
 
