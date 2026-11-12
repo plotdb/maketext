@@ -1,6 +1,8 @@
 ## master
 
  - fixes:
+   - deps: `@plotdb/srcbuild` ^0.1.12. 0.1.11 was published with `dist/` flattened, so
+     `@plotdb/srcbuild/dist/view/pug` was not found and the server didn't start.
    - deps: `nodemailer` ^9 -> ^10.5.0 for security advisories ( address parsing DoS, SMTP
      credential disclosure across transports ). 10.x requires Node.js 20+, so `engines.node` is
      now `>=20.0.0`; nothing changes in how `mail-queue` uses it.
