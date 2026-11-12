@@ -21,6 +21,21 @@ include @/ldpalettepicker/ldpp.pug
       div(style="flex:1 1 auto")
       .btn.btn-sm.btn-outline-secondary(data-ldcv-set="") close
 
+//- 分享 ( src/ls/editor/share.ls )
+#share-panel.ldcv: .base: .inner
+  .p-4
+    h5.mb-1 Share
+    .small.text-muted.mb-3 this link opens the editor with the current effect, text and settings.
+    .d-flex
+      input.form-control.form-control-sm(readonly)
+      .btn.btn-sm.btn-dark.ml-2.mt-share-copy Copy
+    .small.text-success.mt-1.d-none.mt-share-copied copied!
+    .mt-3.d-flex.align-items-center
+      a.btn.btn-sm.btn-outline-dark.mr-2.mt-share-x(target="_blank",rel="noopener") #[+x-icon]
+      a.btn.btn-sm.btn-outline-dark.mt-share-fb(target="_blank",rel="noopener") #[i.fa.fa-facebook]
+      div(style="flex:1 1 auto")
+      .btn.btn-sm.btn-outline-secondary(data-ldcv-set="") close
+
 #download.modal
   .card
     .card-body
@@ -98,4 +113,6 @@ include @/ldpalettepicker/ldpp.pug
       //- 拖曳過文字時出現: 回到原本的位置
       .btn.btn-outline-dark.mr-2.d-none#editor-reset-offset(onclick="mtFrame.reset()",title="reset text position") &#x21ba; Position
       .btn.btn-outline-dark.mr-2(onclick="editor.toggle(false)") #[big(style="line-height:1em") &times;] Close
+      //- 分享目前的設定 ( 效果頁的網址帶參數, src/ls/editor/share.ls )
+      .btn.btn-outline-dark.mr-2(onclick="mtShare.open()") #[i.fa.fa-share-alt] Share
     .mt-drag-hint drag the text to adjust its position

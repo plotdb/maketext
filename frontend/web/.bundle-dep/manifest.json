@@ -1,11 +1,11 @@
 {
   "/css/mt/index.css": {
-    "url": "/css/mt/index.css?v=87fc52ee5f73",
+    "url": "/css/mt/index.css?v=af3c232309fc",
     "refs": [],
     "generations": []
   },
   "/css/mt/index.min.css": {
-    "url": "/css/mt/index.min.css?v=4ec1273f71b5",
+    "url": "/css/mt/index.min.css?v=f2e255e5e825",
     "refs": [],
     "generations": []
   },
@@ -42,12 +42,12 @@
     "generations": []
   },
   "/js/editor/index.js": {
-    "url": "/js/editor/index.js?v=863a978acd2b",
+    "url": "/js/editor/index.js?v=98f2433c6a83",
     "refs": [],
     "generations": []
   },
   "/js/editor/index.min.js": {
-    "url": "/js/editor/index.min.js?v=ce876b2fcaa2",
+    "url": "/js/editor/index.min.js?v=72a62710c829",
     "refs": [],
     "generations": []
   },
@@ -106,12 +106,12 @@
     "generations": []
   },
   "/assets/bundle/2c436f4d3a76b30ad70c067e9717d0dd.css": {
-    "url": "/assets/bundle/2c436f4d3a76b30ad70c067e9717d0dd.css?v=2db3d1a349f4",
+    "url": "/assets/bundle/2c436f4d3a76b30ad70c067e9717d0dd.css?v=718a12e16375",
     "refs": [],
     "generations": []
   },
   "/assets/bundle/2c436f4d3a76b30ad70c067e9717d0dd.min.css": {
-    "url": "/assets/bundle/2c436f4d3a76b30ad70c067e9717d0dd.min.css?v=501e474a66ed",
+    "url": "/assets/bundle/2c436f4d3a76b30ad70c067e9717d0dd.min.css?v=d93c5fc80bdd",
     "refs": [
       "frontend/web/src/pug/api/editor/0.1/index.pug",
       "frontend/web/src/pug/fancy/index.pug",
@@ -193,32 +193,32 @@
     "generations": []
   },
   "/assets/bundle/9f7e52091e46e912b44bf578e14a22fd.css": {
-    "url": "/assets/bundle/9f7e52091e46e912b44bf578e14a22fd.css?v=6eac1493dc87",
+    "url": "/assets/bundle/9f7e52091e46e912b44bf578e14a22fd.css?v=74b8bba28680",
     "refs": [],
     "generations": []
   },
   "/assets/bundle/9f7e52091e46e912b44bf578e14a22fd.min.css": {
-    "url": "/assets/bundle/9f7e52091e46e912b44bf578e14a22fd.min.css?v=ce6abcf5265c",
+    "url": "/assets/bundle/9f7e52091e46e912b44bf578e14a22fd.min.css?v=0b950b673451",
     "refs": [],
     "generations": []
   },
   "/assets/bundle/892f3b9b586be27241d89b2ff9bc49a8.js": {
-    "url": "/assets/bundle/892f3b9b586be27241d89b2ff9bc49a8.js?v=6bd69c530014",
+    "url": "/assets/bundle/892f3b9b586be27241d89b2ff9bc49a8.js?v=45cb8a701414",
     "refs": [],
     "generations": []
   },
   "/assets/bundle/892f3b9b586be27241d89b2ff9bc49a8.min.js": {
-    "url": "/assets/bundle/892f3b9b586be27241d89b2ff9bc49a8.min.js?v=4a974fbd9b98",
+    "url": "/assets/bundle/892f3b9b586be27241d89b2ff9bc49a8.min.js?v=55fda253b899",
     "refs": [],
     "generations": []
   },
   "/assets/bundle/b56c3fa815f2a166e4150ca98c5d5aac.js": {
-    "url": "/assets/bundle/b56c3fa815f2a166e4150ca98c5d5aac.js?v=5a9024bb05d5",
+    "url": "/assets/bundle/b56c3fa815f2a166e4150ca98c5d5aac.js?v=ba4b8996d374",
     "refs": [],
     "generations": []
   },
   "/assets/bundle/b56c3fa815f2a166e4150ca98c5d5aac.min.js": {
-    "url": "/assets/bundle/b56c3fa815f2a166e4150ca98c5d5aac.min.js?v=5922eaad23ae",
+    "url": "/assets/bundle/b56c3fa815f2a166e4150ca98c5d5aac.min.js?v=509c96545ecb",
     "refs": [
       "frontend/web/src/pug/index.pug",
       "/Users/tkirby/workspace/maketext/server/frontend/web/src/pug/effect/index.pug"
@@ -226,12 +226,12 @@
     "generations": []
   },
   "/assets/bundle/d733ec846614e70279bf8b803b72f660.js": {
-    "url": "/assets/bundle/d733ec846614e70279bf8b803b72f660.js?v=7259cf2b96e1",
+    "url": "/assets/bundle/d733ec846614e70279bf8b803b72f660.js?v=80f97f5ad8a4",
     "refs": [],
     "generations": []
   },
   "/assets/bundle/d733ec846614e70279bf8b803b72f660.min.js": {
-    "url": "/assets/bundle/d733ec846614e70279bf8b803b72f660.min.js?v=66231dcd5ba6",
+    "url": "/assets/bundle/d733ec846614e70279bf8b803b72f660.min.js?v=731211d54b38",
     "refs": [
       "frontend/web/src/pug/api/editor/0.1/index.pug"
     ],
@@ -443,14 +443,14 @@
     "generations": []
   },
   "/assets/bundle/42c2e54a2b86da5f4329c8e7f10f205b.min.js": {
-    "url": "/assets/bundle/42c2e54a2b86da5f4329c8e7f10f205b.min.js?v=aad19814b385",
+    "url": "/assets/bundle/42c2e54a2b86da5f4329c8e7f10f205b.min.js?v=fb99794af3e6",
     "refs": [
       "frontend/web/src/pug/api/editor/0.1/index.pug"
     ],
     "generations": []
   },
   "/assets/bundle/d3ca42e672edd4c705dbe9ef2d3f10ab.min.js": {
-    "url": "/assets/bundle/d3ca42e672edd4c705dbe9ef2d3f10ab.min.js?v=bdee317fd295",
+    "url": "/assets/bundle/d3ca42e672edd4c705dbe9ef2d3f10ab.min.js?v=6394479b9c66",
     "refs": [
       "frontend/web/src/pug/index.pug",
       "/Users/tkirby/workspace/maketext/server/frontend/web/src/pug/effect/index.pug"
@@ -458,12 +458,12 @@
     "generations": []
   },
   "/assets/bundle/d3ca42e672edd4c705dbe9ef2d3f10ab.js": {
-    "url": "/assets/bundle/d3ca42e672edd4c705dbe9ef2d3f10ab.js?v=e5ebd4a41e1b",
+    "url": "/assets/bundle/d3ca42e672edd4c705dbe9ef2d3f10ab.js?v=ed3f5be9158c",
     "refs": [],
     "generations": []
   },
   "/assets/bundle/42c2e54a2b86da5f4329c8e7f10f205b.js": {
-    "url": "/assets/bundle/42c2e54a2b86da5f4329c8e7f10f205b.js?v=4dc13df8a0bf",
+    "url": "/assets/bundle/42c2e54a2b86da5f4329c8e7f10f205b.js?v=49471d591e89",
     "refs": [],
     "generations": []
   },
@@ -478,14 +478,14 @@
     "generations": []
   },
   "/assets/bundle/4afce53d34d9bc08d41dbae87dcd2c6d.min.js": {
-    "url": "/assets/bundle/4afce53d34d9bc08d41dbae87dcd2c6d.min.js?v=731b22f65bd6",
+    "url": "/assets/bundle/4afce53d34d9bc08d41dbae87dcd2c6d.min.js?v=70317f937ce1",
     "refs": [
       "frontend/web/src/pug/api/editor/0.1/index.pug"
     ],
     "generations": []
   },
   "/assets/bundle/68a0587ca442d67d5714724de10ef366.min.js": {
-    "url": "/assets/bundle/68a0587ca442d67d5714724de10ef366.min.js?v=ee10f3fc30da",
+    "url": "/assets/bundle/68a0587ca442d67d5714724de10ef366.min.js?v=a837d982a32c",
     "refs": [
       "frontend/web/src/pug/index.pug",
       "/Users/tkirby/workspace/maketext/server/frontend/web/src/pug/effect/index.pug"
@@ -493,12 +493,47 @@
     "generations": []
   },
   "/assets/bundle/4afce53d34d9bc08d41dbae87dcd2c6d.js": {
-    "url": "/assets/bundle/4afce53d34d9bc08d41dbae87dcd2c6d.js?v=6c96529b429b",
+    "url": "/assets/bundle/4afce53d34d9bc08d41dbae87dcd2c6d.js?v=d08cf8970b8b",
     "refs": [],
     "generations": []
   },
   "/assets/bundle/68a0587ca442d67d5714724de10ef366.js": {
-    "url": "/assets/bundle/68a0587ca442d67d5714724de10ef366.js?v=0688e0e3cd45",
+    "url": "/assets/bundle/68a0587ca442d67d5714724de10ef366.js?v=3b65567c7bd2",
+    "refs": [],
+    "generations": []
+  },
+  "/js/editor/share.js": {
+    "url": "/js/editor/share.js?v=49deaf5c53ff",
+    "refs": [],
+    "generations": []
+  },
+  "/js/editor/share.min.js": {
+    "url": "/js/editor/share.min.js?v=30ae9b04480a",
+    "refs": [],
+    "generations": []
+  },
+  "/assets/bundle/5731fd83e63ba3e248fa2c4d6504d5a8.min.js": {
+    "url": "/assets/bundle/5731fd83e63ba3e248fa2c4d6504d5a8.min.js?v=5e69197c23d4",
+    "refs": [
+      "frontend/web/src/pug/api/editor/0.1/index.pug"
+    ],
+    "generations": []
+  },
+  "/assets/bundle/bdbd1949e80f72b0f2641ff91a2007ad.min.js": {
+    "url": "/assets/bundle/bdbd1949e80f72b0f2641ff91a2007ad.min.js?v=352e1aaa85bf",
+    "refs": [
+      "frontend/web/src/pug/index.pug",
+      "/Users/tkirby/workspace/maketext/server/frontend/web/src/pug/effect/index.pug"
+    ],
+    "generations": []
+  },
+  "/assets/bundle/5731fd83e63ba3e248fa2c4d6504d5a8.js": {
+    "url": "/assets/bundle/5731fd83e63ba3e248fa2c4d6504d5a8.js?v=8ef99a8690a7",
+    "refs": [],
+    "generations": []
+  },
+  "/assets/bundle/bdbd1949e80f72b0f2641ff91a2007ad.js": {
+    "url": "/assets/bundle/bdbd1949e80f72b0f2641ff91a2007ad.js?v=65ad9cd150a7",
     "refs": [],
     "generations": []
   }

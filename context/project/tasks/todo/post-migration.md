@@ -136,3 +136,10 @@ gallery 一開始顯示 build 時以固定文字、預設字型 render 的 webp 
   mediabunny 由 fedep 放到 static/assets/lib ( 不進 git ), 部署時 frontend/web 要 npm install.
 - 待做: 以 filter 自己上色 ( 只用 SourceAlpha ) 的效果選了圖樣也看不到, 之後可只在看得到的效果顯示按鈕;
   沒有 ImageDecoder 的瀏覽器 ( 舊版 Safari ) 預覽是靜止的, GIF 匯出也只有一格.
+
+## 多行文字、分享連結 ( 2026-11-12 )
+
+- 多行文字: 文字欄改成 textarea, 點擊時往下展開. 效果的 text 以 tspan 分行 ( `mt-set-text`, util.ls ), 垂直置中在原位置;
+  匯出轉 path 時逐行轉換 ( download.ls ). 預覽高度隨匯出範圍延伸 ( layout.ls 的 fit ).
+- 分享 ( `src/ls/editor/share.ls` ): editor 下方的 Share 產生效果頁網址, 設定放在 query string
+  ( edit=1, t, s, bg, font, pat, pad, ox, oy, p.<參數> ). 開啟時以這些設定打開 editor. 上傳的圖樣不分享.

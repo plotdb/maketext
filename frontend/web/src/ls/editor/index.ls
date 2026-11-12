@@ -288,7 +288,9 @@ document.addEventListener \scroll, (e) ->
 
 window.maketext = maketext = editor: do
   input: ->
-    node = document.querySelector('#landing input')
+    # 首頁的輸入框是單行的; 編輯器的文字欄 ( textarea ) 保留多行
+    document.querySelector('#landing input').value = it
+    node = document.querySelector('#text-input')
     node.value = it
     update-text node
   evt-handler: {}
@@ -324,3 +326,15 @@ Array.from(document.querySelectorAll('#font-size-slider .up.irs-input')).map (d,
     ..ionRangeSlider do
       onChange: (data) -> editor.update \fontSize, data.from
       max: 200
+
+# 分享的網址 ( share.ls ): /effect/<name>/?edit=1&... 以網址上的設定打開 editor
+do ->
+  q = {}
+  for [k, v] in queries => q[decodeURIComponent k] = decodeURIComponent((v or '').replace /\+/g, ' ')
+  if !(q.edit and (m = /^\/effect\/([^\/]+)/.exec location.pathname) and effects[m.1]) => return
+  mteffect.load m.1
+    .then (e) ->
+      open-effect m.1, e
+      mt-share.apply q
+    .catch (e) -> console.warn "[maketext] share:", e
+

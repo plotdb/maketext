@@ -488,7 +488,8 @@ $(document).ready(function(){
     editor: {
       input: function(it){
         var node;
-        node = document.querySelector('#landing input');
+        document.querySelector('#landing input').value = it;
+        node = document.querySelector('#text-input');
         node.value = it;
         return updateText(node);
       },
@@ -534,7 +535,7 @@ $(document).ready(function(){
   Array.from(document.querySelectorAll('input[data-toggle="colorpicker"]')).map(function(it){
     return new ldcolorpicker(it);
   });
-  return Array.from(document.querySelectorAll('#font-size-slider .up.irs-input')).map(function(d, i){
+  Array.from(document.querySelectorAll('#font-size-slider .up.irs-input')).map(function(d, i){
     var v, x$;
     editor.update('fontSize', v = +d.value || 64);
     x$ = $(d);
@@ -547,6 +548,23 @@ $(document).ready(function(){
     });
     return x$;
   });
+  return function(){
+    var q, i$, ref$, len$, ref1$, k, v, m;
+    q = {};
+    for (i$ = 0, len$ = (ref$ = queries).length; i$ < len$; ++i$) {
+      ref1$ = ref$[i$], k = ref1$[0], v = ref1$[1];
+      q[decodeURIComponent(k)] = decodeURIComponent((v || '').replace(/\+/g, ' '));
+    }
+    if (!(q.edit && (m = /^\/effect\/([^\/]+)/.exec(location.pathname)) && effects[m[1]])) {
+      return;
+    }
+    return mteffect.load(m[1]).then(function(e){
+      openEffect(m[1], e);
+      return mtShare.apply(q);
+    })['catch'](function(e){
+      return console.warn("[maketext] share:", e);
+    });
+  }();
 });
 function in$(x, xs){
   var i = -1, l = xs.length >>> 0;

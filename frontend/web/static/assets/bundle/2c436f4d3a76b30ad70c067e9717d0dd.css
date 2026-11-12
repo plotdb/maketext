@@ -17761,6 +17761,10 @@ body.editing #cooltext.dragging {
 #editor:focus-within {
   overflow: visible;
 }
+#share-panel .base {
+  width: 520px;
+  max-width: 95vw;
+}
 .gallery {
   max-width: 1024px;
   width: 90%;
