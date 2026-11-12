@@ -555,12 +555,17 @@ $(document).ready(function(){
       ref1$ = ref$[i$], k = ref1$[0], v = ref1$[1];
       q[decodeURIComponent(k)] = decodeURIComponent((v || '').replace(/\+/g, ' '));
     }
-    if (!(q.edit && (m = /^\/effect\/([^\/]+)/.exec(location.pathname)) && effects[m[1]])) {
+    if (!((q.d || q.edit) && (m = /^\/effect\/([^\/]+)/.exec(location.pathname)) && effects[m[1]])) {
       return;
     }
-    return mteffect.load(m[1]).then(function(e){
+    return Promise.all([mteffect.load(m[1]), mtShare.parse(q)]).then(function(arg$){
+      var e, s;
+      e = arg$[0], s = arg$[1];
+      if (!s) {
+        return;
+      }
       openEffect(m[1], e);
-      return mtShare.apply(q);
+      return mtShare.apply(s, !!q.d);
     })['catch'](function(e){
       return console.warn("[maketext] share:", e);
     });
@@ -1248,56 +1253,105 @@ document.addEventListener('DOMContentLoaded', function(){
     return this.value = '';
   });
 });
-var shareUrl, share, setColor;
-shareUrl = function(){
-  var type, cur, q, f, p, e, k;
-  type = editor.effects.type;
+var b64url, unb64url, pipe, encode, decode, settings, shareUrl, share, setColor;
+b64url = function(bytes){
+  var s, i$, to$, i;
+  s = '';
+  for (i$ = 0, to$ = bytes.length; i$ < to$; i$ += 0x8000) {
+    i = i$;
+    s += String.fromCharCode.apply(null, bytes.subarray(i, i + 0x8000));
+  }
+  return btoa(s).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+};
+unb64url = function(str){
+  var s;
+  s = atob(str.replace(/-/g, '+').replace(/_/g, '/'));
+  return Uint8Array.from(s, function(c){
+    return c.charCodeAt(0);
+  });
+};
+pipe = function(bytes, stream){
+  return new Response(new Blob([bytes]).stream().pipeThrough(stream)).arrayBuffer().then(function(it){
+    return new Uint8Array(it);
+  });
+};
+encode = function(obj){
+  var bytes;
+  bytes = new TextEncoder().encode(JSON.stringify(obj));
+  if (!window.CompressionStream) {
+    return Promise.resolve('0' + b64url(bytes));
+  }
+  return pipe(bytes, new CompressionStream('deflate-raw')).then(function(it){
+    return '1' + b64url(it);
+  });
+};
+decode = function(d){
+  return Promise.resolve().then(function(){
+    var bytes;
+    bytes = unb64url(d.substring(1));
+    if (d[0] === '1') {
+      return pipe(bytes, new DecompressionStream('deflate-raw'));
+    } else {
+      return bytes;
+    }
+  }).then(function(it){
+    return JSON.parse(new TextDecoder().decode(it));
+  });
+};
+settings = function(){
+  var cur, o, f, p, e, k;
   cur = editor.config.cur;
-  q = [['edit', 1], ['t', document.querySelector('#text-input').value], ['s', cur.fontSize]];
+  o = {
+    t: document.querySelector('#text-input').value,
+    s: cur.fontSize
+  };
   if (cur.background) {
-    q.push(['bg', cur.background]);
+    o.bg = cur.background;
   }
   if (f = mtFont.override) {
-    q.push([
-      'font', (f.style || 'normal') === 'normal' && (f.weight || 400) + "" === '400'
-        ? f.name
-        : f.name + "/" + f.style + "/" + f.weight + ".ttf"
-    ]);
+    o.font = (f.style || 'normal') === 'normal' && (f.weight || 400) + "" === '400'
+      ? f.name
+      : f.name + "/" + f.style + "/" + f.weight + ".ttf";
   }
   if ((p = mtPattern.cur) && p.name !== 'upload') {
-    q.push(['pat', p.name]);
+    o.pat = p.name;
   }
-  q.push(['pad', mtFrame.opt.padding]);
+  o.pad = mtFrame.opt.padding;
   if (mtFrame.offset.x || mtFrame.offset.y) {
-    q.push(['ox', Math.round(mtFrame.offset.x)], ['oy', Math.round(mtFrame.offset.y)]);
+    o.ox = Math.round(mtFrame.offset.x);
+    o.oy = Math.round(mtFrame.offset.y);
   }
-  e = editor.effects[type];
+  e = editor.effects[editor.effects.type];
+  o.p = {};
   for (k in (e && e.js && e.js.edit) || {}) {
     if (cur[k] != null) {
-      q.push(["p." + k, cur[k]]);
+      o.p[k] = cur[k];
     }
   }
-  return (location.origin + "/effect/" + type + "/?") + q.map(function(arg$){
-    var k, v;
-    k = arg$[0], v = arg$[1];
-    return k + "=" + encodeURIComponent(v);
-  }).join('&');
+  return o;
+};
+shareUrl = function(){
+  return encode(settings()).then(function(d){
+    return location.origin + "/effect/" + editor.effects.type + "/?d=" + d;
+  });
 };
 window.mtShare = share = {
   open: function(){
-    var url, root;
-    url = shareUrl();
-    mtTrack('share', {
-      effect: editor.effects.type
+    var this$ = this;
+    return shareUrl().then(function(url){
+      var root;
+      mtTrack('share', {
+        effect: editor.effects.type
+      });
+      root = this$.root;
+      root.querySelector('input').value = url;
+      root.querySelector('.mt-share-x').href = "https://x.com/intent/post?url=" + encodeURIComponent(url);
+      root.querySelector('.mt-share-fb').href = "https://www.facebook.com/sharer/sharer.php?u=" + encodeURIComponent(url);
+      this$.ldcv = this$.ldcv || new ldcover({
+        root: root
+      });
+      return this$.ldcv.toggle(true);
     });
-    root = this.root;
-    root.querySelector('input').value = url;
-    root.querySelector('.mt-share-x').href = "https://x.com/intent/post?url=" + encodeURIComponent(url);
-    root.querySelector('.mt-share-fb').href = "https://www.facebook.com/sharer/sharer.php?u=" + encodeURIComponent(url);
-    this.ldcv = this.ldcv || new ldcover({
-      root: root
-    });
-    return this.ldcv.toggle(true);
   },
   copy: function(){
     var input, p, this$ = this;
@@ -1315,8 +1369,38 @@ window.mtShare = share = {
       }, 1200);
     });
   },
-  apply: function(q){
-    var k, v, name, n, ref$;
+  parse: function(q){
+    if (q.d) {
+      return decode(q.d).then(function(o){
+        var ret, k, ref$, v;
+        ret = import$({}, o);
+        delete ret.p;
+        for (k in ref$ = o.p || {}) {
+          v = ref$[k];
+          ret["p." + k] = v;
+        }
+        return ret;
+      })['catch'](function(e){
+        console.warn("[maketext] share:", e);
+        return null;
+      });
+    } else {
+      return Promise.resolve(q.edit ? q : null);
+    }
+  },
+  apply: function(q, fromD){
+    var n, ref$, k, v, name, ref1$;
+    if (fromD && q.t != null) {
+      maketext.editor.input(q.t + "");
+    }
+    if (fromD && q.s != null && (n = document.querySelector('#font-size-slider .up.irs-input'))) {
+      if ((ref$ = $(n).data('ionRangeSlider')) != null) {
+        ref$.update({
+          from: +q.s
+        });
+      }
+      editor.update('fontSize', +q.s);
+    }
     if (q.bg) {
       setColor('background', q.bg);
     }
@@ -1327,8 +1411,8 @@ window.mtShare = share = {
         if (document.querySelector("#editor-custom-options input[name=\"" + name + "\"][data-toggle=colorpicker]")) {
           setColor(name, v);
         } else if (n = document.querySelector("#editor-custom-options .irs-input input[data-name=\"" + name + "\"]")) {
-          if ((ref$ = $(n).data('ionRangeSlider')) != null) {
-            ref$.update({
+          if ((ref1$ = $(n).data('ionRangeSlider')) != null) {
+            ref1$.update({
               from: +v
             });
           }
@@ -1389,6 +1473,11 @@ document.addEventListener('DOMContentLoaded', function(){
     return this.select();
   });
 });
+function import$(obj, src){
+  var own = {}.hasOwnProperty;
+  for (var key in src) if (own.call(src, key)) obj[key] = src[key];
+  return obj;
+}
 var loadFont, RASTER, backgroundColor, blobToDataurl, gifenc, gifencLoad, gifBlob, loadImage, dataurlCache, inlineImages, decodeFrames, ANIMATED, mediabunny, mediabunnyLoad, videoSink, webpAnimate;
 loadFont = function(){
   return mtFont.of(editor.effects.type).then(function(f){

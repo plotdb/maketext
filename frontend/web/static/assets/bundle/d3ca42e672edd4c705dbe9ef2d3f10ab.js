@@ -555,12 +555,17 @@ $(document).ready(function(){
       ref1$ = ref$[i$], k = ref1$[0], v = ref1$[1];
       q[decodeURIComponent(k)] = decodeURIComponent((v || '').replace(/\+/g, ' '));
     }
-    if (!(q.edit && (m = /^\/effect\/([^\/]+)/.exec(location.pathname)) && effects[m[1]])) {
+    if (!((q.d || q.edit) && (m = /^\/effect\/([^\/]+)/.exec(location.pathname)) && effects[m[1]])) {
       return;
     }
-    return mteffect.load(m[1]).then(function(e){
+    return Promise.all([mteffect.load(m[1]), mtShare.parse(q)]).then(function(arg$){
+      var e, s;
+      e = arg$[0], s = arg$[1];
+      if (!s) {
+        return;
+      }
       openEffect(m[1], e);
-      return mtShare.apply(q);
+      return mtShare.apply(s, !!q.d);
     })['catch'](function(e){
       return console.warn("[maketext] share:", e);
     });
