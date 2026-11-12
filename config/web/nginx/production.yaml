@@ -1,0 +1,9 @@
+name: maketext
+ip: 127.0.0.1
+port: 9101
+hostname: maketext.io
+root: /home/web/projects/maketext.io/server/frontend/web/static/
+cert:
+  crt: /etc/letsencrypt/live/maketext.io/fullchain.pem
+  key: /etc/letsencrypt/live/maketext.io/privkey.pem
+nginxCfgDir: /etc/nginx
