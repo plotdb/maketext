@@ -148,6 +148,10 @@ while read -r name; do
   done
 done <<< "$(ls -1 "$FEROOT/static/assets/lib" 2>/dev/null)"
 
+# a pre-built page goes through the catch-all location, which has no rule of its own
+# for html: without no-cache there, the browser keeps the old page after a deploy.
+if [ -f "$FEROOT/static/index.html" ]; then check "/index.html" nocache "html page"; fi
+
 if [ "$MODE" = json ]; then
   printf '{"origin":"%s","pass":%d,"warn":%d,"fail":%d,"checks":[' "$ORIGIN" "$PASS" "$WARN" "$FAIL"
   first=1

@@ -3,6 +3,11 @@
  - fixes:
    - deps: `@plotdb/srcbuild` ^0.1.12. 0.1.11 was published with `dist/` flattened, so
      `@plotdb/srcbuild/dist/view/pug` was not found and the server didn't start.
+   - nginx sample ( `config/base/nginx/config.ngx` ): the catch-all location, which serves
+     the pre-built html pages, had no `Cache-Control`, so browsers guessed a lifetime from
+     `Last-Modified` and kept showing old pages after a deploy. It's now `no-cache` ( with
+     the security headers repeated, since `add_header` doesn't inherit ). `cachecheck`
+     checks a page too. Derived projects need the same change in their own nginx config.
    - deps: `nodemailer` ^9 -> ^10.5.0 for security advisories ( address parsing DoS, SMTP
      credential disclosure across transports ). 10.x requires Node.js 20+, so `engines.node` is
      now `>=20.0.0`; nothing changes in how `mail-queue` uses it.
