@@ -28,8 +28,9 @@ include @/ldpalettepicker/ldpp.pug
     .small.text-muted.mb-3 this link opens the editor with the current effect, text and settings.
     .d-flex
       input.form-control.form-control-sm(readonly)
-      .btn.btn-sm.btn-dark.ml-2.mt-share-copy Copy
-    .small.text-success.mt-1.d-none.mt-share-copied copied!
+      //- 複製後短暫顯示提示 ( .tip-on, src/ls/editor/share.ls ); manual: 滑過時不顯示
+      .btn.btn-sm.btn-dark.ml-2.mt-share-copy.has-tips.manual Copy
+        .hover-tip.tip-sm.tip-fit.top copied!
     .mt-3.d-flex.align-items-center
       a.btn.btn-sm.btn-outline-dark.mr-2.mt-share-x(target="_blank",rel="noopener") #[+x-icon]
       a.btn.btn-sm.btn-outline-dark.mt-share-fb(target="_blank",rel="noopener") #[i.fa.fa-facebook]

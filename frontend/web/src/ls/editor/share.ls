@@ -28,7 +28,6 @@ window.mt-share = share = do
     root.querySelector(\input).value = url
     root.querySelector(\.mt-share-x).href = "https://x.com/intent/post?url=#{encodeURIComponent url}"
     root.querySelector(\.mt-share-fb).href = "https://www.facebook.com/sharer/sharer.php?u=#{encodeURIComponent url}"
-    root.querySelector(\.mt-share-copied).classList.add \d-none
     @ldcv = @ldcv or new ldcover root: root
     @ldcv.toggle true
   copy: ->
@@ -36,7 +35,11 @@ window.mt-share = share = do
     p = if navigator.clipboard => navigator.clipboard.writeText(input.value) else
       input.select!
       Promise.resolve document.execCommand(\copy)
-    p.then ~> @root.querySelector(\.mt-share-copied).classList.remove \d-none
+    p.then ~>
+      btn = @root.querySelector \.mt-share-copy
+      btn.classList.add \tip-on
+      clearTimeout @_tip
+      @_tip = setTimeout (-> btn.classList.remove \tip-on), 1200
   # 開啟分享的網址時: 打開 editor 並套用設定 ( index.ls 在 open-effect 之後呼叫 )
   apply: (q) ->
     if q.bg => set-color \background, q.bg

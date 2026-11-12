@@ -44,7 +44,6 @@ window.mtShare = share = {
     root.querySelector('input').value = url;
     root.querySelector('.mt-share-x').href = "https://x.com/intent/post?url=" + encodeURIComponent(url);
     root.querySelector('.mt-share-fb').href = "https://www.facebook.com/sharer/sharer.php?u=" + encodeURIComponent(url);
-    root.querySelector('.mt-share-copied').classList.add('d-none');
     this.ldcv = this.ldcv || new ldcover({
       root: root
     });
@@ -57,7 +56,13 @@ window.mtShare = share = {
       ? navigator.clipboard.writeText(input.value)
       : (input.select(), Promise.resolve(document.execCommand('copy')));
     return p.then(function(){
-      return this$.root.querySelector('.mt-share-copied').classList.remove('d-none');
+      var btn;
+      btn = this$.root.querySelector('.mt-share-copy');
+      btn.classList.add('tip-on');
+      clearTimeout(this$._tip);
+      return this$._tip = setTimeout(function(){
+        return btn.classList.remove('tip-on');
+      }, 1200);
     });
   },
   apply: function(q){
