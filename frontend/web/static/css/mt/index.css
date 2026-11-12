@@ -2816,8 +2816,9 @@ body.editing #cooltext.dragging {
   display: flex;
 }
 #editor .mt-fill .color {
-  -webkit-flex: 1;
-  flex: 1;
+  flex-grow: 1;
+  flex-shrink: 1;
+  flex-basis: auto;
   min-width: 0;
   -ms-transition: flex 0.2s ease-in-out;
   -moz-transition: flex 0.2s ease-in-out;
@@ -2826,8 +2827,10 @@ body.editing #cooltext.dragging {
   transition: flex 0.2s ease-in-out;
 }
 #editor .mt-fill .mt-pattern-btn {
-  -webkit-flex: 0;
-  flex: 0;
+  flex-grow: 0;
+  flex-shrink: 0;
+  flex-basis: auto;
+  padding: 0 10px;
   margin-left: 4px;
   position: relative;
   border: 1px dashed #999;
@@ -2837,7 +2840,8 @@ body.editing #cooltext.dragging {
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 11px;
+  font-size: 13px;
+  font-weight: bold;
   color: #777;
   -ms-transition: flex 0.2s ease-in-out;
   -moz-transition: flex 0.2s ease-in-out;
@@ -2853,13 +2857,24 @@ body.editing #cooltext.dragging {
   display: none;
 }
 #editor .mt-fill.on .color {
-  -webkit-flex: 0;
-  flex: 0;
+  flex-grow: 0;
+  flex-shrink: 0;
+  flex-basis: 44px;
   cursor: pointer;
 }
+#editor .mt-fill.on .color input {
+  color: transparent;
+}
+#editor .mt-fill.on .color .inner {
+  left: 4px;
+  right: 4px;
+  width: auto;
+  border-radius: 3px;
+}
 #editor .mt-fill.on .mt-pattern-btn {
-  -webkit-flex: 1;
-  flex: 1;
+  flex-grow: 1;
+  flex-shrink: 1;
+  flex-basis: auto;
   border: 1px solid #333;
 }
 #editor .mt-fill.on .mt-pattern-label {
