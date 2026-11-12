@@ -2781,7 +2781,7 @@ body.editing #cooltext {
   box-shadow: 0 1px 3px rgba(0,0,0,0.2);
 }
 #editor .footer .inline-block {
-  vertical-align: bottom;
+  vertical-align: top;
 }
 #editor .footer .mt-export-opt .form-control {
   width: 90px;
@@ -2907,6 +2907,9 @@ body.editing #cooltext.dragging {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: 8px;
+  max-height: 60vh;
+  overflow-y: auto;
+  padding: 2px;
 }
 #pattern-picker .base .mt-pattern-item {
   height: 72px;

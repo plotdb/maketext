@@ -1556,7 +1556,7 @@ window.convert = {
           path = document.createElementNS("http://www.w3.org/2000/svg", "path");
           parent = text.parentNode;
           path.setAttribute('d', d);
-          for (i$ = 0, len$ = (ref$ = ['fill', 'stroke', 'stroke-width']).length; i$ < len$; ++i$) {
+          for (i$ = 0, len$ = (ref$ = ['fill', 'fill-opacity', 'stroke', 'stroke-width', 'stroke-opacity', 'stroke-dasharray', 'stroke-linejoin', 'paint-order', 'mask']).length; i$ < len$; ++i$) {
             name = ref$[i$];
             if (that = text.getAttribute(name)) {
               path.setAttribute(name, that);
@@ -1567,6 +1567,9 @@ window.convert = {
           g2.appendChild(path);
           if (that = text.getAttribute('filter')) {
             g1.setAttribute('filter', that);
+          }
+          if (that = text.getAttribute('transform')) {
+            g1.setAttribute('transform', that);
           }
           parent.removeChild(text);
           pbox = path.getBBox();

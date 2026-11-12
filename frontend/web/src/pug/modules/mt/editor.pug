@@ -111,6 +111,9 @@ include @/ldpalettepicker/ldpp.pug
             each f in ["mp4", "webm"]
               a.dropdown-item.d-none(href="#",data-type=f,data-anim="",onclick="convert.video('" + f + "');return false")= f.toUpperCase()
     .inline-block
+      //- 空白的標題: 按鈕與左邊各欄的輸入框對齊
+      label &nbsp;
+      br
       //- 拖曳過文字時出現: 回到原本的位置
       .btn.btn-outline-dark.mr-2.d-none#editor-reset-offset(onclick="mtFrame.reset()",title="reset text position") &#x21ba; Position
       .btn.btn-outline-dark.mr-2(onclick="editor.toggle(false)") #[big(style="line-height:1em") &times;] Close

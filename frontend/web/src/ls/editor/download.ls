@@ -70,7 +70,8 @@ window.convert = do
     path = document.createElementNS("http://www.w3.org/2000/svg", "path")
     parent = text.parentNode
     path.setAttribute \d, d
-    for name in <[fill stroke stroke-width]> =>
+    # text 上的外觀屬性搬到 path ( 例: 透明度 / 虛線 / 遮罩 ), 位移放在外層的 g1
+    for name in <[fill fill-opacity stroke stroke-width stroke-opacity stroke-dasharray stroke-linejoin paint-order mask]> =>
       if text.getAttribute(name) => path.setAttribute name, that
     parent.insertBefore(g1, text)
     # put path in two g, one for filter, one for transform.
@@ -78,6 +79,7 @@ window.convert = do
     g1.appendChild(g2)
     g2.appendChild(path)
     if text.getAttribute(\filter) => g1.setAttribute \filter, that
+    if text.getAttribute(\transform) => g1.setAttribute \transform, that
     parent.removeChild(text)
     pbox = path.getBBox!
 
