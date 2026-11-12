@@ -15,6 +15,8 @@ window.editor = editor = do
     if !v =>
       svg = document.querySelector '#cooltext svg'
       svg.parentNode.removeChild svg
+      # 預覽高度可能被匯出範圍撐高過 ( layout.ls 的 fit )
+      document.querySelector('#cooltext').style.height = ''
   config: cur: {fontSize: 64}, old: {}
 
 # gallery 的分段更新:
@@ -37,7 +39,7 @@ gallery.sync = (item) ->
       if font => mt-font.apply item, font
       item.classList.add \live
       {text, font-size, background} = @state
-      if text? => Array.from(item.querySelectorAll \text).map -> it.textContent = text
+      if text? => Array.from(item.querySelectorAll \text).map -> mt-set-text it, text
       if font-size? => Array.from(item.querySelectorAll \text).map -> it.style.fontSize = "#{font-size}px"
       if background? => item.querySelector(\svg).style.background = background
       item.dataset.v = ver
@@ -77,8 +79,9 @@ update-text = (node) ->
   text-input = document.querySelector('#text-input')
   value = node.value or 'Hello World!'
   gallery.set \text, value
-  Array.from(document.querySelectorAll('#cooltext text')).map -> it.textContent = value
-  text-input.value = value
+  Array.from(document.querySelectorAll('#cooltext text')).map -> mt-set-text it, value
+  # 正在打字的就是這個欄位時不要回寫 ( 會把游標移到最後 )
+  if text-input.value != value and node != text-input => text-input.value = value
   mt-frame.refresh!
 
 window.scrollto = scrollto = (node) ->
@@ -87,7 +90,12 @@ window.scrollto = scrollto = (node) ->
 document.querySelector('#landing input').addEventListener \keyup, (e) ->
   if e.keyCode == 13 => scrollto \#top
   update-text @
-document.querySelector(\#text-input).addEventListener \keyup, -> update-text @
+document.querySelector(\#text-input).addEventListener \input, -> update-text @
+# 文字欄 ( textarea, 可多行 ): 點擊時展開, 離開時收回 ( css: #editor .mt-text-box )
+do ->
+  n = document.querySelector \#text-input
+  n.addEventListener \focus, -> n.parentNode.classList.add \open
+  n.addEventListener \blur, -> n.parentNode.classList.remove \open
 editor.update = (name, value) ->
   @config.old = JSON.parse JSON.stringify @config.cur
   @config.cur[name] = value
@@ -193,7 +201,7 @@ open-effect = (type, e) ->
     smiltool.url-to-dataurl href, w, h .then -> d.setAttributeNS \http://www.w3.org/1999/xlink, \href, it
   editor.toggle true
   Array.from(document.querySelectorAll('#cooltext text')).map ->
-    it.textContent = (document.querySelector('#text-input').value or 'Hello World')
+    mt-set-text it, (document.querySelector('#text-input').value or 'Hello World')
   editor.effects.type = type
   effect = editor.effects[type]
   options = document.querySelector(\#editor-custom-options)

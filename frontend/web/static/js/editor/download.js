@@ -4,10 +4,14 @@ loadFont = function(){
     return f.getotf();
   }).then(function(otf){
     return {
-      getD: function(text, arg$){
+      getD: function(lines, arg$){
         var fontSize;
         fontSize = arg$.fontSize;
-        return otf.getPath(text, 0, 0, fontSize).toPathData();
+        return lines.map(function(line, i){
+          var x;
+          x = -otf.getAdvanceWidth(line, fontSize) / 2;
+          return otf.getPath(line, x, i * fontSize * mtLineHeight, fontSize).toPathData();
+        }).join(' ');
       }
     };
   });
@@ -58,12 +62,13 @@ window.convert = {
         var tts;
         tts = arg$[0];
         return Array.from(svg.querySelectorAll('text')).map(function(text, i){
-          var textbox, fontSize, textValue, d, g1, g2, path, parent, i$, ref$, len$, name, that, pbox, x, y, width, height;
+          var textbox, fontSize, lines, textValue, d, g1, g2, path, parent, i$, ref$, len$, name, that, pbox, x, y, width, height;
           textbox = text.getBBox();
           fontSize = getComputedStyle(text).fontSize;
           fontSize = +(/(\d+)/.exec(fontSize) || [0, 64])[1];
-          textValue = text.textContent || 'Hello World';
-          d = tts.getD(textValue, {
+          lines = mtTextLines(text);
+          textValue = lines.join(' ').trim() || 'Hello World';
+          d = tts.getD(lines, {
             fontSize: fontSize
           });
           g1 = document.createElementNS("http://www.w3.org/2000/svg", "g");
@@ -86,7 +91,7 @@ window.convert = {
           parent.removeChild(text);
           pbox = path.getBBox();
           x = -path.getBBox().width * 0.5 - path.getBBox().x + textbox.width * 0.5 + textbox.x;
-          y = path.getBBox().height * 0.5 + textbox.height * 0.5 + textbox.y;
+          y = -path.getBBox().height * 0.5 - path.getBBox().y + textbox.height * 0.5 + textbox.y;
           g2.setAttribute("transform", "translate(" + x + ", " + y + ")");
           ref$ = [box.width, box.height].map(function(it){
             return Math.round(it * scale);

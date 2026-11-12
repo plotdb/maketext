@@ -14,7 +14,8 @@ $(document).ready(function(){
       document.body.classList[!v ? 'remove' : 'add']('editing');
       if (!v) {
         svg = document.querySelector('#cooltext svg');
-        return svg.parentNode.removeChild(svg);
+        svg.parentNode.removeChild(svg);
+        return document.querySelector('#cooltext').style.height = '';
       }
     },
     config: {
@@ -59,7 +60,7 @@ $(document).ready(function(){
       ref$ = this$.state, text = ref$.text, fontSize = ref$.fontSize, background = ref$.background;
       if (text != null) {
         Array.from(item.querySelectorAll('text')).map(function(it){
-          return it.textContent = text;
+          return mtSetText(it, text);
         });
       }
       if (fontSize != null) {
@@ -133,9 +134,11 @@ $(document).ready(function(){
     value = node.value || 'Hello World!';
     gallery.set('text', value);
     Array.from(document.querySelectorAll('#cooltext text')).map(function(it){
-      return it.textContent = value;
+      return mtSetText(it, value);
     });
-    textInput.value = value;
+    if (textInput.value !== value && node !== textInput) {
+      textInput.value = value;
+    }
     return mtFrame.refresh();
   };
   window.scrollto = scrollto = function(node){
@@ -149,9 +152,19 @@ $(document).ready(function(){
     }
     return updateText(this);
   });
-  document.querySelector('#text-input').addEventListener('keyup', function(){
+  document.querySelector('#text-input').addEventListener('input', function(){
     return updateText(this);
   });
+  (function(){
+    var n;
+    n = document.querySelector('#text-input');
+    n.addEventListener('focus', function(){
+      return n.parentNode.classList.add('open');
+    });
+    return n.addEventListener('blur', function(){
+      return n.parentNode.classList.remove('open');
+    });
+  })();
   editor.update = function(name, value){
     var svg;
     this.config.old = JSON.parse(JSON.stringify(this.config.cur));
@@ -309,7 +322,7 @@ $(document).ready(function(){
     });
     editor.toggle(true);
     Array.from(document.querySelectorAll('#cooltext text')).map(function(it){
-      return it.textContent = document.querySelector('#text-input').value || 'Hello World';
+      return mtSetText(it, document.querySelector('#text-input').value || 'Hello World');
     });
     editor.effects.type = type;
     effect = editor.effects[type];
@@ -677,10 +690,14 @@ loadFont = function(){
     return f.getotf();
   }).then(function(otf){
     return {
-      getD: function(text, arg$){
+      getD: function(lines, arg$){
         var fontSize;
         fontSize = arg$.fontSize;
-        return otf.getPath(text, 0, 0, fontSize).toPathData();
+        return lines.map(function(line, i){
+          var x;
+          x = -otf.getAdvanceWidth(line, fontSize) / 2;
+          return otf.getPath(line, x, i * fontSize * mtLineHeight, fontSize).toPathData();
+        }).join(' ');
       }
     };
   });
@@ -731,12 +748,13 @@ window.convert = {
         var tts;
         tts = arg$[0];
         return Array.from(svg.querySelectorAll('text')).map(function(text, i){
-          var textbox, fontSize, textValue, d, g1, g2, path, parent, i$, ref$, len$, name, that, pbox, x, y, width, height;
+          var textbox, fontSize, lines, textValue, d, g1, g2, path, parent, i$, ref$, len$, name, that, pbox, x, y, width, height;
           textbox = text.getBBox();
           fontSize = getComputedStyle(text).fontSize;
           fontSize = +(/(\d+)/.exec(fontSize) || [0, 64])[1];
-          textValue = text.textContent || 'Hello World';
-          d = tts.getD(textValue, {
+          lines = mtTextLines(text);
+          textValue = lines.join(' ').trim() || 'Hello World';
+          d = tts.getD(lines, {
             fontSize: fontSize
           });
           g1 = document.createElementNS("http://www.w3.org/2000/svg", "g");
@@ -759,7 +777,7 @@ window.convert = {
           parent.removeChild(text);
           pbox = path.getBBox();
           x = -path.getBBox().width * 0.5 - path.getBBox().x + textbox.width * 0.5 + textbox.x;
-          y = path.getBBox().height * 0.5 + textbox.height * 0.5 + textbox.y;
+          y = -path.getBBox().height * 0.5 - path.getBBox().y + textbox.height * 0.5 + textbox.y;
           g2.setAttribute("transform", "translate(" + x + ", " + y + ")");
           ref$ = [box.width, box.height].map(function(it){
             return Math.round(it * scale);

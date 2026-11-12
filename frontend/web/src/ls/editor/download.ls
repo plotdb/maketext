@@ -5,7 +5,12 @@
 load-font = ->
   mt-font.of(editor.effects.type).then (f) -> f.getotf!
   .then (otf) ->
-    getD: (text, {fontSize}) -> otf.getPath(text, 0, 0, fontSize).toPathData!
+    # 多行: 每行水平置中, 以 mt-line-height ( util.ls ) 往下排. 整段的位置之後再對齊到 text 的外框
+    getD: (lines, {fontSize}) ->
+      lines.map (line, i) ->
+        x = -otf.getAdvanceWidth(line, fontSize) / 2
+        otf.getPath(line, x, i * fontSize * mt-line-height, fontSize).toPathData!
+      .join ' '
 
 window.convert = do
   prepare: -> new Promise (res, rej) ->
@@ -57,8 +62,9 @@ window.convert = do
 
     fontSize = getComputedStyle(text).fontSize
     fontSize = +(/(\d+)/.exec(fontSize) or [0,64]).1
-    text-value = text.textContent or 'Hello World'
-    d = tts.getD text-value, {fontSize}
+    lines = mt-text-lines text
+    text-value = lines.join(' ').trim! or 'Hello World'
+    d = tts.getD lines, {fontSize}
     g1 = document.createElementNS("http://www.w3.org/2000/svg", "g")
     g2 = document.createElementNS("http://www.w3.org/2000/svg", "g")
     path = document.createElementNS("http://www.w3.org/2000/svg", "path")
@@ -76,7 +82,8 @@ window.convert = do
     pbox = path.getBBox!
 
     x = -path.getBBox!width * 0.5 - path.getBBox!x + textbox.width * 0.5 + textbox.x
-    y = path.getBBox!height * 0.5                  + textbox.height * 0.5 + textbox.y
+    # 字形外框的中心對齊 text 外框的中心 ( 多行時字形不只在基線上方, 不能假設 pbox.y = -高度 )
+    y = -path.getBBox!height * 0.5 - path.getBBox!y + textbox.height * 0.5 + textbox.y
 
     g2.setAttribute("transform", "translate(#x, #y)")
     [width, height] = [box.width, box.height].map -> Math.round(it * scale)

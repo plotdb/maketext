@@ -15150,6 +15150,35 @@ body.editing #cooltext.dragging {
   justify-content: center;
   color: #999;
 }
+#editor .mt-text-box {
+  position: relative;
+  height: calc(1.8125rem + 2px);
+}
+#editor .mt-text-box textarea {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  resize: none;
+  overflow: hidden;
+  white-space: pre;
+  line-height: 1.4;
+  -ms-transition: height 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+  -moz-transition: height 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+  -webkit-transition: height 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+  -o-transition: height 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+  transition: height 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+}
+#editor .mt-text-box.open textarea {
+  height: 7.5em;
+  overflow: auto;
+  z-index: 10;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+#editor:focus-within {
+  overflow: visible;
+}
 .gallery {
   max-width: 1024px;
   width: 90%;

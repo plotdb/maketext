@@ -23,6 +23,8 @@ window.mt-frame = frame = do
     g.setAttribute \class, \mt-offset
     for n in Array.from(svg.childNodes) when !(n.nodeType == 1 and n.localName in NON-GRAPHIC) => g.appendChild n
     svg.appendChild g
+    # 效果原本的 viewBox ( 通常 0 0 500 150 ), 預覽高度依匯出範圍延伸時以它為準 ( fit )
+    svg.dataset.vb = svg.getAttribute(\viewBox) or '0 0 500 150'
     crop = document.createElementNS SVGNS, \rect
     crop.setAttribute \class, \mt-crop
     svg.appendChild crop
@@ -51,7 +53,16 @@ window.mt-frame = frame = do
       if !((svg = @svg!) and crop = svg.querySelector \.mt-crop) => return
       if !(b = @box svg) => return crop.setAttribute \width, 0
       for k,v of b => crop.setAttribute k, v
+      @fit svg, b
     ), 60
+  # 預覽的高度: 匯出範圍 ( padding 大 / 多行文字 ) 超出效果原本的畫面時, 上下延伸 viewBox 與 #cooltext 的高度,
+  # 縮放比例不變 ( 預設高度 170px 對應 viewBox 的 150 單位 )
+  fit: (svg, b) ->
+    [x, y, w, h] = svg.dataset.vb.split(/[\s,]+/).map(-> +it)
+    y1 = Math.min(y, b.y - 10)
+    y2 = Math.max(y + h, b.y + b.height + 10)
+    svg.setAttribute \viewBox, [x, y1, w, y2 - y1].join(' ')
+    if (n = document.querySelector \#cooltext) => n.style.height = "#{Math.round(170 * (y2 - y1) / h)}px"
   reset: -> @offset = {x: 0, y: 0}; @apply!
   set-opt: (k, v) ->
     @opt[k] = v

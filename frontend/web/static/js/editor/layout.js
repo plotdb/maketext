@@ -33,6 +33,7 @@ window.mtFrame = frame = {
       }
     }
     svg.appendChild(g);
+    svg.dataset.vb = svg.getAttribute('viewBox') || '0 0 500 150';
     crop = document.createElementNS(SVGNS, 'rect');
     crop.setAttribute('class', 'mt-crop');
     svg.appendChild(crop);
@@ -101,7 +102,7 @@ window.mtFrame = frame = {
     var this$ = this;
     clearTimeout(this._timer);
     return this._timer = setTimeout(function(){
-      var svg, crop, b, k, v, results$ = [];
+      var svg, crop, b, k, v;
       if (!((svg = this$.svg()) && (crop = svg.querySelector('.mt-crop')))) {
         return;
       }
@@ -110,10 +111,22 @@ window.mtFrame = frame = {
       }
       for (k in b) {
         v = b[k];
-        results$.push(crop.setAttribute(k, v));
+        crop.setAttribute(k, v);
       }
-      return results$;
+      return this$.fit(svg, b);
     }, 60);
+  },
+  fit: function(svg, b){
+    var ref$, x, y, w, h, y1, y2, n;
+    ref$ = svg.dataset.vb.split(/[\s,]+/).map(function(it){
+      return +it;
+    }), x = ref$[0], y = ref$[1], w = ref$[2], h = ref$[3];
+    y1 = Math.min(y, b.y - 10);
+    y2 = Math.max(y + h, b.y + b.height + 10);
+    svg.setAttribute('viewBox', [x, y1, w, y2 - y1].join(' '));
+    if (n = document.querySelector('#cooltext')) {
+      return n.style.height = Math.round(170 * (y2 - y1) / h) + "px";
+    }
   },
   reset: function(){
     this.offset = {

@@ -14,7 +14,8 @@ $(document).ready(function(){
       document.body.classList[!v ? 'remove' : 'add']('editing');
       if (!v) {
         svg = document.querySelector('#cooltext svg');
-        return svg.parentNode.removeChild(svg);
+        svg.parentNode.removeChild(svg);
+        return document.querySelector('#cooltext').style.height = '';
       }
     },
     config: {
@@ -59,7 +60,7 @@ $(document).ready(function(){
       ref$ = this$.state, text = ref$.text, fontSize = ref$.fontSize, background = ref$.background;
       if (text != null) {
         Array.from(item.querySelectorAll('text')).map(function(it){
-          return it.textContent = text;
+          return mtSetText(it, text);
         });
       }
       if (fontSize != null) {
@@ -133,9 +134,11 @@ $(document).ready(function(){
     value = node.value || 'Hello World!';
     gallery.set('text', value);
     Array.from(document.querySelectorAll('#cooltext text')).map(function(it){
-      return it.textContent = value;
+      return mtSetText(it, value);
     });
-    textInput.value = value;
+    if (textInput.value !== value && node !== textInput) {
+      textInput.value = value;
+    }
     return mtFrame.refresh();
   };
   window.scrollto = scrollto = function(node){
@@ -149,9 +152,19 @@ $(document).ready(function(){
     }
     return updateText(this);
   });
-  document.querySelector('#text-input').addEventListener('keyup', function(){
+  document.querySelector('#text-input').addEventListener('input', function(){
     return updateText(this);
   });
+  (function(){
+    var n;
+    n = document.querySelector('#text-input');
+    n.addEventListener('focus', function(){
+      return n.parentNode.classList.add('open');
+    });
+    return n.addEventListener('blur', function(){
+      return n.parentNode.classList.remove('open');
+    });
+  })();
   editor.update = function(name, value){
     var svg;
     this.config.old = JSON.parse(JSON.stringify(this.config.cur));
@@ -309,7 +322,7 @@ $(document).ready(function(){
     });
     editor.toggle(true);
     Array.from(document.querySelectorAll('#cooltext text')).map(function(it){
-      return it.textContent = document.querySelector('#text-input').value || 'Hello World';
+      return mtSetText(it, document.querySelector('#text-input').value || 'Hello World');
     });
     editor.effects.type = type;
     effect = editor.effects[type];

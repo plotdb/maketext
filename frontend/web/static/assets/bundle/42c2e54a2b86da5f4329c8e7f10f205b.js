@@ -1,3 +1,4 @@
+var LINEHEIGHT;
 window.idle = function(cb, timeout){
   var run;
   timeout == null && (timeout = 2000);
@@ -22,6 +23,34 @@ window.mtTrack = function(name, params){
     return gtag('event', name, params);
   }
 };
+LINEHEIGHT = 1.2;
+window.mtSetText = function(node, value){
+  var lines, x, i$, len$, i, line, t, results$ = [];
+  lines = (value + "").split(/\r?\n/);
+  node.dataset.mtText = value;
+  if (lines.length < 2) {
+    return node.textContent = value;
+  }
+  node.textContent = '';
+  x = node.getAttribute('x') || 0;
+  for (i$ = 0, len$ = lines.length; i$ < len$; ++i$) {
+    i = i$;
+    line = lines[i$];
+    t = document.createElementNS('http://www.w3.org/2000/svg', 'tspan');
+    t.setAttribute('x', x);
+    t.setAttribute('dy', (i === 0 ? -(lines.length - 1) / 2 * LINEHEIGHT : LINEHEIGHT) + "em");
+    t.textContent = line || ' ';
+    results$.push(node.appendChild(t));
+  }
+  return results$;
+};
+window.mtTextLines = function(node){
+  var ref$;
+  return (((ref$ = node.dataset.mtText) != null
+    ? ref$
+    : node.textContent) + "").split(/\r?\n/);
+};
+window.mtLineHeight = LINEHEIGHT;
 history.scrollRestoration = 'manual';
 $(document).ready(function(){
   var svgHtml, editor, gallery, updateText, scrollto, hasStar, galleryRows, initSlider, initColorpicker, openEffect, clusterize, maketext, queries;
@@ -38,7 +67,8 @@ $(document).ready(function(){
       document.body.classList[!v ? 'remove' : 'add']('editing');
       if (!v) {
         svg = document.querySelector('#cooltext svg');
-        return svg.parentNode.removeChild(svg);
+        svg.parentNode.removeChild(svg);
+        return document.querySelector('#cooltext').style.height = '';
       }
     },
     config: {
@@ -83,7 +113,7 @@ $(document).ready(function(){
       ref$ = this$.state, text = ref$.text, fontSize = ref$.fontSize, background = ref$.background;
       if (text != null) {
         Array.from(item.querySelectorAll('text')).map(function(it){
-          return it.textContent = text;
+          return mtSetText(it, text);
         });
       }
       if (fontSize != null) {
@@ -157,9 +187,11 @@ $(document).ready(function(){
     value = node.value || 'Hello World!';
     gallery.set('text', value);
     Array.from(document.querySelectorAll('#cooltext text')).map(function(it){
-      return it.textContent = value;
+      return mtSetText(it, value);
     });
-    textInput.value = value;
+    if (textInput.value !== value && node !== textInput) {
+      textInput.value = value;
+    }
     return mtFrame.refresh();
   };
   window.scrollto = scrollto = function(node){
@@ -173,9 +205,19 @@ $(document).ready(function(){
     }
     return updateText(this);
   });
-  document.querySelector('#text-input').addEventListener('keyup', function(){
+  document.querySelector('#text-input').addEventListener('input', function(){
     return updateText(this);
   });
+  (function(){
+    var n;
+    n = document.querySelector('#text-input');
+    n.addEventListener('focus', function(){
+      return n.parentNode.classList.add('open');
+    });
+    return n.addEventListener('blur', function(){
+      return n.parentNode.classList.remove('open');
+    });
+  })();
   editor.update = function(name, value){
     var svg;
     this.config.old = JSON.parse(JSON.stringify(this.config.cur));
@@ -333,7 +375,7 @@ $(document).ready(function(){
     });
     editor.toggle(true);
     Array.from(document.querySelectorAll('#cooltext text')).map(function(it){
-      return it.textContent = document.querySelector('#text-input').value || 'Hello World';
+      return mtSetText(it, document.querySelector('#text-input').value || 'Hello World');
     });
     editor.effects.type = type;
     effect = editor.effects[type];
@@ -730,6 +772,7 @@ window.mtFrame = frame = {
       }
     }
     svg.appendChild(g);
+    svg.dataset.vb = svg.getAttribute('viewBox') || '0 0 500 150';
     crop = document.createElementNS(SVGNS, 'rect');
     crop.setAttribute('class', 'mt-crop');
     svg.appendChild(crop);
@@ -798,7 +841,7 @@ window.mtFrame = frame = {
     var this$ = this;
     clearTimeout(this._timer);
     return this._timer = setTimeout(function(){
-      var svg, crop, b, k, v, results$ = [];
+      var svg, crop, b, k, v;
       if (!((svg = this$.svg()) && (crop = svg.querySelector('.mt-crop')))) {
         return;
       }
@@ -807,10 +850,22 @@ window.mtFrame = frame = {
       }
       for (k in b) {
         v = b[k];
-        results$.push(crop.setAttribute(k, v));
+        crop.setAttribute(k, v);
       }
-      return results$;
+      return this$.fit(svg, b);
     }, 60);
+  },
+  fit: function(svg, b){
+    var ref$, x, y, w, h, y1, y2, n;
+    ref$ = svg.dataset.vb.split(/[\s,]+/).map(function(it){
+      return +it;
+    }), x = ref$[0], y = ref$[1], w = ref$[2], h = ref$[3];
+    y1 = Math.min(y, b.y - 10);
+    y2 = Math.max(y + h, b.y + b.height + 10);
+    svg.setAttribute('viewBox', [x, y1, w, y2 - y1].join(' '));
+    if (n = document.querySelector('#cooltext')) {
+      return n.style.height = Math.round(170 * (y2 - y1) / h) + "px";
+    }
   },
   reset: function(){
     this.offset = {
@@ -913,10 +968,14 @@ loadFont = function(){
     return f.getotf();
   }).then(function(otf){
     return {
-      getD: function(text, arg$){
+      getD: function(lines, arg$){
         var fontSize;
         fontSize = arg$.fontSize;
-        return otf.getPath(text, 0, 0, fontSize).toPathData();
+        return lines.map(function(line, i){
+          var x;
+          x = -otf.getAdvanceWidth(line, fontSize) / 2;
+          return otf.getPath(line, x, i * fontSize * mtLineHeight, fontSize).toPathData();
+        }).join(' ');
       }
     };
   });
@@ -967,12 +1026,13 @@ window.convert = {
         var tts;
         tts = arg$[0];
         return Array.from(svg.querySelectorAll('text')).map(function(text, i){
-          var textbox, fontSize, textValue, d, g1, g2, path, parent, i$, ref$, len$, name, that, pbox, x, y, width, height;
+          var textbox, fontSize, lines, textValue, d, g1, g2, path, parent, i$, ref$, len$, name, that, pbox, x, y, width, height;
           textbox = text.getBBox();
           fontSize = getComputedStyle(text).fontSize;
           fontSize = +(/(\d+)/.exec(fontSize) || [0, 64])[1];
-          textValue = text.textContent || 'Hello World';
-          d = tts.getD(textValue, {
+          lines = mtTextLines(text);
+          textValue = lines.join(' ').trim() || 'Hello World';
+          d = tts.getD(lines, {
             fontSize: fontSize
           });
           g1 = document.createElementNS("http://www.w3.org/2000/svg", "g");
@@ -995,7 +1055,7 @@ window.convert = {
           parent.removeChild(text);
           pbox = path.getBBox();
           x = -path.getBBox().width * 0.5 - path.getBBox().x + textbox.width * 0.5 + textbox.x;
-          y = path.getBBox().height * 0.5 + textbox.height * 0.5 + textbox.y;
+          y = -path.getBBox().height * 0.5 - path.getBBox().y + textbox.height * 0.5 + textbox.y;
           g2.setAttribute("transform", "translate(" + x + ", " + y + ")");
           ref$ = [box.width, box.height].map(function(it){
             return Math.round(it * scale);

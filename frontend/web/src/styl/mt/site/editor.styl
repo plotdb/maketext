@@ -261,3 +261,27 @@ body.editing #cooltext
       align-items: center
       justify-content: center
       color: #999
+
+// 文字欄 ( 可多行, src/ls/editor/index.ls ): 平常是一行高, 點擊時往下展開, 蓋在下面的欄位上
+#editor .mt-text-box
+  position: relative
+  height: calc(1.8125rem + 2px)
+  textarea
+    position: absolute
+    top: 0
+    left: 0
+    width: 100%
+    height: 100%
+    resize: none
+    overflow: hidden
+    white-space: pre
+    line-height: 1.4
+    transition: height .2s ease-in-out, box-shadow .2s ease-in-out
+  &.open textarea
+    height: 7.5em
+    overflow: auto
+    z-index: 10
+    box-shadow: 0 4px 12px rgba(0,0,0,.15)
+// 上方收合的設定列 ( overflow: hidden ) 也要讓展開的文字欄露出來
+#editor:focus-within
+  overflow: visible

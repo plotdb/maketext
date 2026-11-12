@@ -46,7 +46,8 @@ include @/ldpalettepicker/ldpp.pug
     .row(style="max-width:1024px;margin:auto")
       .col-6.col-sm-3
         label Text
-        input#text-input.form-control.form-control-sm(value="Hello World!")
+        //- 可多行: 點擊時展開成多行的高度 ( 蓋在下面的欄位上 ), 離開時收回
+        .mt-text-box: textarea#text-input.form-control.form-control-sm(rows="1",spellcheck="false") Hello World!
       .col-6.col-sm-3
         label Font
         //- 選的字型套用到所有效果; 還原: 回到各效果自己的預設字型 ( src/ls/editor/font.ls )
