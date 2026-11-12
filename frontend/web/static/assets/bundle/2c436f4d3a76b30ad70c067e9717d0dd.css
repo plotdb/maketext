@@ -17425,10 +17425,10 @@ body.editing {
 }
 #editor {
   position: fixed;
-  top: -75px;
+  top: -92px;
   left: 0;
   width: 100%;
-  height: 75px;
+  height: 92px;
   z-index: 6;
   background: url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMCIgaGVpZ2h0PSIxMCIgdmlld0JveD0iMCAwIDEwIDEwIj48cGF0aCBkPSJNLTEwIC0xMEwyMCAyME0tMjAgLTEwTDEwIDIwTS0xMCAtMjBMMjAgMTAiIHN0cm9rZT0iI2ZhZmJmYyIgc3Ryb2tlLXdpZHRoPSIxIi8+PC9zdmc+) #fff;
   padding: 0 0 10px;
@@ -17499,8 +17499,8 @@ body.editing {
 }
 @media (max-width: 576px) {
   #editor {
-    top: -135px;
-    height: 135px;
+    top: -165px;
+    height: 165px;
   }
 }
 #cooltext {
@@ -17572,7 +17572,7 @@ body.editing #cooltext {
   margin: auto;
   width: 90%;
   max-width: 640px;
-  height: 380px;
+  height: fit-content;
   text-align: center;
 }
 #download.modal .card .result {

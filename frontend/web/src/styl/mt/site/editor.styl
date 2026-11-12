@@ -15,11 +15,13 @@ body.editing
     text-overflow: ellipsis
     white-space: nowrap
     overflow: hidden
+  // collapsed bar shows the first row of options ( text / font / size / background ).
+  // at the 18px root font size that row ends at 79px; the bar's height has to follow it
   position: fixed
-  top: -75px
+  top: -92px
   left: 0
   width: 100%
-  height: 75px
+  height: 92px
   z-index: index(order, 'editor')
   background: unquote('url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMCIgaGVpZ2h0PSIxMCIgdmlld0JveD0iMCAwIDEwIDEwIj48cGF0aCBkPSJNLTEwIC0xMEwyMCAyME0tMjAgLTEwTDEwIDIwTS0xMCAtMjBMMjAgMTAiIHN0cm9rZT0iI2ZhZmJmYyIgc3Ryb2tlLXdpZHRoPSIxIi8+PC9zdmc+)') #fff
   padding: 0 0 10px
@@ -61,8 +63,8 @@ body.editing
 
 @media(max-width: 576px)
   #editor
-    top: -135px
-    height: 135px
+    top: -165px
+    height: 165px
 
 
 #cooltext
@@ -123,7 +125,9 @@ body.editing
   centered()
   width: 90%
   max-width: 640px
-  height: 380px
+  // follows its content ( a fixed 380px clipped the buttons once the font got larger );
+  // with inset 0 and margin auto it stays centered
+  height: fit-content
   text-align: center
   .result
     background: center center no-repeat
