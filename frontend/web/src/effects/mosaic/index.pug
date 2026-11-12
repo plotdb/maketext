@@ -1,0 +1,19 @@
+svg(xmlns="http://www.w3.org/2000/svg",viewBox="0 0 500 150",style="background:#fdf6e3")
+  defs
+    //- 3x3 的磁磚, 三種顏色斜向輪替, 縫隙是底色
+    pattern#mosaic-tiles(width="42",height="42",patternUnits="userSpaceOnUse")
+      rect(width="42",height="42",fill="#fffaf0")
+      - var cs = [1, 2, 3, 3, 1, 2, 2, 3, 1]
+      - var cc = ["#e76f51", "#2a9d8f", "#e9c46a"]
+      - var op = [1, 0.85, 1, 0.9, 1, 0.8, 1, 0.92, 0.85]
+      each c, i in cs
+        rect(class="c" + c,x=(i % 3) * 14 + 1,y=Math.floor(i / 3) * 14 + 1,width="12",height="12",rx="1.5",fill=cc[c - 1],fill-opacity=op[i])
+    filter#mosaic(x="-10%",y="-30%",width="120%",height="160%")
+      feGaussianBlur(in="SourceAlpha",stdDeviation="1.5",result="shadow-blur")
+      feOffset(in="shadow-blur",dx="2",dy="3",result="shadow-shape")
+      feFlood(flood-color="#000000",flood-opacity="0.3",result="shadow-color")
+      feComposite(in="shadow-color",in2="shadow-shape",operator="in",result="shadow")
+      feMerge
+        feMergeNode(in="shadow")
+        feMergeNode(in="SourceGraphic")
+  text(x="250",y="75",fill="url(#mosaic-tiles)",stroke="#3d3d3d",stroke-width="1",paint-order="stroke",filter="url(#mosaic)") Hello World!

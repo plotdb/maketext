@@ -1,0 +1,22 @@
+svg(xmlns="http://www.w3.org/2000/svg",viewBox="0 0 500 150",style="background:#070b1a")
+  defs
+    filter#electric(x="-20%",y="-60%",width="140%",height="220%")
+      //- 外擴的一圈以雜訊扭成電弧
+      feMorphology(in="SourceAlpha",operator="dilate",radius="3",result="fat")
+      feComposite(in="fat",in2="SourceAlpha",operator="out",result="ring")
+      feTurbulence(type="turbulence",baseFrequency="0.05",numOctaves="3",seed="3",result="noise")
+      feDisplacementMap(in="ring",in2="noise",scale="18",xChannelSelector="R",yChannelSelector="G",result="arcs")
+      feFlood(flood-color="#ffffff",result="white")
+      feComposite(in="white",in2="arcs",operator="in",result="arc-core")
+      feGaussianBlur(in="arcs",stdDeviation="2.5",result="glow1-shape")
+      feFlood(flood-color="#4cc9ff",result="spark-color")
+      feComposite(in="spark-color",in2="glow1-shape",operator="in",result="glow1")
+      feGaussianBlur(in="SourceAlpha",stdDeviation="9",result="glow2-shape")
+      feComposite(in="spark-color",in2="glow2-shape",operator="in",result="glow2")
+      feMerge
+        feMergeNode(in="glow2")
+        feMergeNode(in="glow1")
+        feMergeNode(in="glow1")
+        feMergeNode(in="SourceGraphic")
+        feMergeNode(in="arc-core")
+  text(x="250",y="75",fill="#dff6ff",letter-spacing="3",filter="url(#electric)") Hello World!

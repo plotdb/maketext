@@ -1,0 +1,13 @@
+# 效果描述 ( 名稱 / 排序 / 參數等 ), 欄位說明見 tool/maketext/build-effects.ls
+desc: "Weathered steel letters eaten by patches of orange rust."
+no: 73
+font: Anton
+edit:
+  fill:
+    name: fill
+    type: color
+    default: '#8a8f96'
+  rust:
+    name: rust
+    type: color
+    default: '#a0461b'

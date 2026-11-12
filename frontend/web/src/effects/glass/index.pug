@@ -1,0 +1,24 @@
+svg(xmlns="http://www.w3.org/2000/svg",viewBox="0 0 500 150",style="background:#3a2e8c")
+  defs
+    filter#glass(x="-10%",y="-30%",width="120%",height="170%")
+      //- 半透明的字, alpha 拉回實心再計算邊與高光
+      feComponentTransfer(in="SourceAlpha",result="solid")
+        feFuncA(type="linear",slope="20")
+      feMorphology(in="solid",operator="erode",radius="2",result="inner")
+      feComposite(in="solid",in2="inner",operator="out",result="rim-shape")
+      feFlood(flood-color="#ffffff",flood-opacity="0.75",result="rim-color")
+      feComposite(in="rim-color",in2="rim-shape",operator="in",result="rim")
+      feGaussianBlur(in="solid",stdDeviation="3",result="blur")
+      feSpecularLighting(in="blur",surfaceScale="5",specularConstant="1",specularExponent="40",lighting-color="#ffffff",result="spec")
+        fePointLight(x="120",y="-60",z="180")
+      feComposite(in="spec",in2="solid",operator="in",result="shine")
+      feGaussianBlur(in="solid",stdDeviation="6",result="shadow-blur")
+      feOffset(in="shadow-blur",dy="8",result="shadow-shape")
+      feFlood(flood-color="#000000",flood-opacity="0.3",result="shadow-color")
+      feComposite(in="shadow-color",in2="shadow-shape",operator="in",result="shadow")
+      feMerge
+        feMergeNode(in="shadow")
+        feMergeNode(in="SourceGraphic")
+        feMergeNode(in="rim")
+        feMergeNode(in="shine")
+  text(x="250",y="75",fill="#9ad7ff",fill-opacity="0.22",filter="url(#glass)") Hello World!

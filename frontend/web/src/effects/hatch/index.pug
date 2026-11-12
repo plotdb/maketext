@@ -1,0 +1,8 @@
+svg(xmlns="http://www.w3.org/2000/svg",viewBox="0 0 500 150",style="background:#f2e8cf")
+  defs
+    pattern#hatch-lines(width="5",height="5",patternUnits="userSpaceOnUse",patternTransform="rotate(45)")
+      rect(width="1.8",height="5",fill="#386641")
+  //- 一層層錯開的斜線字疊成長影子
+  - for (var i = 14; i >= 1; i--)
+    text.shade(x=250 + i,y=75 + i,fill="url(#hatch-lines)") Hello World!
+  text.face(x="250",y="75",fill="#bc4749",stroke="#386641",stroke-width="2",paint-order="stroke") Hello World!

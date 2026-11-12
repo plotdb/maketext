@@ -1,0 +1,28 @@
+svg(xmlns="http://www.w3.org/2000/svg",viewBox="0 0 500 150",style="background:#f6f1e9")
+  defs
+    filter#papercut(x="-20%",y="-50%",width="140%",height="200%")
+      //- 一圈圈外擴的紙層, 每層在下一層投下影子
+      feMorphology(in="SourceAlpha",operator="dilate",radius="12",result="l3")
+      feMorphology(in="SourceAlpha",operator="dilate",radius="8",result="l2")
+      feMorphology(in="SourceAlpha",operator="dilate",radius="4",result="l1")
+      feFlood(flood-color="#ff6b6b",result="c1")
+      feComposite(in="c1",in2="l1",operator="in",result="p1")
+      feFlood(flood-color="#ffd166",result="c2")
+      feComposite(in="c2",in2="l2",operator="in",result="p2")
+      feFlood(flood-color="#06d6a0",result="c3")
+      feComposite(in="c3",in2="l3",operator="in",result="p3")
+      feFlood(flood-color="#000000",flood-opacity="0.28",result="ink")
+      each l in ["l3", "l2", "l1", "SourceAlpha"]
+        feGaussianBlur(in=l,stdDeviation="2.2",result=l + "-blur")
+        feOffset(in=l + "-blur",dx="1",dy="3",result=l + "-off")
+        feComposite(in="ink",in2=l + "-off",operator="in",result=l + "-shadow")
+      feMerge
+        feMergeNode(in="l3-shadow")
+        feMergeNode(in="p3")
+        feMergeNode(in="l2-shadow")
+        feMergeNode(in="p2")
+        feMergeNode(in="l1-shadow")
+        feMergeNode(in="p1")
+        feMergeNode(in="SourceAlpha-shadow")
+        feMergeNode(in="SourceGraphic")
+  text(x="250",y="75",fill="#ffffff",filter="url(#papercut)") Hello World!

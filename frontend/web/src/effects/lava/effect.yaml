@@ -1,0 +1,9 @@
+# 效果描述 ( 名稱 / 排序 / 參數等 ), 欄位說明見 tool/maketext/build-effects.ls
+desc: "Molten lava letters with glowing magma veins and a hot halo."
+no: 62
+font: Ultra
+edit:
+  glow:
+    name: glow
+    type: color
+    default: '#ff5a00'

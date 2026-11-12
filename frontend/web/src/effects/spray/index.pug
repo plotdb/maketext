@@ -1,0 +1,15 @@
+svg(xmlns="http://www.w3.org/2000/svg",viewBox="0 0 500 150",style="background:#e4e4e1")
+  defs
+    filter#spray(x="-15%",y="-50%",width="130%",height="200%")
+      //- 外擴的模糊乘上細雜訊, 成為散開的噴漆顆粒
+      feGaussianBlur(in="SourceAlpha",stdDeviation="5",result="mist")
+      feTurbulence(type="fractalNoise",baseFrequency="1.6",numOctaves="1",seed="12",result="noise")
+      feColorMatrix(in="noise",type="matrix",values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  6 0 0 0 -2.8",result="dots")
+      feComposite(in="mist",in2="dots",operator="arithmetic",k1="1.6",result="speckle")
+      feFlood(flood-color="#ff2e88",result="paint")
+      feComposite(in="paint",in2="speckle",operator="in",result="overspray")
+      feGaussianBlur(in="SourceGraphic",stdDeviation="0.8",result="soft")
+      feMerge
+        feMergeNode(in="overspray")
+        feMergeNode(in="soft")
+  text(x="250",y="75",fill="#ff2e88",filter="url(#spray)") Hello World!

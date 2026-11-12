@@ -1,0 +1,27 @@
+svg(xmlns="http://www.w3.org/2000/svg",viewBox="0 0 500 150",style="background:#1e1b2e")
+  defs
+    filter#slime(x="-10%",y="-60%",width="120%",height="240%")
+      //- 縱向抹開往下垂, 以縱向的雜訊條紋挑出幾道滴落
+      feGaussianBlur(in="SourceAlpha",stdDeviation="0 12",result="smear")
+      feOffset(in="smear",dy="18",result="sag")
+      feTurbulence(type="fractalNoise",baseFrequency="0.07 0.002",numOctaves="1",seed="9",result="noise")
+      feColorMatrix(in="noise",type="matrix",values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  9 0 0 0 -5",result="cols")
+      feComposite(in="sag",in2="cols",operator="in",result="drips")
+      feMerge(result="body")
+        feMergeNode(in="drips")
+        feMergeNode(in="SourceAlpha")
+      //- 模糊後拉高對比: 黏稠的圓角
+      feGaussianBlur(in="body",stdDeviation="2.5",result="goo-blur")
+      feComponentTransfer(in="goo-blur",result="goo")
+        feFuncA(type="linear",slope="12",intercept="-5")
+      feFlood(flood-color="#7ddc1f",result="goo-fill")
+      feComposite(in="goo-fill",in2="goo",operator="in",result="goo-color")
+      feGaussianBlur(in="goo",stdDeviation="3",result="goo-height")
+      feSpecularLighting(in="goo-height",surfaceScale="4",specularConstant="1",specularExponent="22",lighting-color="#ffffff",result="spec")
+        fePointLight(x="150",y="-60",z="150")
+      feComposite(in="spec",in2="goo",operator="in",result="shine")
+      feMerge
+        feMergeNode(in="goo-color")
+        feMergeNode(in="SourceGraphic")
+        feMergeNode(in="shine")
+  text(x="250",y="68",fill="#7ddc1f",filter="url(#slime)") Hello World!

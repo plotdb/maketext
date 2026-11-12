@@ -1,0 +1,20 @@
+svg(xmlns="http://www.w3.org/2000/svg",viewBox="0 0 500 150",style="background:#0b1026")
+  defs
+    linearGradient#hologram-fill(x1="0",y1="0",x2="1",y2="1")
+      stop(offset="0",stop-color="#ff9ad5")
+      stop(offset="0.25",stop-color="#a0f0ff")
+      stop(offset="0.5",stop-color="#fff6a8")
+      stop(offset="0.75",stop-color="#b79bff")
+      stop(offset="1",stop-color="#7dffd8")
+    //- 掃描線
+    pattern#hologram-scan(width="4",height="4",patternUnits="userSpaceOnUse")
+      rect(width="4",height="1.6",fill="#0b1026",fill-opacity="0.45")
+    filter#hologram(x="-20%",y="-50%",width="140%",height="200%")
+      feGaussianBlur(in="SourceAlpha",stdDeviation="7",result="blur")
+      feFlood(flood-color="#59f3ff",flood-opacity="0.7",result="glow-color")
+      feComposite(in="glow-color",in2="blur",operator="in",result="glow")
+      feMerge
+        feMergeNode(in="glow")
+        feMergeNode(in="SourceGraphic")
+  text(x="250",y="75",fill="url(#hologram-fill)",filter="url(#hologram)") Hello World!
+  text(x="250",y="75",fill="url(#hologram-scan)") Hello World!

@@ -1,0 +1,9 @@
+# 效果描述 ( 名稱 / 排序 / 參數等 ), 欄位說明見 tool/maketext/build-effects.ls
+desc: "Translucent jelly candy letters with a glossy highlight and a tinted shadow."
+no: 54
+font: Luckiest Guy
+edit:
+  fill:
+    name: fill
+    type: color
+    default: '#ff3d7f'

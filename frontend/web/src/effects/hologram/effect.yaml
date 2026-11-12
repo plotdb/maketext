@@ -1,0 +1,9 @@
+# 效果描述 ( 名稱 / 排序 / 參數等 ), 欄位說明見 tool/maketext/build-effects.ls
+desc: "Iridescent holographic letters with scan lines and a cyan glow."
+no: 56
+font: Black Han Sans
+edit:
+  glow:
+    name: glow
+    type: color
+    default: '#59f3ff'

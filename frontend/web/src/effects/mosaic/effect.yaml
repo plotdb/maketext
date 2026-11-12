@@ -1,0 +1,17 @@
+# 效果描述 ( 名稱 / 排序 / 參數等 ), 欄位說明見 tool/maketext/build-effects.ls
+desc: "Letters tiled with colorful ceramic mosaic squares."
+no: 67
+font: Passion One
+edit:
+  color1:
+    name: color1
+    type: color
+    default: '#e76f51'
+  color2:
+    name: color2
+    type: color
+    default: '#2a9d8f'
+  color3:
+    name: color3
+    type: color
+    default: '#e9c46a'

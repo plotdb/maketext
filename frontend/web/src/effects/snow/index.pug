@@ -1,0 +1,27 @@
+svg(xmlns="http://www.w3.org/2000/svg",viewBox="0 0 500 150",style="background:#2a4d7a")
+  defs
+    filter#snow(x="-10%",y="-60%",width="120%",height="180%")
+      //- 上緣: 原形減掉往下移的自己, 加粗後以雜訊扭成蓬鬆的雪
+      feOffset(in="SourceAlpha",dy="6",result="down")
+      feComposite(in="SourceAlpha",in2="down",operator="out",result="top")
+      feMorphology(in="top",operator="dilate",radius="3 1",result="top-thick")
+      feTurbulence(type="fractalNoise",baseFrequency="0.05",numOctaves="1",seed="5",result="noise")
+      feDisplacementMap(in="top-thick",in2="noise",scale="5",xChannelSelector="R",yChannelSelector="G",result="cap-shape")
+      feGaussianBlur(in="cap-shape",stdDeviation="2",result="cap-soft")
+      feComponentTransfer(in="cap-soft",result="cap-solid")
+        feFuncA(type="linear",slope="6",intercept="-2")
+      feOffset(in="cap-solid",dy="-4",result="cap-up")
+      feFlood(flood-color="#ffffff",result="snow-color")
+      feComposite(in="snow-color",in2="cap-up",operator="in",result="cap")
+      feFlood(flood-color="#000000",flood-opacity="0.25",result="cap-shade-color")
+      feComposite(in="cap-shade-color",in2="cap-solid",operator="in",result="cap-shade")
+      feGaussianBlur(in="SourceAlpha",stdDeviation="2",result="shadow-blur")
+      feOffset(in="shadow-blur",dy="4",result="shadow-shape")
+      feFlood(flood-color="#000000",flood-opacity="0.35",result="shadow-color")
+      feComposite(in="shadow-color",in2="shadow-shape",operator="in",result="shadow")
+      feMerge
+        feMergeNode(in="shadow")
+        feMergeNode(in="SourceGraphic")
+        feMergeNode(in="cap-shade")
+        feMergeNode(in="cap")
+  text(x="250",y="80",fill="#d62828",filter="url(#snow)") Hello World!

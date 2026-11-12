@@ -1,0 +1,17 @@
+svg(xmlns="http://www.w3.org/2000/svg",viewBox="0 0 500 150",style="background:#31527a")
+  defs
+    filter#embroidery(x="-10%",y="-30%",width="120%",height="160%")
+      //- 縱向拉長的細雜訊當成線的明暗
+      feTurbulence(type="fractalNoise",baseFrequency="0.9 0.06",numOctaves="2",seed="3",result="noise")
+      feColorMatrix(in="noise",type="matrix",values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  1.4 0 0 0 -0.5",result="threads")
+      feComposite(in="threads",in2="SourceAlpha",operator="in",result="thread-shade")
+      feGaussianBlur(in="SourceAlpha",stdDeviation="1.5",result="shadow-blur")
+      feOffset(in="shadow-blur",dx="2",dy="2",result="shadow-shape")
+      feFlood(flood-color="#000000",flood-opacity="0.45",result="shadow-color")
+      feComposite(in="shadow-color",in2="shadow-shape",operator="in",result="shadow")
+      feMerge
+        feMergeNode(in="shadow")
+        feMergeNode(in="SourceGraphic")
+        feMergeNode(in="thread-shade")
+  text.face(x="250",y="75",fill="#e63946",filter="url(#embroidery)") Hello World!
+  text.stitch(x="250",y="75",fill="none",stroke="#ffe8a3",stroke-width="1.6",stroke-dasharray="5 3",stroke-linejoin="round") Hello World!

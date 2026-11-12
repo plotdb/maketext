@@ -1,0 +1,25 @@
+svg(xmlns="http://www.w3.org/2000/svg",viewBox="0 0 500 150",style="background:#fff4e6")
+  defs
+    filter#gummy(x="-20%",y="-40%",width="140%",height="190%")
+      //- 模糊的形狀當高度, 打一道高光
+      feGaussianBlur(in="SourceAlpha",stdDeviation="4",result="blur")
+      feSpecularLighting(in="blur",surfaceScale="6",specularConstant="0.9",specularExponent="28",lighting-color="#ffffff",result="spec")
+        fePointLight(x="100",y="-80",z="160")
+      feComposite(in="spec",in2="SourceAlpha",operator="in",result="shine")
+      //- 邊緣暗一些: 內縮後模糊的形狀之外
+      feMorphology(in="SourceAlpha",operator="erode",radius="3",result="inner")
+      feGaussianBlur(in="inner",stdDeviation="3",result="inner-blur")
+      feComposite(in="SourceAlpha",in2="inner-blur",operator="out",result="rim-shape")
+      feFlood(flood-color="#000000",flood-opacity="0.22",result="rim-color")
+      feComposite(in="rim-color",in2="rim-shape",operator="in",result="rim")
+      //- 帶顏色的影子
+      feGaussianBlur(in="SourceAlpha",stdDeviation="5",result="shadow-blur")
+      feOffset(in="shadow-blur",dy="7",result="shadow-shape")
+      feFlood(flood-color="#ff3d7f",flood-opacity="0.45",result="shadow-color")
+      feComposite(in="shadow-color",in2="shadow-shape",operator="in",result="shadow")
+      feMerge
+        feMergeNode(in="shadow")
+        feMergeNode(in="SourceGraphic")
+        feMergeNode(in="rim")
+        feMergeNode(in="shine")
+  text(x="250",y="75",fill="#ff3d7f",fill-opacity="0.88",filter="url(#gummy)") Hello World!

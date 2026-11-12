@@ -1,0 +1,9 @@
+# 效果描述 ( 名稱 / 排序 / 參數等 ), 欄位說明見 tool/maketext/build-effects.ls
+desc: "Gold script letters sprinkled with sparkling glitter."
+no: 69
+font: Oleo Script
+edit:
+  fill:
+    name: fill
+    type: color
+    default: '#e0b04a'

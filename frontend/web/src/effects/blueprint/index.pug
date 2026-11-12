@@ -1,0 +1,7 @@
+svg(xmlns="http://www.w3.org/2000/svg",viewBox="0 0 500 150",style="background:#1f4e8c")
+  defs
+    pattern#blueprint-grid(width="10",height="10",patternUnits="userSpaceOnUse")
+      path(d="M10 0H0V10",fill="none",stroke="#ffffff",stroke-opacity="0.35",stroke-width="0.6")
+  //- 錯開的虛線: 輔助線
+  text.guide(x="250",y="75",transform="translate(5 5)",fill="none",stroke="#ffffff",stroke-opacity="0.35",stroke-width="0.8",stroke-dasharray="3 3") Hello World!
+  text.face(x="250",y="75",fill="url(#blueprint-grid)",stroke="#ffffff",stroke-width="1.6",stroke-linejoin="round") Hello World!
