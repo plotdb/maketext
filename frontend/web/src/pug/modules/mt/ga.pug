@@ -1,6 +1,7 @@
 //- module
 //- Google Analytics ( gtag.js ). 事件由 src/ls/editor/util.ls 的 mt-track 送出.
-//- GA4 串流 "maketext.io - GA4". 舊的 UA-120719734-1 ( Universal Analytics ) 已在 2023 年停止處理資料, 不再送
+//- GA4 串流 "maketext.io - GA4". 舊站載入的是 UA-120719734-1, 但 Google 已把它連到這個 GA4 ( 載入 UA 的 gtag.js 時
+//- 也會送到 G-9220DQ9M90 ), 所以舊站的數據一直有進 GA4. 這裡直接用 GA4 ID, 不要兩個都放, 否則會重複計算
 - var gaIds = ["G-9220DQ9M90"]
 script(async,src="https://www.googletagmanager.com/gtag/js?id=" + gaIds[0])
 script.
