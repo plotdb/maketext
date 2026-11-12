@@ -70,25 +70,25 @@ include @/ldpalettepicker/ldpp.pug
         .d-flex
           .btn.btn-sm.btn-outline-dark.text-truncate(onclick="chooseFont()",style="flex:1 1 auto;min-width:0"): span#font-name Choose ...
           .btn.btn-sm.btn-outline-dark.ml-1.d-none#font-reset(onclick="resetFont()",title="use each effect's own font") &#x21ba;
-      #font-size-slider.col-4.col-sm-3
+      #font-size-slider.col-4.col-sm-2
         label Font Size
         +slider
-      .col-4.col-sm-3
+      //- 行距與字距 ( em ), 套用到所有效果 ( src/ls/editor/index.ls 的 editor.update )
+      #line-height-slider.col-4.col-sm-2
+        label Line Height
+        +slider
+      #letter-spacing-slider.col-4.col-sm-2
+        label Letter Spacing
+        +slider
+      .col-6.col-sm-2
         label Background
         +color-input('background')
-      #palette-btn.col-sm-3.col-4.adv
+      #palette-btn.col-6.col-sm-2.adv
         label Palette
         .palette(onclick="pickPalette()")
           each i in ['#f00','#0f0','#00f','#0ff']
             .color(style="background:" + i)
-      #editor-custom-options.col-12.col-sm-9.row.adv(style="margin-left:0;padding:0")
-      //- 行距與字距 ( em ), 套用到所有效果 ( src/ls/editor/index.ls 的 editor.update )
-      #line-height-slider.col-6.col-sm-3.adv
-        label Line Height
-        +slider
-      #letter-spacing-slider.col-6.col-sm-3.adv
-        label Letter Spacing
-        +slider
+      #editor-custom-options.col-12.col-sm-8.row.adv(style="margin-left:0;padding:0")
   br
   #cooltext
   .footer.text-center
