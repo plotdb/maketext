@@ -55,3 +55,9 @@ context/shared
 !frontend/web/
 frontend/web/static/assets/lib
 context/cached
+# the bundle manifest ( url -> ?v= hash ) travels with static/: production does not build,
+# and server-rendered pages ( /effect/<name>/ ) read their bundle urls from it.
+# the rest of .bundle-dep is builder state. see doc/base/infrastructure.md -> Build Artifacts
+!frontend/web/.bundle-dep/
+frontend/web/.bundle-dep/*
+!frontend/web/.bundle-dep/manifest.json

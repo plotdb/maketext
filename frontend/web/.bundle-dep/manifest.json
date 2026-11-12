@@ -1,0 +1,435 @@
+{
+  "/css/mt/index.css": {
+    "url": "/css/mt/index.css?v=c4d7badbb75b",
+    "refs": [],
+    "generations": []
+  },
+  "/css/mt/index.min.css": {
+    "url": "/css/mt/index.min.css?v=7e111a9ec934",
+    "refs": [],
+    "generations": []
+  },
+  "/css/reset.css": {
+    "url": "/css/reset.css?v=b3110a76a6d5",
+    "refs": [],
+    "generations": []
+  },
+  "/css/reset.min.css": {
+    "url": "/css/reset.min.css?v=42de0aa9daf1",
+    "refs": [
+      "frontend/web/src/pug/auth/index.pug"
+    ],
+    "generations": []
+  },
+  "/js/editor/download.js": {
+    "url": "/js/editor/download.js?v=6855011bacb3",
+    "refs": [],
+    "generations": []
+  },
+  "/js/editor/download.min.js": {
+    "url": "/js/editor/download.min.js?v=249118270432",
+    "refs": [],
+    "generations": []
+  },
+  "/js/editor/font.js": {
+    "url": "/js/editor/font.js?v=8b1bd54d51ba",
+    "refs": [],
+    "generations": []
+  },
+  "/js/editor/font.min.js": {
+    "url": "/js/editor/font.min.js?v=b472fbec3d8e",
+    "refs": [],
+    "generations": []
+  },
+  "/js/editor/index.js": {
+    "url": "/js/editor/index.js?v=7ef7586bf494",
+    "refs": [],
+    "generations": []
+  },
+  "/js/editor/index.min.js": {
+    "url": "/js/editor/index.min.js?v=089dbb6aec37",
+    "refs": [],
+    "generations": []
+  },
+  "/js/editor/palette.js": {
+    "url": "/js/editor/palette.js?v=83254a9ed64b",
+    "refs": [],
+    "generations": []
+  },
+  "/js/editor/palette.min.js": {
+    "url": "/js/editor/palette.min.js?v=3b73f8a5be38",
+    "refs": [],
+    "generations": []
+  },
+  "/js/editor/star.js": {
+    "url": "/js/editor/star.js?v=6327afb17d45",
+    "refs": [],
+    "generations": []
+  },
+  "/js/editor/star.min.js": {
+    "url": "/js/editor/star.min.js?v=cc5c01603ada",
+    "refs": [],
+    "generations": []
+  },
+  "/js/editor/util.js": {
+    "url": "/js/editor/util.js?v=7e89135df91c",
+    "refs": [],
+    "generations": []
+  },
+  "/js/editor/util.min.js": {
+    "url": "/js/editor/util.min.js?v=dd2e6da46573",
+    "refs": [],
+    "generations": []
+  },
+  "/js/fancy/index.js": {
+    "url": "/js/fancy/index.js?v=2dff04a94581",
+    "refs": [
+      "frontend/web/src/pug/fancy/index.pug"
+    ],
+    "generations": []
+  },
+  "/js/fancy/index.min.js": {
+    "url": "/js/fancy/index.min.js?v=28e15df9de5d",
+    "refs": [],
+    "generations": []
+  },
+  "/js/site.js": {
+    "url": "/js/site.js?v=6a1ba529081e",
+    "refs": [],
+    "generations": []
+  },
+  "/js/site.min.js": {
+    "url": "/js/site.min.js?v=61768fa9166b",
+    "refs": [
+      "frontend/web/src/pug/auth/index.pug"
+    ],
+    "generations": []
+  },
+  "/assets/bundle/2c436f4d3a76b30ad70c067e9717d0dd.css": {
+    "url": "/assets/bundle/2c436f4d3a76b30ad70c067e9717d0dd.css?v=0e23840eab6f",
+    "refs": [],
+    "generations": []
+  },
+  "/assets/bundle/2c436f4d3a76b30ad70c067e9717d0dd.min.css": {
+    "url": "/assets/bundle/2c436f4d3a76b30ad70c067e9717d0dd.min.css?v=208b2217b207",
+    "refs": [
+      "frontend/web/src/pug/api/editor/0.1/index.pug",
+      "frontend/web/src/pug/fancy/index.pug",
+      "frontend/web/src/pug/tos/index.pug",
+      "frontend/web/src/pug/privacy/index.pug",
+      "frontend/web/src/pug/index.pug",
+      "/Users/tkirby/workspace/maketext/server/frontend/web/src/pug/effect/index.pug"
+    ],
+    "generations": []
+  },
+  "/assets/bundle/vendor.css": {
+    "url": "/assets/bundle/vendor.css?v=36eade503c01",
+    "refs": [],
+    "generations": []
+  },
+  "/assets/bundle/vendor.min.css": {
+    "url": "/assets/bundle/vendor.min.css?v=6170717e9418",
+    "refs": [],
+    "generations": []
+  },
+  "/assets/bundle/05fb609a5db39af74ae795033fe86c4a.js": {
+    "url": "/assets/bundle/05fb609a5db39af74ae795033fe86c4a.js?v=7c386d8e1307",
+    "refs": [],
+    "generations": []
+  },
+  "/assets/bundle/05fb609a5db39af74ae795033fe86c4a.min.js": {
+    "url": "/assets/bundle/05fb609a5db39af74ae795033fe86c4a.min.js?v=de1ac4852599",
+    "refs": [
+      "frontend/web/src/pug/api/editor/0.1/index.pug",
+      "frontend/web/src/pug/fancy/index.pug",
+      "frontend/web/src/pug/tos/index.pug",
+      "frontend/web/src/pug/privacy/index.pug",
+      "frontend/web/src/pug/index.pug",
+      "/Users/tkirby/workspace/maketext/server/frontend/web/src/pug/effect/index.pug"
+    ],
+    "generations": []
+  },
+  "/assets/bundle/core.js": {
+    "url": "/assets/bundle/core.js?v=662c9e1868de",
+    "refs": [],
+    "generations": []
+  },
+  "/assets/bundle/core.min.js": {
+    "url": "/assets/bundle/core.min.js?v=e8c133ebdfec",
+    "refs": [],
+    "generations": []
+  },
+  "/assets/bundle/vendor.js": {
+    "url": "/assets/bundle/vendor.js?v=3c466633ff2d",
+    "refs": [],
+    "generations": []
+  },
+  "/assets/bundle/vendor.min.js": {
+    "url": "/assets/bundle/vendor.min.js?v=b108887c2dbd",
+    "refs": [],
+    "generations": []
+  },
+  "/assets/bundle/9fb504458c56ef5cd5bad3d90546e74d.js": {
+    "url": "/assets/bundle/9fb504458c56ef5cd5bad3d90546e74d.js?v=4823814d12f3",
+    "refs": [],
+    "generations": []
+  },
+  "/assets/bundle/9fb504458c56ef5cd5bad3d90546e74d.min.js": {
+    "url": "/assets/bundle/9fb504458c56ef5cd5bad3d90546e74d.min.js?v=13f5850940f6",
+    "refs": [
+      "frontend/web/src/pug/index.pug",
+      "/Users/tkirby/workspace/maketext/server/frontend/web/src/pug/effect/index.pug"
+    ],
+    "generations": []
+  },
+  "/assets/bundle/sharedb.js": {
+    "url": "/assets/bundle/sharedb.js?v=0d9b02a8c43d",
+    "refs": [],
+    "generations": []
+  },
+  "/assets/bundle/sharedb.min.js": {
+    "url": "/assets/bundle/sharedb.min.js?v=b464f04bd940",
+    "refs": [],
+    "generations": []
+  },
+  "/assets/bundle/9f7e52091e46e912b44bf578e14a22fd.css": {
+    "url": "/assets/bundle/9f7e52091e46e912b44bf578e14a22fd.css?v=784b1405e6a0",
+    "refs": [],
+    "generations": []
+  },
+  "/assets/bundle/9f7e52091e46e912b44bf578e14a22fd.min.css": {
+    "url": "/assets/bundle/9f7e52091e46e912b44bf578e14a22fd.min.css?v=65e75a1a731b",
+    "refs": [],
+    "generations": []
+  },
+  "/assets/bundle/892f3b9b586be27241d89b2ff9bc49a8.js": {
+    "url": "/assets/bundle/892f3b9b586be27241d89b2ff9bc49a8.js?v=aa3ae7afb35c",
+    "refs": [],
+    "generations": []
+  },
+  "/assets/bundle/892f3b9b586be27241d89b2ff9bc49a8.min.js": {
+    "url": "/assets/bundle/892f3b9b586be27241d89b2ff9bc49a8.min.js?v=531097a65365",
+    "refs": [],
+    "generations": []
+  },
+  "/assets/bundle/b56c3fa815f2a166e4150ca98c5d5aac.js": {
+    "url": "/assets/bundle/b56c3fa815f2a166e4150ca98c5d5aac.js?v=91154ab9abb8",
+    "refs": [],
+    "generations": []
+  },
+  "/assets/bundle/b56c3fa815f2a166e4150ca98c5d5aac.min.js": {
+    "url": "/assets/bundle/b56c3fa815f2a166e4150ca98c5d5aac.min.js?v=662258fcbaf1",
+    "refs": [
+      "frontend/web/src/pug/index.pug",
+      "/Users/tkirby/workspace/maketext/server/frontend/web/src/pug/effect/index.pug"
+    ],
+    "generations": []
+  },
+  "/assets/bundle/d733ec846614e70279bf8b803b72f660.js": {
+    "url": "/assets/bundle/d733ec846614e70279bf8b803b72f660.js?v=4e8b7dfaec7c",
+    "refs": [],
+    "generations": []
+  },
+  "/assets/bundle/d733ec846614e70279bf8b803b72f660.min.js": {
+    "url": "/assets/bundle/d733ec846614e70279bf8b803b72f660.min.js?v=566df9b7182c",
+    "refs": [
+      "frontend/web/src/pug/api/editor/0.1/index.pug"
+    ],
+    "generations": []
+  },
+  "/assets/lib/bootstrap/main/dist/css/bootstrap.min.css": {
+    "refs": [
+      "frontend/web/src/pug/auth/index.pug"
+    ]
+  },
+  "/assets/lib/@loadingio/bootstrap.ext/main/index.min.css": {
+    "refs": [
+      "frontend/web/src/pug/auth/index.pug"
+    ]
+  },
+  "/assets/lib/ldcover/main/index.min.css": {
+    "refs": [
+      "frontend/web/src/pug/auth/index.pug"
+    ]
+  },
+  "/assets/lib/ldloader/main/index.min.css": {
+    "refs": [
+      "frontend/web/src/pug/auth/index.pug"
+    ]
+  },
+  "/assets/lib/ldiconfont/main/ldif.min.css": {
+    "refs": [
+      "frontend/web/src/pug/auth/index.pug"
+    ]
+  },
+  "/assets/lib/ldbutton/main/index.min.css": {
+    "refs": [
+      "frontend/web/src/pug/auth/index.pug"
+    ]
+  },
+  "/assets/lib/@loadingio/loading.css/main/loading.min.css": {
+    "refs": [
+      "frontend/web/src/pug/auth/index.pug"
+    ]
+  },
+  "/assets/lib/@loadingio/transition.css/main/transition.min.css": {
+    "refs": [
+      "frontend/web/src/pug/auth/index.pug"
+    ]
+  },
+  "/assets/lib/ldnotify/main/index.min.css": {
+    "refs": [
+      "frontend/web/src/pug/auth/index.pug"
+    ]
+  },
+  "/assets/lib/bootstrap.native/main/dist/bootstrap-native-v4.min.js": {
+    "refs": [
+      "frontend/web/src/pug/auth/index.pug"
+    ]
+  },
+  "/assets/lib/i18next/main/dist/umd/i18next.min.js": {
+    "refs": [
+      "frontend/web/src/pug/auth/index.pug"
+    ]
+  },
+  "/assets/lib/i18next-browser-languagedetector/main//dist/umd/i18nextBrowserLanguageDetector.min.js": {
+    "refs": [
+      "frontend/web/src/pug/auth/index.pug"
+    ]
+  },
+  "/assets/lib/zmgr/main/index.min.js": {
+    "refs": [
+      "frontend/web/src/pug/auth/index.pug"
+    ]
+  },
+  "/assets/lib/@loadingio/ldquery/main/index.min.js": {
+    "refs": [
+      "frontend/web/src/pug/auth/index.pug"
+    ]
+  },
+  "/assets/lib/proxise/main/index.min.js": {
+    "refs": [
+      "frontend/web/src/pug/auth/index.pug"
+    ]
+  },
+  "/assets/lib/@loadingio/debounce.js/main/index.min.js": {
+    "refs": [
+      "frontend/web/src/pug/auth/index.pug"
+    ]
+  },
+  "/assets/lib/@plotdb/httputil/main/index.min.js": {
+    "refs": [
+      "frontend/web/src/pug/auth/index.pug"
+    ]
+  },
+  "/assets/lib/@plotdb/semver/main/index.min.js": {
+    "refs": [
+      "frontend/web/src/pug/auth/index.pug"
+    ]
+  },
+  "/assets/lib/@plotdb/rescope/main/index.min.js": {
+    "refs": [
+      "frontend/web/src/pug/auth/index.pug"
+    ]
+  },
+  "/assets/lib/@plotdb/csscope/main/index.min.js": {
+    "refs": [
+      "frontend/web/src/pug/auth/index.pug"
+    ]
+  },
+  "/assets/lib/@plotdb/block/main/index.min.js": {
+    "refs": [
+      "frontend/web/src/pug/auth/index.pug"
+    ]
+  },
+  "/assets/lib/ldcover/main/index.min.js": {
+    "refs": [
+      "frontend/web/src/pug/auth/index.pug"
+    ]
+  },
+  "/assets/lib/ldform/main/index.min.js": {
+    "refs": [
+      "frontend/web/src/pug/auth/index.pug"
+    ]
+  },
+  "/assets/lib/curegex/main/curegex.min.js": {
+    "refs": [
+      "frontend/web/src/pug/auth/index.pug"
+    ]
+  },
+  "/assets/lib/ldview/main/index.min.js": {
+    "refs": [
+      "frontend/web/src/pug/auth/index.pug"
+    ]
+  },
+  "/assets/lib/ldloader/main/index.min.js": {
+    "refs": [
+      "frontend/web/src/pug/auth/index.pug"
+    ]
+  },
+  "/assets/lib/lderror/main/index.min.js": {
+    "refs": [
+      "frontend/web/src/pug/auth/index.pug"
+    ]
+  },
+  "/assets/lib/ldnotify/main/index.min.js": {
+    "refs": [
+      "frontend/web/src/pug/auth/index.pug"
+    ]
+  },
+  "/assets/lib/ldcvmgr/main/index.min.js": {
+    "refs": [
+      "frontend/web/src/pug/auth/index.pug"
+    ]
+  },
+  "/assets/lib/@loadingio/ldc/main/index.min.js": {
+    "refs": [
+      "frontend/web/src/pug/auth/index.pug"
+    ]
+  },
+  "/assets/lib/@servebase/auth/main/index.min.js": {
+    "refs": [
+      "frontend/web/src/pug/auth/index.pug"
+    ]
+  },
+  "/assets/lib/@servebase/consent/main/index.min.js": {
+    "refs": [
+      "frontend/web/src/pug/auth/index.pug"
+    ]
+  },
+  "/assets/lib/@servebase/captcha/main/index.min.js": {
+    "refs": [
+      "frontend/web/src/pug/auth/index.pug"
+    ]
+  },
+  "/assets/lib/@servebase/erratum/main/index.min.js": {
+    "refs": [
+      "frontend/web/src/pug/auth/index.pug"
+    ]
+  },
+  "/assets/lib/@servebase/core/main/index.min.js": {
+    "refs": [
+      "frontend/web/src/pug/auth/index.pug"
+    ]
+  },
+  "/assets/lib/@servebase/navtop/main/index.min.js": {
+    "refs": [
+      "frontend/web/src/pug/auth/index.pug"
+    ]
+  },
+  "/assets/lib/@servebase/payment/main/index.min.js": {
+    "refs": [
+      "frontend/web/src/pug/auth/index.pug"
+    ]
+  },
+  "/assets/lib/@servebase/discuss/main/index.min.js": {
+    "refs": [
+      "frontend/web/src/pug/auth/index.pug"
+    ]
+  },
+  "/assets/lib/@servebase/auth/main/route.min.js": {
+    "refs": [
+      "frontend/web/src/pug/auth/index.pug"
+    ]
+  }
+}
