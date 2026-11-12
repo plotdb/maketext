@@ -1,0 +1,17 @@
+# appended to the generated production config on mwb ( see production.yaml ):
+# www.maketext.io redirects to the apex. www is proxied by cloudflare ( non-strict ssl ),
+# so the apex cert is fine here.
+server {
+  listen 80;
+  server_name www.maketext.io;
+  location / { return 301 https://maketext.io$request_uri; }
+}
+
+server {
+  listen 443 ssl;
+  server_name www.maketext.io;
+  server_tokens off;
+  ssl_certificate /etc/letsencrypt/live/maketext.io/fullchain.pem;
+  ssl_certificate_key /etc/letsencrypt/live/maketext.io/privkey.pem;
+  return 301 https://maketext.io$request_uri;
+}

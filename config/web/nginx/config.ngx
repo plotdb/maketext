@@ -131,6 +131,15 @@ server {
     add_header 'Cache-Control' 'public';
   }
 
+  # embeddable editor: other sites put /api/editor/0.1/ in an iframe, so this page goes
+  # without the frame-ancestors / X-Frame-Options / COOP headers the other pages carry.
+  location ~ ^/api/editor/(.*)$ {
+    root !{root};
+    add_header X-Content-Type-Options "nosniff" always;
+    add_header Cache-Control "no-cache" always;
+    try_files /api/editor/$1 /api/editor/$1/index.html @apiserver;
+  }
+
   # pages ( prebuilt html ) and other files without a rule above. without Cache-Control
   # browsers cache them heuristically from Last-Modified and keep showing the old page
   # after a deploy; no-cache makes them revalidate ( 304 from the ETag ).
@@ -170,6 +179,11 @@ server {
   listen 80;
   server_name !{hostname};
   add_header Strict-Transport-Security "max-age=16070400; includeSubDomains";
+  # let's encrypt http-01 ( certbot webroot = the static root )
+  location /.well-known/acme-challenge/ {
+    root !{root};
+    try_files $uri =404;
+  }
   location / {
     if ($http_user_agent !~* (facebook) ) {
       return 301 https://$host$request_uri;
