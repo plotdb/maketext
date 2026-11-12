@@ -1,6 +1,6 @@
 history.scrollRestoration = 'manual';
 $(document).ready(function(){
-  var svgHtml, editor, gallery, updateText, scrollto, hasStar, galleryRows, initSlider, initColorpicker, openEffect, clusterize, maketext, queries;
+  var svgHtml, editor, gallery, updateText, scrollto, hasStar, galleryRows, initSlider, initColorpicker, openEffect, clusterize, maketext, queries, i$, ref$, len$, ref1$, id, name, opt, d;
   svgHtml = function(e){
     return e.html.replace("<svg", "<svg width='100%' height='100%'");
   };
@@ -178,6 +178,20 @@ $(document).ready(function(){
       if (name === 'fontSize') {
         Array.from(svg.querySelectorAll('text')).map(function(it){
           return it.style.fontSize = value + "px";
+        });
+      }
+      if (name === 'lineHeight') {
+        mtTextStyle.lineHeight = value;
+        Array.from(svg.querySelectorAll('text')).map(function(it){
+          var ref$;
+          return mtSetText(it, (ref$ = it.dataset.mtText) != null
+            ? ref$
+            : it.textContent);
+        });
+      }
+      if (name === 'letterSpacing') {
+        Array.from(svg.querySelectorAll('text')).map(function(it){
+          return it.style.letterSpacing = +value ? value + "em" : '';
         });
       }
       mtPattern.apply(svg);
@@ -482,6 +496,29 @@ $(document).ready(function(){
   Array.from(document.querySelectorAll('input[data-toggle="colorpicker"]')).map(function(it){
     return new ldcolorpicker(it);
   });
+  for (i$ = 0, len$ = (ref$ = [
+    [
+      'line-height-slider', 'lineHeight', {
+        min: 0.6,
+        max: 3,
+        step: 0.05,
+        from: 1.2
+      }
+    ], [
+      'letter-spacing-slider', 'letterSpacing', {
+        min: -0.2,
+        max: 1,
+        step: 0.01,
+        from: 0
+      }
+    ]
+  ]).length; i$ < len$; ++i$) {
+    ref1$ = ref$[i$], id = ref1$[0], name = ref1$[1], opt = ref1$[2];
+    if (!(d = document.querySelector("#" + id + " .up.irs-input"))) {
+      continue;
+    }
+    (fn$.call(this, name, d, opt));
+  }
   Array.from(document.querySelectorAll('#font-size-slider .up.irs-input')).map(function(d, i){
     var v, x$;
     editor.update('fontSize', v = +d.value || 64);
@@ -517,6 +554,15 @@ $(document).ready(function(){
       return console.warn("[maketext] share:", e);
     });
   }();
+  function fn$(name, d, opt){
+    var x$;
+    editor.update(name, opt.from);
+    x$ = $(d);
+    x$.val(opt.from);
+    x$.ionRangeSlider((opt.onChange = function(data){
+      return editor.update(name, data.from);
+    }, opt));
+  }
 });
 function in$(x, xs){
   var i = -1, l = xs.length >>> 0;
@@ -714,12 +760,31 @@ loadFont = function(){
   }).then(function(otf){
     return {
       getD: function(lines, arg$){
-        var fontSize;
-        fontSize = arg$.fontSize;
+        var fontSize, spacing, ref$;
+        fontSize = arg$.fontSize, spacing = (ref$ = arg$.spacing) != null ? ref$ : 0;
         return lines.map(function(line, i){
-          var x;
-          x = -otf.getAdvanceWidth(line, fontSize) / 2;
-          return otf.getPath(line, x, i * fontSize * mtLineHeight, fontSize).toPathData();
+          var y, x, scale, glyphs, pos, i$, len$, j, g;
+          y = i * fontSize * mtTextStyle.lineHeight;
+          if (!spacing) {
+            x = -otf.getAdvanceWidth(line, fontSize) / 2;
+            return otf.getPath(line, x, y, fontSize).toPathData();
+          }
+          scale = fontSize / otf.unitsPerEm;
+          glyphs = otf.stringToGlyphs(line);
+          pos = [];
+          x = 0;
+          for (i$ = 0, len$ = glyphs.length; i$ < len$; ++i$) {
+            j = i$;
+            g = glyphs[i$];
+            if (j > 0) {
+              x += spacing + otf.getKerningValue(glyphs[j - 1], g) * scale;
+            }
+            pos.push(x);
+            x += (g.advanceWidth || 0) * scale;
+          }
+          return glyphs.map(function(g, j){
+            return g.getPath(pos[j] - x / 2, y, fontSize).toPathData();
+          }).join(' ');
         }).join(' ');
       }
     };
@@ -771,14 +836,16 @@ window.convert = {
         var tts;
         tts = arg$[0];
         return Array.from(svg.querySelectorAll('text')).map(function(text, i){
-          var textbox, fontSize, lines, textValue, d, g1, g2, path, parent, i$, ref$, len$, name, that, pbox, x, y, width, height;
+          var textbox, fontSize, lines, textValue, spacing, d, g1, g2, path, parent, i$, ref$, len$, name, that, pbox, x, y, width, height;
           textbox = text.getBBox();
           fontSize = getComputedStyle(text).fontSize;
           fontSize = +(/(\d+)/.exec(fontSize) || [0, 64])[1];
           lines = mtTextLines(text);
           textValue = lines.join(' ').trim() || 'Hello World';
+          spacing = parseFloat(getComputedStyle(text).letterSpacing) || 0;
           d = tts.getD(lines, {
-            fontSize: fontSize
+            fontSize: fontSize,
+            spacing: spacing
           });
           g1 = document.createElementNS("http://www.w3.org/2000/svg", "g");
           g2 = document.createElementNS("http://www.w3.org/2000/svg", "g");

@@ -82,6 +82,13 @@ include @/ldpalettepicker/ldpp.pug
           each i in ['#f00','#0f0','#00f','#0ff']
             .color(style="background:" + i)
       #editor-custom-options.col-12.col-sm-9.row.adv(style="margin-left:0;padding:0")
+      //- 行距與字距 ( em ), 套用到所有效果 ( src/ls/editor/index.ls 的 editor.update )
+      #line-height-slider.col-6.col-sm-3.adv
+        label Line Height
+        +slider
+      #letter-spacing-slider.col-6.col-sm-3.adv
+        label Letter Spacing
+        +slider
   br
   #cooltext
   .footer.text-center

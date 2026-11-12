@@ -62,6 +62,12 @@ settings = function(){
     o.pat = p.name;
   }
   o.pad = mtFrame.opt.padding;
+  if (cur.lineHeight != null && +cur.lineHeight !== 1.2) {
+    o.lh = cur.lineHeight;
+  }
+  if (+cur.letterSpacing) {
+    o.ls = cur.letterSpacing;
+  }
   if (mtFrame.offset.x || mtFrame.offset.y) {
     o.ox = Math.round(mtFrame.offset.x);
     o.oy = Math.round(mtFrame.offset.y);
@@ -134,7 +140,7 @@ window.mtShare = share = {
     }
   },
   apply: function(q, fromD){
-    var n, ref$, k, v, name, ref1$;
+    var n, ref$, k, v, name, ref1$, i$, ref2$, len$, ref3$, id;
     if (fromD && q.t != null) {
       maketext.editor.input(q.t + "");
     }
@@ -169,6 +175,17 @@ window.mtShare = share = {
     }
     if (q.pad != null) {
       mtFrame.setOpt('padding', +q.pad);
+    }
+    for (i$ = 0, len$ = (ref2$ = [['lh', 'lineHeight', 'line-height-slider'], ['ls', 'letterSpacing', 'letter-spacing-slider']]).length; i$ < len$; ++i$) {
+      ref3$ = ref2$[i$], k = ref3$[0], name = ref3$[1], id = ref3$[2];
+      if (q[k] != null) {
+        if ((ref3$ = $(document.querySelector("#" + id + " .up.irs-input")).data('ionRangeSlider')) != null) {
+          ref3$.update({
+            from: +q[k]
+          });
+        }
+        editor.update(name, +q[k]);
+      }
     }
     if (q.ox != null || q.oy != null) {
       mtFrame.offset = {

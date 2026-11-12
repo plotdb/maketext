@@ -104,6 +104,11 @@ editor.update = (name, value) ->
     @effects[effects.type].js.watch @config.cur, @config.old, svg
     if name == \background => svg.style.background = value
     if name == \fontSize => Array.from(svg.querySelectorAll(\text)).map -> it.style.fontSize = "#{value}px"
+    # 行距 ( em ): 重排各行的 tspan; 字距 ( em ): 0 時用效果自己的設定
+    if name == \lineHeight =>
+      mt-text-style.line-height = value
+      Array.from(svg.querySelectorAll(\text)).map -> mt-set-text it, it.dataset.mt-text ? it.textContent
+    if name == \letterSpacing => Array.from(svg.querySelectorAll(\text)).map -> it.style.letterSpacing = if +value => "#{value}em" else ''
     # watch 改 fill 顏色時會蓋掉圖樣填色 ( pattern.ls ), 再套一次
     mt-pattern.apply svg
     mt-frame.refresh!
@@ -318,6 +323,18 @@ queries
 
 # 新版 ldcolorpicker 沒有自動掃描的 init, 逐一建立 ( 設定由 input 上的 data-* 屬性讀取 )
 Array.from(document.querySelectorAll 'input[data-toggle="colorpicker"]').map -> new ldcolorpicker it
+
+# 行距與字距 ( 套用到所有效果 )
+for [id, name, opt] in [
+  [\line-height-slider, \lineHeight, {min: 0.6, max: 3, step: 0.05, from: 1.2}]
+  [\letter-spacing-slider, \letterSpacing, {min: -0.2, max: 1, step: 0.01, from: 0}]
+]
+  if !(d = document.querySelector "\##id .up.irs-input") => continue
+  let name, d, opt
+    editor.update name, opt.from
+    $(d)
+      ..val opt.from
+      ..ionRangeSlider opt <<< onChange: (data) -> editor.update name, data.from
 
 Array.from(document.querySelectorAll('#font-size-slider .up.irs-input')).map (d,i) ->
   editor.update \fontSize, (v = (+d.value or 64))

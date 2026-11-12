@@ -2,7 +2,7 @@
 #
 #   /effect/<name>/?d=<編碼後的設定>
 #
-# 設定是 {t: 文字, s: 字級, bg: 背景, font: 字型, pat: 圖樣, pad: padding, ox, oy, p: {參數: 值}} 的 JSON,
+# 設定是 {t: 文字, s: 字級, bg: 背景, font: 字型, pat: 圖樣, pad: padding, ox, oy, lh: 行距, ls: 字距, p: {參數: 值}} 的 JSON,
 # 壓縮 ( deflate-raw ) 後以 base64url 編碼, 第一個字元是格式: 1 = 壓縮, 0 = 未壓縮 ( 沒有 CompressionStream 時 ).
 # 舊格式 ( 明碼 ) 仍可開啟:
 #
@@ -41,6 +41,8 @@ settings = ->
     o.font = if (f.style or \normal) == \normal and "#{f.weight or 400}" == \400 => f.name else "#{f.name}/#{f.style}/#{f.weight}.ttf"
   if (p = mt-pattern.cur) and p.name != \upload => o.pat = p.name
   o.pad = mt-frame.opt.padding
+  if cur.lineHeight? and +cur.lineHeight != 1.2 => o.lh = cur.lineHeight
+  if +cur.letterSpacing => o.ls = cur.letterSpacing
   if mt-frame.offset.x or mt-frame.offset.y => o <<< ox: Math.round(mt-frame.offset.x), oy: Math.round(mt-frame.offset.y)
   e = editor.effects[editor.effects.type]
   o.p = {}
@@ -96,6 +98,9 @@ window.mt-share = share = do
         editor.update name, +v
       else editor.update name, v
     if q.pad? => mt-frame.set-opt \padding, +q.pad
+    for [k, name, id] in [[\lh, \lineHeight, \line-height-slider], [\ls, \letterSpacing, \letter-spacing-slider]] when q[k]? =>
+      $(document.querySelector "\##id .up.irs-input").data(\ionRangeSlider)?update {from: +q[k]}
+      editor.update name, +q[k]
     if q.ox? or q.oy? =>
       mt-frame.offset = {x: +q.ox or 0, y: +q.oy or 0}
       mt-frame.apply!

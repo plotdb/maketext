@@ -5,11 +5,23 @@
 load-font = ->
   mt-font.of(editor.effects.type).then (f) -> f.getotf!
   .then (otf) ->
-    # 多行: 每行水平置中, 以 mt-line-height ( util.ls ) 往下排. 整段的位置之後再對齊到 text 的外框
-    getD: (lines, {fontSize}) ->
+    # 多行: 每行水平置中, 以 mt-text-style.line-height ( util.ls ) 往下排. 整段的位置之後再對齊到 text 的外框
+    # spacing: 字距 ( px, 同 css letter-spacing ). 不為 0 時逐字排 ( 含 kerning )
+    getD: (lines, {fontSize, spacing = 0}) ->
       lines.map (line, i) ->
-        x = -otf.getAdvanceWidth(line, fontSize) / 2
-        otf.getPath(line, x, i * fontSize * mt-line-height, fontSize).toPathData!
+        y = i * fontSize * mt-text-style.line-height
+        if !spacing =>
+          x = -otf.getAdvanceWidth(line, fontSize) / 2
+          return otf.getPath(line, x, y, fontSize).toPathData!
+        scale = fontSize / otf.unitsPerEm
+        glyphs = otf.stringToGlyphs line
+        pos = []
+        x = 0
+        for g, j in glyphs
+          if j > 0 => x += spacing + otf.getKerningValue(glyphs[j - 1], g) * scale
+          pos.push x
+          x += (g.advanceWidth or 0) * scale
+        glyphs.map((g, j) -> g.getPath(pos[j] - x / 2, y, fontSize).toPathData!).join ' '
       .join ' '
 
 window.convert = do
@@ -64,7 +76,8 @@ window.convert = do
     fontSize = +(/(\d+)/.exec(fontSize) or [0,64]).1
     lines = mt-text-lines text
     text-value = lines.join(' ').trim! or 'Hello World'
-    d = tts.getD lines, {fontSize}
+    spacing = parseFloat(getComputedStyle(text).letterSpacing) or 0
+    d = tts.getD lines, {fontSize, spacing}
     g1 = document.createElementNS("http://www.w3.org/2000/svg", "g")
     g2 = document.createElementNS("http://www.w3.org/2000/svg", "g")
     path = document.createElementNS("http://www.w3.org/2000/svg", "path")

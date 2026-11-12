@@ -12,7 +12,8 @@ window.mt-track = (name, params = {}) ->
 # 設定效果的文字 ( 可多行 ). 多行時每行一個 tspan, 以 dy 往下排, 整段垂直置中在原本的位置
 # ( 效果的 text 多半是 text-anchor: middle / dominant-baseline: central ).
 # 原始文字記在 data-mt-text, 匯出 ( download.ls ) 轉 path 時用
-LINE-HEIGHT = 1.2
+# 行距 ( em ) 由 editor 的 Line Height 調整 ( index.ls ), 匯出也用它
+window.mt-text-style = {line-height: 1.2}
 window.mt-set-text = (node, value) ->
   lines = "#value".split /\r?\n/
   node.dataset.mt-text = value
@@ -22,9 +23,9 @@ window.mt-set-text = (node, value) ->
   for line, i in lines
     t = document.createElementNS \http://www.w3.org/2000/svg, \tspan
     t.setAttribute \x, x
-    t.setAttribute \dy, "#{if i == 0 => -(lines.length - 1) / 2 * LINE-HEIGHT else LINE-HEIGHT}em"
+    lh = mt-text-style.line-height
+    t.setAttribute \dy, "#{if i == 0 => -(lines.length - 1) / 2 * lh else lh}em"
     # 空行也要佔一行的高度
     t.textContent = line or ' '
     node.appendChild t
 window.mt-text-lines = (node) -> "#{node.dataset.mt-text ? node.textContent}".split /\r?\n/
-window.mt-line-height = LINE-HEIGHT
