@@ -797,7 +797,6 @@ window.convert = {
     }
     url = URL.createObjectURL(blob);
     document.querySelector('#download img').setAttribute('src', url);
-    document.querySelector('#download .result').style.height = option.height + "px";
     x$ = document.querySelector('#download .btn');
     x$.setAttribute('href', url);
     x$.setAttribute('download', (option.name || 'output') + "." + (option.postfix || 'png'));

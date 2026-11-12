@@ -17576,18 +17576,14 @@ body.editing #cooltext {
   text-align: center;
 }
 #download.modal .card .result {
-  background: center center no-repeat;
-  background-size: contain;
-  margin: auto;
-  min-height: 200px;
+  margin: 1em auto;
 }
 #download.modal .card .result img {
-  position: absolute;
-  left: -600px;
-  right: -600px;
-  top: -50px;
-  bottom: -50px;
+  display: block;
   margin: auto;
+  max-width: 100%;
+  max-height: 50vh;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.2);
 }
 .gallery {
   max-width: 1024px;

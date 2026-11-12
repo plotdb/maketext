@@ -90,7 +90,6 @@ window.convert = do
     else null
     url = URL.createObjectURL blob
     document.querySelector('#download img').setAttribute \src, url
-    document.querySelector('#download .result').style.height = "#{option.height}px"
     document.querySelector('#download .btn')
       ..setAttribute \href, url
       ..setAttribute \download, "#{option.name or 'output'}.#{option.postfix or 'png'}"

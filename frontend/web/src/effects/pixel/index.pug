@@ -1,8 +1,9 @@
 svg(xmlns="http://www.w3.org/2000/svg",viewBox="0 0 500 150",style="background:#1b1b2f")
   defs
     //- 像素化: 每 4px 取一點, 再擴張成 4px 方塊.
-    //- 取樣點的座標以 filter 區域為準, 因此區域固定從 ( 0, 0 ) 蓋滿整個畫面
-    filter#pixel(filterUnits="userSpaceOnUse",x="0",y="0",width="500",height="150")
+    //- 取樣點的座標以 filter 區域為準, 因此區域用固定的座標 ( 起點是 4 的倍數, 格子位置不變 ).
+    //- 區域要比畫面大很多: 字放大後會超出 500 x 150, 超出 filter 區域的部分會被切掉
+    filter#pixel(filterUnits="userSpaceOnUse",x="-1000",y="-300",width="2500",height="752")
       feFlood(x="2",y="2",width="1",height="1",flood-color="#000",result="dot")
       feComposite(width="4",height="4",in="dot",result="cell")
       feTile(in="cell",result="grid")
