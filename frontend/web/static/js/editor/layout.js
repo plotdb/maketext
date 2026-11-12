@@ -136,7 +136,7 @@ window.mtFrame = frame = {
 };
 drag = null;
 document.addEventListener('DOMContentLoaded', function(){
-  var cooltext, end, n;
+  var cooltext, end, n, x$;
   if (cooltext = document.querySelector('#cooltext')) {
     cooltext.addEventListener('pointerdown', function(e){
       var svg, ctm;
@@ -181,10 +181,16 @@ document.addEventListener('DOMContentLoaded', function(){
       return frame.refresh();
     });
   }
-  if (n = document.querySelector('#export-padding')) {
-    n.value = frame.opt.padding;
-    n.addEventListener('input', function(){
-      return frame.setOpt('padding', Math.max(0, +n.value || 0));
+  if (n = document.querySelector('#export-padding-slider .irs-input input')) {
+    x$ = $(n);
+    x$.val(frame.opt.padding);
+    x$.ionRangeSlider({
+      min: 0,
+      max: 200,
+      step: 1,
+      onChange: function(data){
+        return frame.setOpt('padding', data.from);
+      }
     });
   }
   if (n = document.querySelector('#export-scale')) {

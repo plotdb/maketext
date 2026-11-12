@@ -26,7 +26,9 @@ include @/ldpalettepicker/ldpp.pug
     .card-body
       h4 Generated Image
       small.gray click the download button to download
-      .result: img
+      .result
+        img
+        video.d-none(autoplay,loop,muted,playsinline,controls)
       hr
       a.btn.btn-lg.btn-outline-success.mr-2(href="#",download="") Download
       .btn.btn-lg.btn-outline-secondary(onclick="$('#download').modal('hide')") Close
@@ -67,9 +69,9 @@ include @/ldpalettepicker/ldpp.pug
   #cooltext
   .footer.text-center
     //- 匯出範圍 ( 文字外框加 padding, 預覽上的虛線框 ) 與倍率, 見 src/ls/editor/layout.ls
-    .inline-block.text-left.mr-2.mt-export-opt
+    .inline-block.text-left.mr-3.mt-export-opt#export-padding-slider
       label Padding
-      input#export-padding.form-control(type="number",min="0",max="300",step="1")
+      +slider
     .inline-block.text-left.mr-2.mt-export-opt
       label Scale
       select#export-scale.form-control
@@ -88,6 +90,9 @@ include @/ldpalettepicker/ldpp.pug
           .dropdown-menu.dropdown-menu-right
             each f in ["png", "jpg", "webp", "gif"]
               a.dropdown-item(href="#",data-type=f,onclick="convert.raster('" + f + "');return false")= f.toUpperCase()
+            //- 影片只在有圖樣填色 ( 動態 ) 時出現, 見 src/ls/editor/pattern.ls
+            each f in ["mp4", "webm"]
+              a.dropdown-item.d-none(href="#",data-type=f,data-anim="",onclick="convert.video('" + f + "');return false")= f.toUpperCase()
     .inline-block
       //- 拖曳過文字時出現: 回到原本的位置
       .btn.btn-outline-dark.mr-2.d-none#editor-reset-offset(onclick="mtFrame.reset()",title="reset text position") &#x21ba; Position

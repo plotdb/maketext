@@ -83,9 +83,12 @@ if (cooltext = document.querySelector \#cooltext) =>
 if document.fonts => document.fonts.addEventListener \loadingdone, -> frame.refresh!
 
 # 匯出設定的輸入框 ( src/pug/modules/mt/editor.pug )
-if (n = document.querySelector \#export-padding) =>
-  n.value = frame.opt.padding
-  n.addEventListener \input, -> frame.set-opt \padding, Math.max(0, +n.value or 0)
+if (n = document.querySelector '#export-padding-slider .irs-input input') =>
+  $(n)
+    ..val frame.opt.padding
+    ..ionRangeSlider do
+      min: 0, max: 200, step: 1
+      onChange: (data) -> frame.set-opt \padding, data.from
 if (n = document.querySelector \#export-scale) =>
   n.value = "#{frame.opt.scale}"
   n.addEventListener \change, -> frame.set-opt \scale, +n.value or 1

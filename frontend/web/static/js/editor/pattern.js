@@ -75,6 +75,7 @@ window.mtPattern = pattern = {
     return results$;
   },
   set: function(cur){
+    var this$ = this;
     this.cur = cur;
     this.apply();
     this.animate();
@@ -84,7 +85,10 @@ window.mtPattern = pattern = {
         effect: editor.effects.type
       });
     }
-    return this.renderBtn();
+    this.renderBtn();
+    return Array.from(document.querySelectorAll('#editor-download-btn [data-anim]')).map(function(it){
+      return it.classList.toggle('d-none', !this$.cur);
+    });
   },
   animate: function(){
     var cur, this$ = this;
@@ -116,31 +120,41 @@ window.mtPattern = pattern = {
       return tick();
     });
   },
-  renderBtn: function(btn){
-    btn == null && (btn = document.querySelector('#editor-custom-options .mt-pattern-btn'));
-    if (!btn) {
+  renderBtn: function(box){
+    box == null && (box = document.querySelector('#editor-custom-options .mt-fill'));
+    if (!box) {
       return;
     }
-    btn.classList.toggle('active', !!this.cur);
-    return btn.style.backgroundImage = this.cur ? "url(" + this.cur.url + ")" : '';
+    box.classList.toggle('on', !!this.cur);
+    return box.querySelector('.mt-pattern-btn').style.backgroundImage = this.cur ? "url(" + this.cur.url + ")" : '';
   },
   decorate: function(node, key){
-    var btn, this$ = this;
+    var color, box, this$ = this;
     if (key !== 'fill') {
       return;
     }
-    btn = document.createElement('div');
-    btn.className = 'mt-pattern-btn';
-    btn.title = 'fill with a pattern ( animated gif )';
-    btn.addEventListener('click', function(){
+    color = node.querySelector('.color');
+    box = document.createElement('div');
+    box.className = 'mt-fill';
+    color.parentNode.insertBefore(box, color);
+    box.appendChild(color);
+    box.insertAdjacentHTML('beforeend', '<div class="mt-pattern-btn" title="fill with an animated pattern"><span class="mt-pattern-label">GIF</span><span class="mt-pattern-clear" title="back to color">&times;</span></div>');
+    box.querySelector('.mt-pattern-btn').addEventListener('click', function(e){
+      if (e.target.closest('.mt-pattern-clear')) {
+        return this$.set(null);
+      }
       return this$.pick();
     });
-    node.querySelector('.color').appendChild(btn);
-    return this.renderBtn(btn);
+    color.addEventListener('click', function(){
+      if (this$.cur) {
+        return this$.set(null);
+      }
+    }, true);
+    return this.renderBtn(box);
   },
   pick: function(){
     var root, this$ = this;
-    root = document.querySelector('#pattern-picker');
+    root = this.root;
     this.ldcv = this.ldcv || new ldcover({
       root: root
     });
@@ -231,7 +245,7 @@ decode = function(url){
 };
 document.addEventListener('DOMContentLoaded', function(){
   var root;
-  if (!(root = document.querySelector('#pattern-picker'))) {
+  if (!(root = pattern.root = document.querySelector('#pattern-picker'))) {
     return;
   }
   root.addEventListener('click', function(e){

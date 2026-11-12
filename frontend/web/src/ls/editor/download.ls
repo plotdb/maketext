@@ -93,7 +93,14 @@ window.convert = do
     else if option.content => blob = new Blob [option.content], {type: option.type}
     else null
     url = URL.createObjectURL blob
-    document.querySelector('#download img').setAttribute \src, url
+    # 影片以 <video> 預覽 ( 對話框裡 img 與 video 擇一顯示 )
+    img = document.querySelector('#download img')
+    video = document.querySelector('#download video')
+    img.classList.toggle \d-none, !!option.video
+    video.classList.toggle \d-none, !option.video
+    if option.video => video.src = url else
+      video.removeAttribute \src
+      img.setAttribute \src, url
     document.querySelector('#download .btn')
       ..setAttribute \href, url
       ..setAttribute \download, "#{option.name or 'output'}.#{option.postfix or 'png'}"
@@ -116,8 +123,8 @@ window.convert = do
   png: -> @raster \png
   raster: (format = \png) ->
     if !(fmt = RASTER[format]) => return
-    # 有圖樣填色時, gif 輸出動態的 ( 瀏覽器能逐格解碼 gif 時 )
-    if format == \gif and mt-pattern.cur and window.ImageDecoder => return @animated-gif!
+    # 有圖樣填色時, gif / webp 輸出動態的 ( 瀏覽器能逐格解碼 gif 時 )
+    if format in <[gif webp]> and mt-pattern.cur and window.ImageDecoder => return @animated format
     mt-track \download, {format, effect: editor.effects.type}
     local = {}
     @prepare!
@@ -146,10 +153,13 @@ window.convert = do
           dataurl, blob, name: local.text, postfix: fmt.ext, type: fmt.type
         } <<< local{width, height}
 
-  # 動態 gif: 圖樣的 gif 逐格解碼, 每一格換進 svg 的 <pattern> 再 render 成一格
-  animated-gif: ->
-    mt-track \download, {format: \gif, effect: editor.effects.type, animated: true}
-    fmt = RASTER.gif
+  # 影片 ( 下載選單的 mp4 / webm, 只在有圖樣填色時出現 )
+  video: (format) -> if mt-pattern.cur => @animated format
+  # 動態格式: 圖樣的 gif 逐格解碼, 每一格換進 svg 的 <pattern> 再 render 成一格, 交給各格式的 sink 編碼.
+  # gif ( gifenc ) / webp ( 每格以 canvas 編成 webp 再組成動態 webp ) / mp4, webm ( WebCodecs, mediabunny )
+  animated: (format) ->
+    mt-track \download, {format, effect: editor.effects.type, animated: true}
+    fmt = ANIMATED[format]
     hint = document.querySelector '#download small'
     hint-text = hint.textContent
     progress = (t) -> hint.textContent = t
@@ -159,14 +169,19 @@ window.convert = do
     local = {}
     Promise.all [@prepare!, decode-frames(mt-pattern.cur.url)]
       .then ([{svg, text, width, height}, frames]) ->
+        # h.264 / vp9 的尺寸要是偶數
+        if fmt.video => [width, height] = [width, height].map -> Math.ceil(it / 2) * 2
         local <<< {text, width, height}
+        # 影片不會自己循環播放, 重複到至少 3 秒
+        if fmt.video =>
+          total = frames.reduce ((a, f) -> a + f.delay), 0
+          frames = [0 til Math.max(1, Math.ceil(3000 / total))].reduce ((a) -> a ++ frames), []
         canvas = document.createElement \canvas
         canvas <<< {width, height}
         ctx = canvas.getContext \2d
         bk = background-color!
         image = svg.querySelector "pattern image"
-        gifenc-load!then ({GIFEncoder, quantize, applyPalette}) ->
-          enc = GIFEncoder!
+        fmt.sink(width, height).then (sink) ->
           render = (i) ->
             if i >= frames.length => return
             progress "rendering frame #{i + 1} / #{frames.length} ..."
@@ -174,23 +189,26 @@ window.convert = do
             smiltool.svg-to-dataurl svg.outerHTML
               .then (url) -> load-image url
               .then (img) ->
-                ctx.fillStyle = bk
-                ctx.fillRect 0, 0, width, height
+                ctx.clearRect 0, 0, width, height
+                if fmt.opaque =>
+                  ctx.fillStyle = bk
+                  ctx.fillRect 0, 0, width, height
                 ctx.drawImage img, 0, 0, width, height
-                {data} = ctx.getImageData 0, 0, width, height
-                palette = quantize data, 256
-                enc.writeFrame applyPalette(data, palette), width, height, {palette, delay: frames[i].delay}
-                render i + 1
+                sink.add canvas, frames[i].delay
+              .then -> render i + 1
           render(0).then ->
-            enc.finish!
-            new Blob [enc.bytes!], {type: fmt.type}
-      .then (blob) -> blob-to-dataurl(blob).then (dataurl) -> {blob, dataurl}
+            progress "encoding ..."
+            sink.finish!
+      .then (blob) ->
+        if !blob => return Promise.reject new Error "#format is not supported by this browser"
+        if fmt.video => return {blob, dataurl: null}
+        blob-to-dataurl(blob).then (dataurl) -> {blob, dataurl}
       .then ({blob, dataurl}) ~>
         progress hint-text
-        @download {dataurl, blob, name: local.text, postfix: fmt.ext, type: fmt.type} <<< local{width, height}
+        @download {dataurl, blob, name: local.text, postfix: fmt.ext, type: fmt.type, video: fmt.video} <<< local{width, height}
       .catch (e) ->
-        console.warn "[maketext] gif:", e
-        progress "failed to render the animated GIF."
+        console.warn "[maketext] #format:", e
+        progress "failed to render the animated #{format.toUpperCase!}: #{e.message or e}"
 
 RASTER =
   png: {type: 'image/png', ext: \png}
@@ -266,3 +284,88 @@ decode-frames = (url) ->
           image.close!
           step i + 1
       step 0
+
+# 各動態格式的編碼 ( sink ): add(canvas, delay ms), finish() -> blob
+ANIMATED =
+  gif:
+    type: 'image/gif', ext: \gif, opaque: true
+    sink: (w, h) -> gifenc-load!then ({GIFEncoder, quantize, applyPalette}) ->
+      enc = GIFEncoder!
+      add: (canvas, delay) ->
+        {data} = canvas.getContext(\2d).getImageData 0, 0, w, h
+        palette = quantize data, 256
+        enc.writeFrame applyPalette(data, palette), w, h, {palette, delay}
+      finish: -> enc.finish!; new Blob [enc.bytes!], {type: 'image/gif'}
+  webp:
+    type: 'image/webp', ext: \webp
+    sink: (w, h) -> Promise.resolve do
+      frames: []
+      add: (canvas, delay) ->
+        new Promise (res) -> canvas.toBlob res, 'image/webp', 0.9
+          .then (b) -> b.arrayBuffer!
+          .then (buf) ~> @frames.push {data: new Uint8Array(buf), delay}
+      finish: -> webp-animate @frames, w, h
+  mp4: {type: 'video/mp4', ext: \mp4, video: true, opaque: true, sink: (w, h) -> video-sink \mp4, w, h}
+  webm: {type: 'video/webm', ext: \webm, video: true, sink: (w, h) -> video-sink \webm, w, h}
+
+# mediabunny ( WebCodecs ): mp4 是 h.264 ( 不透明 ), webm 是 vp9 ( 保留透明 ). 不支援時 finish 回 null
+# nginx 可能把 .mjs 當 application/octet-stream ( 瀏覽器不肯當模組載入 ), 抓回來包成 blob 再 import ( 同 loading.io )
+mediabunny = null
+mediabunny-load = ->
+  mediabunny := mediabunny or fetch('/assets/lib/mediabunny/main/mediabunny.min.mjs')
+    .then (r) -> if r.ok => r.text! else Promise.reject new Error "cannot load mediabunny ( #{r.status} )"
+    .then (code) -> (new Function('u', 'return import(u)'))(URL.createObjectURL new Blob([code], {type: \text/javascript}))
+    .catch (e) -> mediabunny := null; Promise.reject e
+video-sink = (format, w, h) ->
+  if !window.VideoEncoder => return Promise.resolve {add: (->), finish: -> null}
+  codec = if format == \mp4 => \avc else \vp9
+  mediabunny-load!then (M) ->
+    M.canEncodeVideo(codec, {width: w, height: h}).then (ok) ->
+      if !ok => return {add: (->), finish: -> null}
+      canvas = document.createElement \canvas
+      canvas <<< {width: w, height: h}
+      ctx = canvas.getContext \2d
+      output = new M.Output do
+        format: if format == \mp4 => new M.Mp4OutputFormat({fastStart: \in-memory}) else new M.WebMOutputFormat!
+        target: new M.BufferTarget!
+      source = new M.CanvasSource canvas, {codec, quality: M.QUALITY_HIGH, alpha: (if format == \mp4 => \discard else \keep)}
+      output.addVideoTrack source
+      t = 0
+      started = output.start!
+      add: (src, delay) ->
+        started.then ->
+          ctx.clearRect 0, 0, w, h
+          ctx.drawImage src, 0, 0
+          source.add(t / 1000, delay / 1000).then -> t := t + delay
+      finish: ->
+        started.then -> output.finalize!
+          .then -> new Blob [output.target.buffer], {type: if format == \mp4 => \video/mp4 else \video/webm}
+
+# 動態 webp: 每格是 canvas 編出的 webp ( RIFF, 內有 ALPH / VP8 或 VP8L chunk ), 取出 chunk 包成 ANMF,
+# 前面加 VP8X ( 動畫 + 透明 ) 與 ANIM ( 無限循環 ). 格式見 https://developers.google.com/speed/webp/docs/riff_container
+webp-animate = (frames, w, h) ->
+  u24 = (v) -> [v .&. 255, (v .>>. 8) .&. 255, (v .>>. 16) .&. 255]
+  u32 = (v) -> [v .&. 255, (v .>>. 8) .&. 255, (v .>>. 16) .&. 255, (v .>>. 24) .&. 255]
+  str = (s) -> [s.charCodeAt(i) for i from 0 til 4]
+  chunk = (id, data) ->
+    out = str(id) ++ u32(data.length) ++ Array.from(data)
+    if data.length % 2 => out.push 0
+    out
+  # 一格 webp 裡的影像 chunk ( 原樣, 含 header 與補位 )
+  image-chunks = (bytes) ->
+    out = []
+    o = 12
+    while o + 8 <= bytes.length
+      id = String.fromCharCode bytes[o], bytes[o + 1], bytes[o + 2], bytes[o + 3]
+      size = bytes[o + 4] .|. (bytes[o + 5] .<<. 8) .|. (bytes[o + 6] .<<. 16) .|. (bytes[o + 7] .<<. 24)
+      end = o + 8 + size + (size % 2)
+      if id in ['ALPH', 'VP8 ', 'VP8L'] => out ++= Array.from(bytes.subarray o, end)
+      o = end
+    out
+  body = str(\WEBP)
+  body ++= chunk \VP8X, [0x12, 0, 0, 0] ++ u24(w - 1) ++ u24(h - 1)
+  body ++= chunk \ANIM, [0, 0, 0, 0, 0, 0]
+  for f in frames
+    # 不與前一格混合 ( flags bit 1 ), 透明的地方才不會留下前一格
+    body ++= chunk \ANMF, u24(0) ++ u24(0) ++ u24(w - 1) ++ u24(h - 1) ++ u24(f.delay) ++ [0x02] ++ image-chunks(f.data)
+  new Blob [new Uint8Array(str(\RIFF) ++ u32(body.length) ++ body)], {type: 'image/webp'}

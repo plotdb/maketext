@@ -833,7 +833,7 @@ window.mtFrame = frame = {
 };
 drag = null;
 document.addEventListener('DOMContentLoaded', function(){
-  var cooltext, end, n;
+  var cooltext, end, n, x$;
   if (cooltext = document.querySelector('#cooltext')) {
     cooltext.addEventListener('pointerdown', function(e){
       var svg, ctm;
@@ -878,10 +878,16 @@ document.addEventListener('DOMContentLoaded', function(){
       return frame.refresh();
     });
   }
-  if (n = document.querySelector('#export-padding')) {
-    n.value = frame.opt.padding;
-    n.addEventListener('input', function(){
-      return frame.setOpt('padding', Math.max(0, +n.value || 0));
+  if (n = document.querySelector('#export-padding-slider .irs-input input')) {
+    x$ = $(n);
+    x$.val(frame.opt.padding);
+    x$.ionRangeSlider({
+      min: 0,
+      max: 200,
+      step: 1,
+      onChange: function(data){
+        return frame.setOpt('padding', data.from);
+      }
     });
   }
   if (n = document.querySelector('#export-scale')) {
@@ -901,7 +907,7 @@ function in$(x, xs){
   while (++i < l) if (x === xs[i]) return true;
   return false;
 }
-var loadFont, RASTER, backgroundColor, blobToDataurl, gifenc, gifencLoad, gifBlob, loadImage, dataurlCache, inlineImages, decodeFrames;
+var loadFont, RASTER, backgroundColor, blobToDataurl, gifenc, gifencLoad, gifBlob, loadImage, dataurlCache, inlineImages, decodeFrames, ANIMATED, mediabunny, mediabunnyLoad, videoSink, webpAnimate;
 loadFont = function(){
   return mtFont.of(editor.effects.type).then(function(f){
     return f.getotf();
@@ -1009,7 +1015,7 @@ window.convert = {
     });
   },
   download: function(option){
-    var that, blob, url, x$, ref$;
+    var that, blob, url, img, video, x$, ref$;
     option == null && (option = {});
     $('#download').modal('show');
     if (that = option.blob) {
@@ -1022,7 +1028,16 @@ window.convert = {
       null;
     }
     url = URL.createObjectURL(blob);
-    document.querySelector('#download img').setAttribute('src', url);
+    img = document.querySelector('#download img');
+    video = document.querySelector('#download video');
+    img.classList.toggle('d-none', !!option.video);
+    video.classList.toggle('d-none', !option.video);
+    if (option.video) {
+      video.src = url;
+    } else {
+      video.removeAttribute('src');
+      img.setAttribute('src', url);
+    }
     x$ = document.querySelector('#download .btn');
     x$.setAttribute('href', url);
     x$.setAttribute('download', (option.name || 'output') + "." + (option.postfix || 'png'));
@@ -1064,8 +1079,8 @@ window.convert = {
     if (!(fmt = RASTER[format])) {
       return;
     }
-    if (format === 'gif' && mtPattern.cur && window.ImageDecoder) {
-      return this.animatedGif();
+    if ((format === 'gif' || format === 'webp') && mtPattern.cur && window.ImageDecoder) {
+      return this.animated(format);
     }
     mtTrack('download', {
       format: format,
@@ -1125,14 +1140,19 @@ window.convert = {
       }, ref$.width = local.width, ref$.height = local.height, ref$));
     });
   },
-  animatedGif: function(){
+  video: function(format){
+    if (mtPattern.cur) {
+      return this.animated(format);
+    }
+  },
+  animated: function(format){
     var fmt, hint, hintText, progress, local, this$ = this;
     mtTrack('download', {
-      format: 'gif',
+      format: format,
       effect: editor.effects.type,
       animated: true
     });
-    fmt = RASTER.gif;
+    fmt = ANIMATED[format];
     hint = document.querySelector('#download small');
     hintText = hint.textContent;
     progress = function(t){
@@ -1143,21 +1163,38 @@ window.convert = {
     progress("rendering ...");
     local = {};
     return Promise.all([this.prepare(), decodeFrames(mtPattern.cur.url)]).then(function(arg$){
-      var ref$, svg, text, width, height, frames, canvas, ctx, bk, image;
+      var ref$, svg, text, width, height, frames, total, canvas, ctx, bk, image;
       ref$ = arg$[0], svg = ref$.svg, text = ref$.text, width = ref$.width, height = ref$.height, frames = arg$[1];
+      if (fmt.video) {
+        ref$ = [width, height].map(function(it){
+          return Math.ceil(it / 2) * 2;
+        }), width = ref$[0], height = ref$[1];
+      }
       local.text = text;
       local.width = width;
       local.height = height;
+      if (fmt.video) {
+        total = frames.reduce(function(a, f){
+          return a + f.delay;
+        }, 0);
+        frames = (function(){
+          var i$, to$, results$ = [];
+          for (i$ = 0, to$ = Math.max(1, Math.ceil(3000 / total)); i$ < to$; ++i$) {
+            results$.push(i$);
+          }
+          return results$;
+        }()).reduce(function(a){
+          return a.concat(frames);
+        }, []);
+      }
       canvas = document.createElement('canvas');
       canvas.width = width;
       canvas.height = height;
       ctx = canvas.getContext('2d');
       bk = backgroundColor();
       image = svg.querySelector("pattern image");
-      return gifencLoad().then(function(arg$){
-        var GIFEncoder, quantize, applyPalette, enc, render;
-        GIFEncoder = arg$.GIFEncoder, quantize = arg$.quantize, applyPalette = arg$.applyPalette;
-        enc = GIFEncoder();
+      return fmt.sink(width, height).then(function(sink){
+        var render;
         render = function(i){
           if (i >= frames.length) {
             return;
@@ -1167,27 +1204,32 @@ window.convert = {
           return smiltool.svgToDataurl(svg.outerHTML).then(function(url){
             return loadImage(url);
           }).then(function(img){
-            var data, palette;
-            ctx.fillStyle = bk;
-            ctx.fillRect(0, 0, width, height);
+            ctx.clearRect(0, 0, width, height);
+            if (fmt.opaque) {
+              ctx.fillStyle = bk;
+              ctx.fillRect(0, 0, width, height);
+            }
             ctx.drawImage(img, 0, 0, width, height);
-            data = ctx.getImageData(0, 0, width, height).data;
-            palette = quantize(data, 256);
-            enc.writeFrame(applyPalette(data, palette), width, height, {
-              palette: palette,
-              delay: frames[i].delay
-            });
+            return sink.add(canvas, frames[i].delay);
+          }).then(function(){
             return render(i + 1);
           });
         };
         return render(0).then(function(){
-          enc.finish();
-          return new Blob([enc.bytes()], {
-            type: fmt.type
-          });
+          progress("encoding ...");
+          return sink.finish();
         });
       });
     }).then(function(blob){
+      if (!blob) {
+        return Promise.reject(new Error(format + " is not supported by this browser"));
+      }
+      if (fmt.video) {
+        return {
+          blob: blob,
+          dataurl: null
+        };
+      }
       return blobToDataurl(blob).then(function(dataurl){
         return {
           blob: blob,
@@ -1203,11 +1245,12 @@ window.convert = {
         blob: blob,
         name: local.text,
         postfix: fmt.ext,
-        type: fmt.type
+        type: fmt.type,
+        video: fmt.video
       }, ref$.width = local.width, ref$.height = local.height, ref$));
     })['catch'](function(e){
-      console.warn("[maketext] gif:", e);
-      return progress("failed to render the animated GIF.");
+      console.warn("[maketext] " + format + ":", e);
+      return progress("failed to render the animated " + format.toUpperCase() + ": " + (e.message || e));
     });
   }
 };
@@ -1352,5 +1395,213 @@ decodeFrames = function(url){
       };
       return step(0);
     });
+  });
+};
+ANIMATED = {
+  gif: {
+    type: 'image/gif',
+    ext: 'gif',
+    opaque: true,
+    sink: function(w, h){
+      return gifencLoad().then(function(arg$){
+        var GIFEncoder, quantize, applyPalette, enc;
+        GIFEncoder = arg$.GIFEncoder, quantize = arg$.quantize, applyPalette = arg$.applyPalette;
+        enc = GIFEncoder();
+        return {
+          add: function(canvas, delay){
+            var data, palette;
+            data = canvas.getContext('2d').getImageData(0, 0, w, h).data;
+            palette = quantize(data, 256);
+            return enc.writeFrame(applyPalette(data, palette), w, h, {
+              palette: palette,
+              delay: delay
+            });
+          },
+          finish: function(){
+            enc.finish();
+            return new Blob([enc.bytes()], {
+              type: 'image/gif'
+            });
+          }
+        };
+      });
+    }
+  },
+  webp: {
+    type: 'image/webp',
+    ext: 'webp',
+    sink: function(w, h){
+      return Promise.resolve({
+        frames: [],
+        add: function(canvas, delay){
+          var this$ = this;
+          return new Promise(function(res){
+            return canvas.toBlob(res, 'image/webp', 0.9);
+          }).then(function(b){
+            return b.arrayBuffer();
+          }).then(function(buf){
+            return this$.frames.push({
+              data: new Uint8Array(buf),
+              delay: delay
+            });
+          });
+        },
+        finish: function(){
+          return webpAnimate(this.frames, w, h);
+        }
+      });
+    }
+  },
+  mp4: {
+    type: 'video/mp4',
+    ext: 'mp4',
+    video: true,
+    opaque: true,
+    sink: function(w, h){
+      return videoSink('mp4', w, h);
+    }
+  },
+  webm: {
+    type: 'video/webm',
+    ext: 'webm',
+    video: true,
+    sink: function(w, h){
+      return videoSink('webm', w, h);
+    }
+  }
+};
+mediabunny = null;
+mediabunnyLoad = function(){
+  return mediabunny = mediabunny || fetch('/assets/lib/mediabunny/main/mediabunny.min.mjs').then(function(r){
+    if (r.ok) {
+      return r.text();
+    } else {
+      return Promise.reject(new Error("cannot load mediabunny ( " + r.status + " )"));
+    }
+  }).then(function(code){
+    return new Function('u', 'return import(u)')(URL.createObjectURL(new Blob([code], {
+      type: 'text/javascript'
+    })));
+  })['catch'](function(e){
+    mediabunny = null;
+    return Promise.reject(e);
+  });
+};
+videoSink = function(format, w, h){
+  var codec;
+  if (!window.VideoEncoder) {
+    return Promise.resolve({
+      add: function(){},
+      finish: function(){
+        return null;
+      }
+    });
+  }
+  codec = format === 'mp4' ? 'avc' : 'vp9';
+  return mediabunnyLoad().then(function(M){
+    return M.canEncodeVideo(codec, {
+      width: w,
+      height: h
+    }).then(function(ok){
+      var canvas, ctx, output, source, t, started;
+      if (!ok) {
+        return {
+          add: function(){},
+          finish: function(){
+            return null;
+          }
+        };
+      }
+      canvas = document.createElement('canvas');
+      canvas.width = w;
+      canvas.height = h;
+      ctx = canvas.getContext('2d');
+      output = new M.Output({
+        format: format === 'mp4'
+          ? new M.Mp4OutputFormat({
+            fastStart: 'in-memory'
+          })
+          : new M.WebMOutputFormat(),
+        target: new M.BufferTarget()
+      });
+      source = new M.CanvasSource(canvas, {
+        codec: codec,
+        quality: M.QUALITY_HIGH,
+        alpha: format === 'mp4' ? 'discard' : 'keep'
+      });
+      output.addVideoTrack(source);
+      t = 0;
+      started = output.start();
+      return {
+        add: function(src, delay){
+          return started.then(function(){
+            ctx.clearRect(0, 0, w, h);
+            ctx.drawImage(src, 0, 0);
+            return source.add(t / 1000, delay / 1000).then(function(){
+              return t = t + delay;
+            });
+          });
+        },
+        finish: function(){
+          return started.then(function(){
+            return output.finalize();
+          }).then(function(){
+            return new Blob([output.target.buffer], {
+              type: format === 'mp4' ? 'video/mp4' : 'video/webm'
+            });
+          });
+        }
+      };
+    });
+  });
+};
+webpAnimate = function(frames, w, h){
+  var u24, u32, str, chunk, imageChunks, body, i$, len$, f;
+  u24 = function(v){
+    return [v & 255, v >> 8 & 255, v >> 16 & 255];
+  };
+  u32 = function(v){
+    return [v & 255, v >> 8 & 255, v >> 16 & 255, v >> 24 & 255];
+  };
+  str = function(s){
+    var i$, i, results$ = [];
+    for (i$ = 0; i$ < 4; ++i$) {
+      i = i$;
+      results$.push(s.charCodeAt(i));
+    }
+    return results$;
+  };
+  chunk = function(id, data){
+    var out;
+    out = str(id).concat(u32(data.length), Array.from(data));
+    if (data.length % 2) {
+      out.push(0);
+    }
+    return out;
+  };
+  imageChunks = function(bytes){
+    var out, o, id, size, end;
+    out = [];
+    o = 12;
+    while (o + 8 <= bytes.length) {
+      id = String.fromCharCode(bytes[o], bytes[o + 1], bytes[o + 2], bytes[o + 3]);
+      size = bytes[o + 4] | bytes[o + 5] << 8 | bytes[o + 6] << 16 | bytes[o + 7] << 24;
+      end = o + 8 + size + size % 2;
+      if (id === 'ALPH' || id === 'VP8 ' || id === 'VP8L') {
+        out = out.concat(Array.from(bytes.subarray(o, end)));
+      }
+      o = end;
+    }
+    return out;
+  };
+  body = str('WEBP');
+  body = body.concat(chunk('VP8X', [0x12, 0, 0, 0].concat(u24(w - 1), u24(h - 1))));
+  body = body.concat(chunk('ANIM', [0, 0, 0, 0, 0, 0]));
+  for (i$ = 0, len$ = frames.length; i$ < len$; ++i$) {
+    f = frames[i$];
+    body = body.concat(chunk('ANMF', u24(0).concat(u24(0), u24(w - 1), u24(h - 1), u24(f.delay), [0x02], imageChunks(f.data))));
+  }
+  return new Blob([new Uint8Array(str('RIFF').concat(u32(body.length), body))], {
+    type: 'image/webp'
   });
 };

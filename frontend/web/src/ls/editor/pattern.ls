@@ -58,6 +58,8 @@ window.mt-pattern = pattern = do
     @animate!
     if cur => mt-track \pattern, {pattern: cur.name, effect: editor.effects.type}
     @render-btn!
+    # 動態格式 ( mp4 / webm ) 只在有圖樣時出現 ( src/pug/modules/mt/editor.pug 的下載選單 )
+    Array.from(document.querySelectorAll '#editor-download-btn [data-anim]').map ~> it.classList.toggle \d-none, !@cur
   # 預覽的動畫: 解碼後的每一格 ( blob url ) 依序換進 <pattern> 的 image
   animate: ->
     clearTimeout @_timer
@@ -74,22 +76,32 @@ window.mt-pattern = pattern = do
         @_timer = setTimeout tick, frames[i].delay
         i := (i + 1) % frames.length
       tick!
-  # btn: 剛建立還沒放進頁面的按鈕 ( decorate )
-  render-btn: (btn = document.querySelector '#editor-custom-options .mt-pattern-btn') ->
-    if !btn => return
-    btn.classList.toggle \active, !!@cur
-    btn.style.backgroundImage = if @cur => "url(#{@cur.url})" else ''
+  # 顏色欄位與圖樣按鈕並排 ( .mt-fill ). 有圖樣時 ( .on ) 圖樣按鈕展開、顏色縮成一小塊;
+  # 點顏色就回到顏色填色. box: 剛建立還沒放進頁面的 ( decorate )
+  render-btn: (box = document.querySelector '#editor-custom-options .mt-fill') ->
+    if !box => return
+    box.classList.toggle \on, !!@cur
+    box.querySelector(\.mt-pattern-btn).style.backgroundImage = if @cur => "url(#{@cur.url})" else ''
   # open-effect ( index.ls ) 建立參數欄位時呼叫: fill 顏色欄位旁加上圖樣按鈕
   decorate: (node, key) ->
     if key != \fill => return
-    btn = document.createElement \div
-    btn.className = \mt-pattern-btn
-    btn.title = 'fill with a pattern ( animated gif )'
-    btn.addEventListener \click, ~> @pick!
-    node.querySelector(\.color).appendChild btn
-    @render-btn btn
+    color = node.querySelector \.color
+    box = document.createElement \div
+    box.className = \mt-fill
+    color.parentNode.insertBefore box, color
+    box.appendChild color
+    box.insertAdjacentHTML \beforeend, '''
+    <div class="mt-pattern-btn" title="fill with an animated pattern"><span class="mt-pattern-label">GIF</span><span class="mt-pattern-clear" title="back to color">&times;</span></div>
+    '''
+    box.querySelector(\.mt-pattern-btn).addEventListener \click, (e) ~>
+      if e.target.closest \.mt-pattern-clear => return @set null
+      @pick!
+    # 有圖樣時點顏色: 改回顏色填色 ( 顏色選擇器照常打開 )
+    color.addEventListener \click, (~> if @cur => @set null), true
+    @render-btn box
   pick: ->
-    root = document.querySelector \#pattern-picker
+    # ldcover 關閉時會把根節點移出 DOM, 不能每次用 querySelector 找; 載入時記下 ( @root )
+    root = @root
     @ldcv = @ldcv or new ldcover root: root
     @load-list!then (list) ~>
       grid = root.querySelector \.mt-pattern-grid
@@ -137,7 +149,7 @@ decode = (url) ->
       step 0
 
 <- document.addEventListener \DOMContentLoaded, _
-if !(root = document.querySelector \#pattern-picker) => return
+if !(root = pattern.root = document.querySelector \#pattern-picker) => return
 root.addEventListener \click, (e) ->
   if !(n = e.target.closest \.mt-pattern-item) => return
   name = n.dataset.name

@@ -131,6 +131,8 @@ gallery 一開始顯示 build 時以固定文字、預設字型 render 的 webp 
 - 圖樣填色 ( `src/ls/editor/pattern.ls` ): 有 fill 顏色參數的效果, 可改用 gif 圖樣填色.
   內建圖樣由 `tool/maketext/build-patterns.ls` 產生 ( 程式算出的無縫循環圖樣 ), 也可上傳.
   瀏覽器不會讓 `<pattern>` 裡的 gif 動起來, 預覽以 ImageDecoder 逐格解碼自己換格.
-  GIF 匯出逐格 render 成動態 gif; SVG 內嵌原本的 gif; PNG / JPG / WEBP 是第一格.
+  有圖樣時 GIF / WEBP 匯出動態的 ( webp 每格以 canvas 編碼, 再自己組成動態 webp ), 下載選單另有 MP4 / WEBM
+  ( WebCodecs, mediabunny, 重複到至少 3 秒 ); SVG 內嵌原本的 gif; PNG / JPG 是第一格.
+  mediabunny 由 fedep 放到 static/assets/lib ( 不進 git ), 部署時 frontend/web 要 npm install.
 - 待做: 以 filter 自己上色 ( 只用 SourceAlpha ) 的效果選了圖樣也看不到, 之後可只在看得到的效果顯示按鈕;
   沒有 ImageDecoder 的瀏覽器 ( 舊版 Safari ) 預覽是靜止的, GIF 匯出也只有一格.

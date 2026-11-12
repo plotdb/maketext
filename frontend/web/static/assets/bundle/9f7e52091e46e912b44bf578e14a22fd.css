@@ -14998,7 +14998,8 @@ body.editing #cooltext {
 #download.modal .card .result {
   margin: 1em auto;
 }
-#download.modal .card .result img {
+#download.modal .card .result img,
+#download.modal .card .result video {
   display: block;
   margin: auto;
   max-width: 100%;
@@ -15010,6 +15011,9 @@ body.editing #cooltext {
 }
 #editor .footer .mt-export-opt .form-control {
   width: 90px;
+}
+#editor .footer #export-padding-slider {
+  width: 180px;
 }
 #editor .footer .mt-drag-hint {
   margin-top: 8px;
@@ -15023,41 +15027,88 @@ body.editing #cooltext {
 body.editing #cooltext.dragging {
   cursor: grabbing;
 }
+#cooltext svg {
+  overflow: visible;
+}
 #cooltext .mt-crop {
   fill: none;
-  stroke: rgba(120,120,120,0.8);
-  stroke-dasharray: 4 4;
+  stroke: #2f9bff;
+  stroke-width: 1.5;
+  stroke-dasharray: 6 4;
   vector-effect: non-scaling-stroke;
   pointer-events: none;
 }
-#editor .color {
-  position: relative;
+#editor .mt-fill {
+  display: flex;
 }
-#editor .color .mt-pattern-btn {
-  position: absolute;
-  top: 3px;
-  right: 14px;
-  width: 22px;
-  height: calc(100% - 6px);
+#editor .mt-fill .color {
+  -webkit-flex: 1;
+  flex: 1;
+  min-width: 0;
+  -ms-transition: flex 0.2s ease-in-out;
+  -moz-transition: flex 0.2s ease-in-out;
+  -webkit-transition: flex 0.2s ease-in-out;
+  -o-transition: flex 0.2s ease-in-out;
+  transition: flex 0.2s ease-in-out;
+}
+#editor .mt-fill .mt-pattern-btn {
+  -webkit-flex: 0;
+  flex: 0;
+  margin-left: 4px;
+  position: relative;
   border: 1px dashed #999;
   border-radius: 3px;
-  background: #fff center/22px repeat;
+  background: #fff center/32px repeat;
   cursor: pointer;
-  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  color: #777;
+  -ms-transition: flex 0.2s ease-in-out;
+  -moz-transition: flex 0.2s ease-in-out;
+  -webkit-transition: flex 0.2s ease-in-out;
+  -o-transition: flex 0.2s ease-in-out;
+  transition: flex 0.2s ease-in-out;
 }
-#editor .color .mt-pattern-btn:after {
-  content: "▦";
-  display: block;
-  text-align: center;
-  font-size: 12px;
-  line-height: 1.6;
-  color: #999;
+#editor .mt-fill .mt-pattern-btn:hover {
+  border-color: #333;
+  color: #333;
 }
-#editor .color .mt-pattern-btn.active {
+#editor .mt-fill .mt-pattern-clear {
+  display: none;
+}
+#editor .mt-fill.on .color {
+  -webkit-flex: 0;
+  flex: 0;
+  cursor: pointer;
+}
+#editor .mt-fill.on .mt-pattern-btn {
+  -webkit-flex: 1;
+  flex: 1;
   border: 1px solid #333;
 }
-#editor .color .mt-pattern-btn.active:after {
-  content: "";
+#editor .mt-fill.on .mt-pattern-label {
+  display: none;
+}
+#editor .mt-fill.on .mt-pattern-clear {
+  display: block;
+  position: absolute;
+  right: 2px;
+  top: 50%;
+  -ms-transform: translateY(-50%);
+  -moz-transform: translateY(-50%);
+  -webkit-transform: translateY(-50%);
+  -o-transform: translateY(-50%);
+  transform: translateY(-50%);
+  width: 18px;
+  height: 18px;
+  line-height: 16px;
+  text-align: center;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.9);
+  color: #333;
+  font-size: 14px;
 }
 #pattern-picker .base {
   width: 480px;
