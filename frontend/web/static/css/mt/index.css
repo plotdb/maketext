@@ -2985,6 +2985,12 @@ body.editing #cooltext.dragging {
   -o-transform: translateX(-50%);
   transform: translateX(-50%);
 }
+#palette-btn .palette {
+  height: calc(1.8125rem + 2px);
+  border: 1px solid #ced4da;
+  border-radius: 0.2rem;
+  box-shadow: none;
+}
 .gallery {
   max-width: 1024px;
   width: 90%;

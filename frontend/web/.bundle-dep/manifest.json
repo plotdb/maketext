@@ -1,11 +1,11 @@
 {
   "/css/mt/index.css": {
-    "url": "/css/mt/index.css?v=ff540883188c",
+    "url": "/css/mt/index.css?v=74be7e79792c",
     "refs": [],
     "generations": []
   },
   "/css/mt/index.min.css": {
-    "url": "/css/mt/index.min.css?v=5edce8f8b0a7",
+    "url": "/css/mt/index.min.css?v=e114d8083f3a",
     "refs": [],
     "generations": []
   },
@@ -106,12 +106,12 @@
     "generations": []
   },
   "/assets/bundle/2c436f4d3a76b30ad70c067e9717d0dd.css": {
-    "url": "/assets/bundle/2c436f4d3a76b30ad70c067e9717d0dd.css?v=10e6d6c602f1",
+    "url": "/assets/bundle/2c436f4d3a76b30ad70c067e9717d0dd.css?v=0e7346662864",
     "refs": [],
     "generations": []
   },
   "/assets/bundle/2c436f4d3a76b30ad70c067e9717d0dd.min.css": {
-    "url": "/assets/bundle/2c436f4d3a76b30ad70c067e9717d0dd.min.css?v=fd637f1ce446",
+    "url": "/assets/bundle/2c436f4d3a76b30ad70c067e9717d0dd.min.css?v=4b8086e6ebfb",
     "refs": [
       "frontend/web/src/pug/api/editor/0.1/index.pug",
       "frontend/web/src/pug/fancy/index.pug",
@@ -193,12 +193,12 @@
     "generations": []
   },
   "/assets/bundle/9f7e52091e46e912b44bf578e14a22fd.css": {
-    "url": "/assets/bundle/9f7e52091e46e912b44bf578e14a22fd.css?v=15617062c6c3",
+    "url": "/assets/bundle/9f7e52091e46e912b44bf578e14a22fd.css?v=26b4db282816",
     "refs": [],
     "generations": []
   },
   "/assets/bundle/9f7e52091e46e912b44bf578e14a22fd.min.css": {
-    "url": "/assets/bundle/9f7e52091e46e912b44bf578e14a22fd.min.css?v=9ac43037b619",
+    "url": "/assets/bundle/9f7e52091e46e912b44bf578e14a22fd.min.css?v=3316fe067fd0",
     "refs": [],
     "generations": []
   },
