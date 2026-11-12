@@ -165,3 +165,49 @@ body.editing #cooltext
   stroke-dasharray: 4 4
   vector-effect: non-scaling-stroke
   pointer-events: none
+
+// 圖樣填色 ( src/ls/editor/pattern.ls ): fill 顏色欄位右邊的按鈕, 與選單
+#editor .color
+  position: relative
+  .mt-pattern-btn
+    position: absolute
+    top: 3px
+    right: 14px
+    width: 22px
+    height: calc(100% - 6px)
+    border: 1px dashed #999
+    border-radius: 3px
+    background: #fff center / 22px repeat
+    cursor: pointer
+    z-index: 1
+    &:after
+      content: "▦"
+      display: block
+      text-align: center
+      font-size: 12px
+      line-height: 1.6
+      color: #999
+    &.active
+      border: 1px solid #333
+      &:after
+        content: ""
+#pattern-picker .base
+  width: 480px
+  max-width: 95vw
+  .mt-pattern-grid
+    display: grid
+    grid-template-columns: repeat(4, 1fr)
+    gap: 8px
+  .mt-pattern-item
+    height: 72px
+    border-radius: 4px
+    border: 1px solid #ddd
+    background: center / 48px repeat
+    cursor: pointer
+    &:hover
+      border-color: #333
+    &.none
+      display: flex
+      align-items: center
+      justify-content: center
+      color: #999

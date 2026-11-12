@@ -122,3 +122,15 @@ gallery 一開始顯示 build 時以固定文字、預設字型 render 的 webp 
 2026-11-12 上線時，舊的靜態版 HTML 沒帶 Cache-Control，瀏覽器會自行快取約一天，期間會去要新版沒有的舊資源，畫面就沒有樣式。
 因此在正式機 nginx 加了 `config/web/nginx/production-v1-assets.ngx` 這段，從 `server-v1/static` 提供 `/css/pack/`、`/js/pack/`、舊字型等。
 等 nginx log 裡不再有這些路徑的請求，就把這段從 `/etc/nginx/sites-available/maketext.io.ngx` 拿掉，再刪除 mwb 上的 `server-v1`（約 1.1GB）。
+
+## 匯出範圍、拖曳微調、圖樣填色 ( 2026-11-12 )
+
+- 匯出範圍 ( `src/ls/editor/layout.ls` ): 文字外框四周加 padding, 倍率 1x / 2x / 3x, 設定記在 localStorage.
+  預覽上以虛線框標出. 以 SVG 座標計算, 不再隨螢幕寬度變動.
+- 拖曳微調: 編輯時在預覽上拖曳文字. 效果的圖形包進 `g.mt-offset` 整組移動, 匯出範圍不跟著動 ( 拖曳就是在範圍內移動文字 ).
+- 圖樣填色 ( `src/ls/editor/pattern.ls` ): 有 fill 顏色參數的效果, 可改用 gif 圖樣填色.
+  內建圖樣由 `tool/maketext/build-patterns.ls` 產生 ( 程式算出的無縫循環圖樣 ), 也可上傳.
+  瀏覽器不會讓 `<pattern>` 裡的 gif 動起來, 預覽以 ImageDecoder 逐格解碼自己換格.
+  GIF 匯出逐格 render 成動態 gif; SVG 內嵌原本的 gif; PNG / JPG / WEBP 是第一格.
+- 待做: 以 filter 自己上色 ( 只用 SourceAlpha ) 的效果選了圖樣也看不到, 之後可只在看得到的效果顯示按鈕;
+  沒有 ImageDecoder 的瀏覽器 ( 舊版 Safari ) 預覽是靜止的, GIF 匯出也只有一格.

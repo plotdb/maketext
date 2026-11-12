@@ -8,6 +8,19 @@ template#mt-xfc-tpl: .mt-xfc-panel: +xfc
 include @/ldpalettepicker/ldpp.pug
 #palette-picker.ldcv.default-size: .base: .inner.ldpp: +ldpp
 
+//- 圖樣填色的選單 ( src/ls/editor/pattern.ls )
+#pattern-picker.ldcv: .base: .inner
+  .p-4
+    h5.mb-1 Pattern Fill
+    .small.text-muted.mb-3 fill the text with an animated pattern. download as GIF to keep the animation.
+    .mt-pattern-grid
+    .mt-3.d-flex.align-items-center
+      label.btn.btn-sm.btn-outline-dark.mb-0
+        | upload a GIF ...
+        input.d-none(type="file",accept="image/gif,image/png,image/jpeg,image/webp")
+      div(style="flex:1 1 auto")
+      .btn.btn-sm.btn-outline-secondary(data-ldcv-set="") close
+
 #download.modal
   .card
     .card-body

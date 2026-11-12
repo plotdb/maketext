@@ -14,7 +14,11 @@ window.convert = do
     box = mt-frame.box(live) or {x: 0, y: 0, width: 500, height: 150}
     scale = +mt-frame.opt.scale or 1
     svg = live.cloneNode true
+    # 效果裡的 xlink:href 要有 namespace 宣告, 序列化後才是合法的 svg
+    svg.setAttributeNS \http://www.w3.org/2000/xmlns/, \xmlns:xlink, \http://www.w3.org/1999/xlink
     if (n = svg.querySelector \.mt-crop) => n.remove!
+    # 圖樣填色: 預覽換格用的是解碼後的單格, 匯出放回原本的 gif ( svg 內嵌; 點陣格式取第一格 )
+    if mt-pattern.cur and (n = svg.querySelector 'pattern image') => n.setAttribute \href, mt-pattern.cur.url
     svg-width = document.querySelector '#cooltext' .getBoundingClientRect!width
 
     svg.setAttribute \width, "#{svg-width}px"
@@ -44,7 +48,8 @@ window.convert = do
       document.body.appendChild(node)
     node.appendChild(svg)
 
-    (tts) <- load-font!then _
+    # 圖樣填色 ( pattern.ls ) 的 gif 轉成 data url, 匯出的 svg 才帶得走
+    ([tts]) <- Promise.all([load-font!, inline-images(svg)]).then _
     (text, i) <~ Array.from(svg.querySelectorAll(\text)).map _
     #text = svg.querySelector('text')
 
@@ -111,6 +116,8 @@ window.convert = do
   png: -> @raster \png
   raster: (format = \png) ->
     if !(fmt = RASTER[format]) => return
+    # 有圖樣填色時, gif 輸出動態的 ( 瀏覽器能逐格解碼 gif 時 )
+    if format == \gif and mt-pattern.cur and window.ImageDecoder => return @animated-gif!
     mt-track \download, {format, effect: editor.effects.type}
     local = {}
     @prepare!
@@ -139,6 +146,52 @@ window.convert = do
           dataurl, blob, name: local.text, postfix: fmt.ext, type: fmt.type
         } <<< local{width, height}
 
+  # 動態 gif: 圖樣的 gif 逐格解碼, 每一格換進 svg 的 <pattern> 再 render 成一格
+  animated-gif: ->
+    mt-track \download, {format: \gif, effect: editor.effects.type, animated: true}
+    fmt = RASTER.gif
+    hint = document.querySelector '#download small'
+    hint-text = hint.textContent
+    progress = (t) -> hint.textContent = t
+    $(\#download).modal \show
+    document.querySelector('#download img').removeAttribute \src
+    progress "rendering ..."
+    local = {}
+    Promise.all [@prepare!, decode-frames(mt-pattern.cur.url)]
+      .then ([{svg, text, width, height}, frames]) ->
+        local <<< {text, width, height}
+        canvas = document.createElement \canvas
+        canvas <<< {width, height}
+        ctx = canvas.getContext \2d
+        bk = background-color!
+        image = svg.querySelector "pattern image"
+        gifenc-load!then ({GIFEncoder, quantize, applyPalette}) ->
+          enc = GIFEncoder!
+          render = (i) ->
+            if i >= frames.length => return
+            progress "rendering frame #{i + 1} / #{frames.length} ..."
+            image.setAttribute \href, frames[i].url
+            smiltool.svg-to-dataurl svg.outerHTML
+              .then (url) -> load-image url
+              .then (img) ->
+                ctx.fillStyle = bk
+                ctx.fillRect 0, 0, width, height
+                ctx.drawImage img, 0, 0, width, height
+                {data} = ctx.getImageData 0, 0, width, height
+                palette = quantize data, 256
+                enc.writeFrame applyPalette(data, palette), width, height, {palette, delay: frames[i].delay}
+                render i + 1
+          render(0).then ->
+            enc.finish!
+            new Blob [enc.bytes!], {type: fmt.type}
+      .then (blob) -> blob-to-dataurl(blob).then (dataurl) -> {blob, dataurl}
+      .then ({blob, dataurl}) ~>
+        progress hint-text
+        @download {dataurl, blob, name: local.text, postfix: fmt.ext, type: fmt.type} <<< local{width, height}
+      .catch (e) ->
+        console.warn "[maketext] gif:", e
+        progress "failed to render the animated GIF."
+
 RASTER =
   png: {type: 'image/png', ext: \png}
   jpg: {type: 'image/jpeg', ext: \jpg, opaque: true}
@@ -156,11 +209,13 @@ blob-to-dataurl = (blob) -> new Promise (res, rej) ->
   fr.onerror = rej
   fr.readAsDataURL blob
 
-# 靜態 gif: 以 gifenc 編碼. 只有選 gif 時才載入 ( esm, 以 dynamic import 載入 )
+# gif 以 gifenc 編碼. 只有選 gif 時才載入 ( esm, 以 dynamic import 載入 )
 gifenc = null
-gif-blob = (ctx, w, h) ->
+gifenc-load = ->
   gifenc := gifenc or (new Function('u', 'return import(u)'))('/assets/lib/gifenc/main/gifenc.esm.js')
-  gifenc.then ({GIFEncoder, quantize, applyPalette}) ->
+# 靜態 gif
+gif-blob = (ctx, w, h) ->
+  gifenc-load!then ({GIFEncoder, quantize, applyPalette}) ->
     {data} = ctx.getImageData 0, 0, w, h
     palette = quantize data, 256
     enc = GIFEncoder!
@@ -172,3 +227,42 @@ gif-blob = (ctx, w, h) ->
 if !/^data:image\/webp/.exec(document.createElement(\canvas).toDataURL 'image/webp') =>
   document.addEventListener \DOMContentLoaded, ->
     Array.from(document.querySelectorAll '#editor-download-btn [data-type=webp]').map -> it.remove!
+
+load-image = (url) -> new Promise (res, rej) ->
+  img = new Image!
+  img.onload = -> res img
+  img.onerror = rej
+  img.src = url
+
+# svg 內 <image> 的外部網址 ( 圖樣的 gif ) 換成 data url
+dataurl-cache = {}
+inline-images = (svg) ->
+  Promise.all(Array.from(svg.querySelectorAll \image).map (img) ->
+    href = img.getAttributeNS(\http://www.w3.org/1999/xlink, \href) or img.getAttribute(\href)
+    if !href or /^data:/.exec(href) => return
+    (dataurl-cache[href] or (dataurl-cache[href] = fetch(href).then(-> it.blob!).then(blob-to-dataurl)))
+      .then (url) ->
+        if img.hasAttribute(\href) => img.setAttribute \href, url
+        else img.setAttributeNS \http://www.w3.org/1999/xlink, \href, url
+  )
+
+# 動態 gif ( 或其它圖片 ) 逐格解碼成 png data url 與每格的時間 ( ms ). 最多 60 格
+decode-frames = (url) ->
+  # 整個檔案讀完再解碼: 給 stream 的話 frameCount 會是當下已收到的格數
+  fetch(url).then (r) -> r.blob!
+  .then (blob) -> blob.arrayBuffer!then (data) -> {data, type: blob.type or 'image/gif'}
+  .then ({data, type}) ->
+    dec = new ImageDecoder {data, type}
+    Promise.all([dec.tracks.ready, dec.completed]).then ->
+      count = Math.min(60, dec.tracks.selectedTrack.frameCount or 1)
+      canvas = document.createElement \canvas
+      frames = []
+      step = (i) ->
+        if i >= count => return frames
+        dec.decode({frameIndex: i}).then ({image}) ->
+          canvas <<< {width: image.displayWidth, height: image.displayHeight}
+          canvas.getContext(\2d).drawImage image, 0, 0
+          frames.push {url: canvas.toDataURL!, delay: Math.max(20, Math.round((image.duration or 100000) / 1000))}
+          image.close!
+          step i + 1
+      step 0

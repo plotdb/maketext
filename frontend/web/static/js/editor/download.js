@@ -1,4 +1,4 @@
-var loadFont, RASTER, backgroundColor, blobToDataurl, gifenc, gifBlob;
+var loadFont, RASTER, backgroundColor, blobToDataurl, gifenc, gifencLoad, gifBlob, loadImage, dataurlCache, inlineImages, decodeFrames;
 loadFont = function(){
   return mtFont.of(editor.effects.type).then(function(f){
     return f.getotf();
@@ -25,8 +25,12 @@ window.convert = {
       };
       scale = +mtFrame.opt.scale || 1;
       svg = live.cloneNode(true);
+      svg.setAttributeNS('http://www.w3.org/2000/xmlns/', 'xmlns:xlink', 'http://www.w3.org/1999/xlink');
       if (n = svg.querySelector('.mt-crop')) {
         n.remove();
+      }
+      if (mtPattern.cur && (n = svg.querySelector('pattern image'))) {
+        n.setAttribute('href', mtPattern.cur.url);
       }
       svgWidth = document.querySelector('#cooltext').getBoundingClientRect().width;
       svg.setAttribute('width', svgWidth + "px");
@@ -50,7 +54,9 @@ window.convert = {
         document.body.appendChild(node);
       }
       node.appendChild(svg);
-      return loadFont().then(function(tts){
+      return Promise.all([loadFont(), inlineImages(svg)]).then(function(arg$){
+        var tts;
+        tts = arg$[0];
         return Array.from(svg.querySelectorAll('text')).map(function(text, i){
           var textbox, fontSize, textValue, d, g1, g2, path, parent, i$, ref$, len$, name, that, pbox, x, y, width, height;
           textbox = text.getBBox();
@@ -155,6 +161,9 @@ window.convert = {
     if (!(fmt = RASTER[format])) {
       return;
     }
+    if (format === 'gif' && mtPattern.cur && window.ImageDecoder) {
+      return this.animatedGif();
+    }
     mtTrack('download', {
       format: format,
       effect: editor.effects.type
@@ -212,6 +221,91 @@ window.convert = {
         type: fmt.type
       }, ref$.width = local.width, ref$.height = local.height, ref$));
     });
+  },
+  animatedGif: function(){
+    var fmt, hint, hintText, progress, local, this$ = this;
+    mtTrack('download', {
+      format: 'gif',
+      effect: editor.effects.type,
+      animated: true
+    });
+    fmt = RASTER.gif;
+    hint = document.querySelector('#download small');
+    hintText = hint.textContent;
+    progress = function(t){
+      return hint.textContent = t;
+    };
+    $('#download').modal('show');
+    document.querySelector('#download img').removeAttribute('src');
+    progress("rendering ...");
+    local = {};
+    return Promise.all([this.prepare(), decodeFrames(mtPattern.cur.url)]).then(function(arg$){
+      var ref$, svg, text, width, height, frames, canvas, ctx, bk, image;
+      ref$ = arg$[0], svg = ref$.svg, text = ref$.text, width = ref$.width, height = ref$.height, frames = arg$[1];
+      local.text = text;
+      local.width = width;
+      local.height = height;
+      canvas = document.createElement('canvas');
+      canvas.width = width;
+      canvas.height = height;
+      ctx = canvas.getContext('2d');
+      bk = backgroundColor();
+      image = svg.querySelector("pattern image");
+      return gifencLoad().then(function(arg$){
+        var GIFEncoder, quantize, applyPalette, enc, render;
+        GIFEncoder = arg$.GIFEncoder, quantize = arg$.quantize, applyPalette = arg$.applyPalette;
+        enc = GIFEncoder();
+        render = function(i){
+          if (i >= frames.length) {
+            return;
+          }
+          progress("rendering frame " + (i + 1) + " / " + frames.length + " ...");
+          image.setAttribute('href', frames[i].url);
+          return smiltool.svgToDataurl(svg.outerHTML).then(function(url){
+            return loadImage(url);
+          }).then(function(img){
+            var data, palette;
+            ctx.fillStyle = bk;
+            ctx.fillRect(0, 0, width, height);
+            ctx.drawImage(img, 0, 0, width, height);
+            data = ctx.getImageData(0, 0, width, height).data;
+            palette = quantize(data, 256);
+            enc.writeFrame(applyPalette(data, palette), width, height, {
+              palette: palette,
+              delay: frames[i].delay
+            });
+            return render(i + 1);
+          });
+        };
+        return render(0).then(function(){
+          enc.finish();
+          return new Blob([enc.bytes()], {
+            type: fmt.type
+          });
+        });
+      });
+    }).then(function(blob){
+      return blobToDataurl(blob).then(function(dataurl){
+        return {
+          blob: blob,
+          dataurl: dataurl
+        };
+      });
+    }).then(function(arg$){
+      var blob, dataurl, ref$;
+      blob = arg$.blob, dataurl = arg$.dataurl;
+      progress(hintText);
+      return this$.download((ref$ = {
+        dataurl: dataurl,
+        blob: blob,
+        name: local.text,
+        postfix: fmt.ext,
+        type: fmt.type
+      }, ref$.width = local.width, ref$.height = local.height, ref$));
+    })['catch'](function(e){
+      console.warn("[maketext] gif:", e);
+      return progress("failed to render the animated GIF.");
+    });
   }
 };
 RASTER = {
@@ -255,9 +349,11 @@ blobToDataurl = function(blob){
   });
 };
 gifenc = null;
+gifencLoad = function(){
+  return gifenc = gifenc || new Function('u', 'return import(u)')('/assets/lib/gifenc/main/gifenc.esm.js');
+};
 gifBlob = function(ctx, w, h){
-  gifenc = gifenc || new Function('u', 'return import(u)')('/assets/lib/gifenc/main/gifenc.esm.js');
-  return gifenc.then(function(arg$){
+  return gifencLoad().then(function(arg$){
     var GIFEncoder, quantize, applyPalette, data, palette, enc;
     GIFEncoder = arg$.GIFEncoder, quantize = arg$.quantize, applyPalette = arg$.applyPalette;
     data = ctx.getImageData(0, 0, w, h).data;
@@ -279,3 +375,79 @@ if (!/^data:image\/webp/.exec(document.createElement('canvas').toDataURL('image/
     });
   });
 }
+loadImage = function(url){
+  return new Promise(function(res, rej){
+    var img;
+    img = new Image();
+    img.onload = function(){
+      return res(img);
+    };
+    img.onerror = rej;
+    return img.src = url;
+  });
+};
+dataurlCache = {};
+inlineImages = function(svg){
+  return Promise.all(Array.from(svg.querySelectorAll('image')).map(function(img){
+    var href;
+    href = img.getAttributeNS('http://www.w3.org/1999/xlink', 'href') || img.getAttribute('href');
+    if (!href || /^data:/.exec(href)) {
+      return;
+    }
+    return (dataurlCache[href] || (dataurlCache[href] = fetch(href).then(function(it){
+      return it.blob();
+    }).then(blobToDataurl))).then(function(url){
+      if (img.hasAttribute('href')) {
+        return img.setAttribute('href', url);
+      } else {
+        return img.setAttributeNS('http://www.w3.org/1999/xlink', 'href', url);
+      }
+    });
+  }));
+};
+decodeFrames = function(url){
+  return fetch(url).then(function(r){
+    return r.blob();
+  }).then(function(blob){
+    return blob.arrayBuffer().then(function(data){
+      return {
+        data: data,
+        type: blob.type || 'image/gif'
+      };
+    });
+  }).then(function(arg$){
+    var data, type, dec;
+    data = arg$.data, type = arg$.type;
+    dec = new ImageDecoder({
+      data: data,
+      type: type
+    });
+    return Promise.all([dec.tracks.ready, dec.completed]).then(function(){
+      var count, canvas, frames, step;
+      count = Math.min(60, dec.tracks.selectedTrack.frameCount || 1);
+      canvas = document.createElement('canvas');
+      frames = [];
+      step = function(i){
+        if (i >= count) {
+          return frames;
+        }
+        return dec.decode({
+          frameIndex: i
+        }).then(function(arg$){
+          var image;
+          image = arg$.image;
+          canvas.width = image.displayWidth;
+          canvas.height = image.displayHeight;
+          canvas.getContext('2d').drawImage(image, 0, 0);
+          frames.push({
+            url: canvas.toDataURL(),
+            delay: Math.max(20, Math.round((image.duration || 100000) / 1000))
+          });
+          image.close();
+          return step(i + 1);
+        });
+      };
+      return step(0);
+    });
+  });
+};

@@ -167,6 +167,7 @@ $(document).ready(function(){
           return it.style.fontSize = value + "px";
         });
       }
+      mtPattern.apply(svg);
       mtFrame.refresh();
       return;
     }
@@ -338,6 +339,7 @@ $(document).ready(function(){
           node.querySelector('label').textContent = v.name;
           node.querySelector('input').setAttribute('name', k);
           initColorpicker(node, k, v);
+          mtPattern.decorate(node, k);
         } else if (v.type === 'number') {
           node.querySelector('label').textContent = v.name;
           node.querySelector('input').setAttribute('name', k, v);

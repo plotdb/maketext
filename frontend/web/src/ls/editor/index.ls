@@ -96,6 +96,8 @@ editor.update = (name, value) ->
     @effects[effects.type].js.watch @config.cur, @config.old, svg
     if name == \background => svg.style.background = value
     if name == \fontSize => Array.from(svg.querySelectorAll(\text)).map -> it.style.fontSize = "#{value}px"
+    # watch 改 fill 顏色時會蓋掉圖樣填色 ( pattern.ls ), 再套一次
+    mt-pattern.apply svg
     mt-frame.refresh!
     return
   # gallery 只同步字級與背景. 舊版這裡另有一段呼叫各效果 watch 的迴圈, 但條件檢查的是
@@ -206,6 +208,7 @@ open-effect = (type, e) ->
         node.querySelector('label').textContent = v.name
         node.querySelector('input').setAttribute \name, k
         init-colorpicker node, k, v
+        mt-pattern.decorate node, k
       else if v.type == \number =>
         node.querySelector('label').textContent = v.name
         node.querySelector('input').setAttribute \name, k, v
