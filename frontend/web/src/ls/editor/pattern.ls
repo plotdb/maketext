@@ -46,7 +46,11 @@ window.mt-pattern = pattern = do
       p.setAttribute k, v
       img.setAttribute k, v
     # 用 href ( 不是 xlink:href ): 匯出時以 outerHTML 序列化, xlink 沒宣告 namespace 會變成不合法的 svg
-    if !img.getAttribute(\href) => img.setAttribute \href, @cur.url
+    # 換圖樣時立即換上新的 gif ( 先顯示第一格 ), 不必等逐格解碼完 ( animate ) 才更新;
+    # 動畫換格時 href 是解碼後的單格, 圖樣沒變就不要蓋回去
+    if img.dataset.src != @cur.url =>
+      img.dataset.src = @cur.url
+      img.setAttribute \href, @cur.url
     # 效果把 fill 顏色設在哪個 text 上: 顏色等於目前的 fill, 或之前已換成圖樣的
     fill = editor.config.cur.fill
     for t in texts when t.hasAttribute(\data-mt-pattern) or (fill and t.getAttribute(\fill) == fill) =>

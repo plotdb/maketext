@@ -61,7 +61,8 @@ window.mtPattern = pattern = {
       p.setAttribute(k, v);
       img.setAttribute(k, v);
     }
-    if (!img.getAttribute('href')) {
+    if (img.dataset.src !== this.cur.url) {
+      img.dataset.src = this.cur.url;
       img.setAttribute('href', this.cur.url);
     }
     fill = editor.config.cur.fill;
