@@ -1,0 +1,9 @@
+// selectors doubled to win over the stock styles of @servebase/auth
+// narrower than the stock 825px
+.auth-base.auth-base
+  width: 680px
+  font-size: 16px
+  // the panel uses `.flex-grow-1`, which bootstrap 4.0.0 ( the editor pages ) does not have yet.
+  // without it "service powered by" does not sit at the bottom, and login / signup do not span the form
+  .flex-grow-1
+    flex-grow: 1 !important

@@ -366,7 +366,7 @@ pug_mixins["i"] = pug_interp = function(){
 var block = (this && this.block), attributes = (this && this.attributes) || {};
 pug_html = pug_html + "\u003Ci" + (pug_attrs(pug_merge([{"aria-hidden": "true"},attributes]), true)) + "\u003E\u003C\u002Fi\u003E";
 };
-pug_html = pug_html + "\u003Chead\u003E\u003Cmeta charset=\"utf-8\"\u003E\u003Ctitle\u003EServerbase\u003C\u002Ftitle\u003E\u003Cmeta name=\"description\" content=\"servebase sample page\"\u003E\u003Cmeta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\"\u003E\u003Cbase href=\"\u002F\"\u003E";
+pug_html = pug_html + "\u003Chead\u003E\u003Cmeta charset=\"utf-8\"\u003E\u003Ctitle\u003Emaketext.io\u003C\u002Ftitle\u003E\u003Cmeta name=\"description\" content=\"cool text generator with effects and fonts\"\u003E\u003Cmeta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\"\u003E\u003Cbase href=\"\u002F\"\u003E";
 pug_mixins["css"]([
       {name: "bootstrap", path: "dist/css/bootstrap.min.css"},
       {name: "@loadingio/bootstrap.ext"},

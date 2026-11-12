@@ -8308,8 +8308,8 @@ ldc.register('locales', [], function(){
   return {
     "@servebase/navtop": {
       en: {
-        login: "登入",
-        signup: "註冊",
+        login: "Login",
+        signup: "Sign Up",
         settings: "Settings",
         logout: "Logout"
       },
@@ -8327,6 +8327,11 @@ ldc.register('corecfg', ['locales'], function(arg$){
   locales = arg$.locales;
   return function(){
     var this$ = this;
+    if ((typeof httputil != 'undefined' && httputil !== null) && !httputil.cookie('lng')) {
+      httputil.cookie('lng', 'en', {
+        path: '/'
+      });
+    }
     return {
       i18n: {
         locales: locales
@@ -8361,10 +8366,10 @@ ldc.register('corecfg', ['locales'], function(arg$){
           name: "authpanel"
         }
       },
-      challenge: {
+      challenge: /\.test$/.test(location.hostname) ? {
         sitekey: '1x00000000000000000000AA',
         clear: '/__cf-mock/clear'
-      }
+      } : void 8
     };
   };
 });

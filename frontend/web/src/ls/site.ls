@@ -1,8 +1,8 @@
 ldc.register \locales, <[]>, ->
   "@servebase/navtop":
     en:
-      login: "登入"
-      signup: "註冊"
+      login: "Login"
+      signup: "Sign Up"
       settings: "Settings"
       logout: "Logout"
     "zh-TW":
@@ -14,6 +14,9 @@ ldc.register \locales, <[]>, ->
 
 ldc.register \corecfg, <[locales]>, ({locales}) -> ->
   # corecfg function will be run in `core` context.
+  # site defaults to en: core falls back to `navigator.language` when there is no `lng` cookie,
+  # so seed the cookie. explicit choices ( ?lng= / ?setlng= ) still override.
+  if httputil? and !httputil.cookie(\lng) => httputil.cookie \lng, \en, {path: \/}
   i18n: locales: locales
   manager: new block.manager registry: ({ns, name, version, path, type}) ~>
     # access @global.version in core context
@@ -26,11 +29,10 @@ ldc.register \corecfg, <[locales]>, ({locales}) -> ->
       if name in <[error cover]> => return "/modules/#name/#path"
       return "/modules/block/#name/#path"
     "/assets/lib/#{name}/#{version or 'main'}/#path"
+  # login / signup panel: src/pug/modules/block/authpanel
   auth: authpanel: {ns: \local, name: "authpanel"}
   # cloudflare challenge ( turnstile pre-clearance ), see @servebase/captcha src/challenge.ls.
-  # demo uses cloudflare's test sitekey ( always passes ) and the dev mock's clear endpoint
-  # ( backend/engine/cf-challenge-mock.ls ). a real site uses its own pre-clearance widget
-  # and no `clear`.
-  challenge:
-    sitekey: \1x00000000000000000000AA
-    clear: \/__cf-mock/clear
+  # only the dev mock ( backend/engine/cf-challenge-mock.ls, on when config.dev.cf-challenge-mock is set )
+  # is wired up here: cloudflare's test sitekey ( always passes ) and the mock's clear endpoint.
+  # production ( maketext.io ) has no pre-clearance widget yet, so it gets none.
+  challenge: if /\.test$/.test(location.hostname) => {sitekey: \1x00000000000000000000AA, clear: \/__cf-mock/clear}
