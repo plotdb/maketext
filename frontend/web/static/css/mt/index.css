@@ -2617,10 +2617,10 @@ body.editing {
 }
 #editor {
   position: fixed;
-  top: -92px;
+  top: -84px;
   left: 0;
   width: 100%;
-  height: 92px;
+  height: 84px;
   z-index: 6;
   background: url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMCIgaGVpZ2h0PSIxMCIgdmlld0JveD0iMCAwIDEwIDEwIj48cGF0aCBkPSJNLTEwIC0xMEwyMCAyME0tMjAgLTEwTDEwIDIwTS0xMCAtMjBMMjAgMTAiIHN0cm9rZT0iI2ZhZmJmYyIgc3Ryb2tlLXdpZHRoPSIxIi8+PC9zdmc+) #fff;
   padding: 0 0 10px;
@@ -2673,6 +2673,8 @@ body.editing {
 }
 #editor label {
   margin-bottom: 0;
+  line-height: 1.2;
+  font-size: 0.9em;
 }
 #editor.on {
   top: 0;
@@ -2691,8 +2693,8 @@ body.editing {
 }
 @media (max-width: 576px) {
   #editor {
-    top: -165px;
-    height: 165px;
+    top: -150px;
+    height: 150px;
   }
 }
 #cooltext {
@@ -2776,6 +2778,31 @@ body.editing #cooltext {
   max-width: 100%;
   max-height: 50vh;
   box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+}
+#editor .footer .inline-block {
+  vertical-align: bottom;
+}
+#editor .footer .mt-export-opt .form-control {
+  width: 90px;
+}
+#editor .footer .mt-drag-hint {
+  margin-top: 8px;
+  font-size: 12px;
+  color: #999;
+}
+body.editing #cooltext {
+  cursor: grab;
+  touch-action: none;
+}
+body.editing #cooltext.dragging {
+  cursor: grabbing;
+}
+#cooltext .mt-crop {
+  fill: none;
+  stroke: rgba(120,120,120,0.8);
+  stroke-dasharray: 4 4;
+  vector-effect: non-scaling-stroke;
+  pointer-events: none;
 }
 .gallery {
   max-width: 1024px;

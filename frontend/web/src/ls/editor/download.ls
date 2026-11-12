@@ -9,9 +9,13 @@ load-font = ->
 
 window.convert = do
   prepare: -> new Promise (res, rej) ->
-    svg = document.querySelector '#cooltext svg' .cloneNode true
+    # 匯出範圍與倍率 ( layout.ls ): 文字外框加 padding, 拖曳的位移在範圍內移動文字
+    live = document.querySelector '#cooltext svg'
+    box = mt-frame.box(live) or {x: 0, y: 0, width: 500, height: 150}
+    scale = +mt-frame.opt.scale or 1
+    svg = live.cloneNode true
+    if (n = svg.querySelector \.mt-crop) => n.remove!
     svg-width = document.querySelector '#cooltext' .getBoundingClientRect!width
-    text-box = document.querySelector '#cooltext text' .getBoundingClientRect!
 
     svg.setAttribute \width, "#{svg-width}px"
     svg.setAttribute \height, \170px
@@ -66,21 +70,16 @@ window.convert = do
     parent.removeChild(text)
     pbox = path.getBBox!
 
-    box = {width: text-box.width * 1.2 + 20, height: text-box.height * 1.2 + 20}
-    # fit viewBox to size?
-    # x = ( box.width - pbox.width ) * 0.5 - pbox.x
-    # y = ( box.height - pbox.height ) * 0.5 - pbox.y
     x = -path.getBBox!width * 0.5 - path.getBBox!x + textbox.width * 0.5 + textbox.x
     y = path.getBBox!height * 0.5                  + textbox.height * 0.5 + textbox.y
 
     g2.setAttribute("transform", "translate(#x, #y)")
-    svg.setAttribute \viewBox, [250 - box.width * 0.5,75 - box.height * 0.5,box.width,box.height].join(' ')
+    [width, height] = [box.width, box.height].map -> Math.round(it * scale)
+    svg.setAttribute \viewBox, [box.x, box.y, box.width, box.height].join(' ')
     svg.setAttribute \preserveAspectRatio, \xMidYMid
-    # fit viewBox to size?
-    #svg.setAttribute \viewBox, "0 0 #{box.width} #{box.height}"
-    svg.setAttribute \width, "#{box.width}px"
-    svg.setAttribute \height, "#{box.height}px"
-    res {svg: svg, text: text-value, width: box.width, height: box.height} #svg-width}
+    svg.setAttribute \width, "#{width}px"
+    svg.setAttribute \height, "#{height}px"
+    res {svg, text: text-value, width, height}
 
   download: (option = {}) ->
     $(\#download).modal \show

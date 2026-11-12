@@ -135,7 +135,8 @@ $(document).ready(function(){
     Array.from(document.querySelectorAll('#cooltext text')).map(function(it){
       return it.textContent = value;
     });
-    return textInput.value = value;
+    textInput.value = value;
+    return mtFrame.refresh();
   };
   window.scrollto = scrollto = function(node){
     return $('html,body').animate({
@@ -166,6 +167,7 @@ $(document).ready(function(){
           return it.style.fontSize = value + "px";
         });
       }
+      mtFrame.refresh();
       return;
     }
     if (name === 'fontSize' || name === 'background') {
@@ -284,6 +286,7 @@ $(document).ready(function(){
     html = html.replace(/url\(#([^)]+)\)/g, 'url(#editing-$1)');
     document.querySelector('#cooltext').innerHTML = html;
     svg = document.querySelector('#cooltext svg');
+    mtFrame.init(svg);
     mtFont.of(type).then(function(f){
       return mtFont.apply(document.querySelector('#cooltext'), f);
     })['catch'](function(e){

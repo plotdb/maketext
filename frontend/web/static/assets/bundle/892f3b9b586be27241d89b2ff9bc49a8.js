@@ -135,7 +135,8 @@ $(document).ready(function(){
     Array.from(document.querySelectorAll('#cooltext text')).map(function(it){
       return it.textContent = value;
     });
-    return textInput.value = value;
+    textInput.value = value;
+    return mtFrame.refresh();
   };
   window.scrollto = scrollto = function(node){
     return $('html,body').animate({
@@ -166,6 +167,7 @@ $(document).ready(function(){
           return it.style.fontSize = value + "px";
         });
       }
+      mtFrame.refresh();
       return;
     }
     if (name === 'fontSize' || name === 'background') {
@@ -284,6 +286,7 @@ $(document).ready(function(){
     html = html.replace(/url\(#([^)]+)\)/g, 'url(#editing-$1)');
     document.querySelector('#cooltext').innerHTML = html;
     svg = document.querySelector('#cooltext svg');
+    mtFrame.init(svg);
     mtFont.of(type).then(function(f){
       return mtFont.apply(document.querySelector('#cooltext'), f);
     })['catch'](function(e){
@@ -683,10 +686,20 @@ loadFont = function(){
 window.convert = {
   prepare: function(){
     return new Promise(function(res, rej){
-      var svg, svgWidth, textBox, feImages, style, node;
-      svg = document.querySelector('#cooltext svg').cloneNode(true);
+      var live, box, scale, svg, n, svgWidth, feImages, style, node;
+      live = document.querySelector('#cooltext svg');
+      box = mtFrame.box(live) || {
+        x: 0,
+        y: 0,
+        width: 500,
+        height: 150
+      };
+      scale = +mtFrame.opt.scale || 1;
+      svg = live.cloneNode(true);
+      if (n = svg.querySelector('.mt-crop')) {
+        n.remove();
+      }
       svgWidth = document.querySelector('#cooltext').getBoundingClientRect().width;
-      textBox = document.querySelector('#cooltext text').getBoundingClientRect();
       svg.setAttribute('width', svgWidth + "px");
       svg.setAttribute('height', '170px');
       feImages = Array.from(svg.querySelectorAll('feImage')).map(function(d, i){
@@ -710,7 +723,7 @@ window.convert = {
       node.appendChild(svg);
       return loadFont().then(function(tts){
         return Array.from(svg.querySelectorAll('text')).map(function(text, i){
-          var textbox, fontSize, textValue, d, g1, g2, path, parent, i$, ref$, len$, name, that, pbox, box, x, y;
+          var textbox, fontSize, textValue, d, g1, g2, path, parent, i$, ref$, len$, name, that, pbox, x, y, width, height;
           textbox = text.getBBox();
           fontSize = getComputedStyle(text).fontSize;
           fontSize = +(/(\d+)/.exec(fontSize) || [0, 64])[1];
@@ -737,22 +750,21 @@ window.convert = {
           }
           parent.removeChild(text);
           pbox = path.getBBox();
-          box = {
-            width: textBox.width * 1.2 + 20,
-            height: textBox.height * 1.2 + 20
-          };
           x = -path.getBBox().width * 0.5 - path.getBBox().x + textbox.width * 0.5 + textbox.x;
           y = path.getBBox().height * 0.5 + textbox.height * 0.5 + textbox.y;
           g2.setAttribute("transform", "translate(" + x + ", " + y + ")");
-          svg.setAttribute('viewBox', [250 - box.width * 0.5, 75 - box.height * 0.5, box.width, box.height].join(' '));
+          ref$ = [box.width, box.height].map(function(it){
+            return Math.round(it * scale);
+          }), width = ref$[0], height = ref$[1];
+          svg.setAttribute('viewBox', [box.x, box.y, box.width, box.height].join(' '));
           svg.setAttribute('preserveAspectRatio', 'xMidYMid');
-          svg.setAttribute('width', box.width + "px");
-          svg.setAttribute('height', box.height + "px");
+          svg.setAttribute('width', width + "px");
+          svg.setAttribute('height', height + "px");
           return res({
             svg: svg,
             text: textValue,
-            width: box.width,
-            height: box.height
+            width: width,
+            height: height
           });
         });
       });

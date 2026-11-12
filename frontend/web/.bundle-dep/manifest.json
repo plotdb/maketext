@@ -1,11 +1,11 @@
 {
   "/css/mt/index.css": {
-    "url": "/css/mt/index.css?v=32e43cb94437",
+    "url": "/css/mt/index.css?v=c400078cce56",
     "refs": [],
     "generations": []
   },
   "/css/mt/index.min.css": {
-    "url": "/css/mt/index.min.css?v=db5938e72746",
+    "url": "/css/mt/index.min.css?v=d0f2e1515322",
     "refs": [],
     "generations": []
   },
@@ -22,12 +22,12 @@
     "generations": []
   },
   "/js/editor/download.js": {
-    "url": "/js/editor/download.js?v=5ede9a3e27b9",
+    "url": "/js/editor/download.js?v=9436ea2eae14",
     "refs": [],
     "generations": []
   },
   "/js/editor/download.min.js": {
-    "url": "/js/editor/download.min.js?v=52da38b9a668",
+    "url": "/js/editor/download.min.js?v=a180b518ac07",
     "refs": [],
     "generations": []
   },
@@ -42,12 +42,12 @@
     "generations": []
   },
   "/js/editor/index.js": {
-    "url": "/js/editor/index.js?v=7ef7586bf494",
+    "url": "/js/editor/index.js?v=f0ca135fd8bc",
     "refs": [],
     "generations": []
   },
   "/js/editor/index.min.js": {
-    "url": "/js/editor/index.min.js?v=089dbb6aec37",
+    "url": "/js/editor/index.min.js?v=bd4255aac6d9",
     "refs": [],
     "generations": []
   },
@@ -106,12 +106,12 @@
     "generations": []
   },
   "/assets/bundle/2c436f4d3a76b30ad70c067e9717d0dd.css": {
-    "url": "/assets/bundle/2c436f4d3a76b30ad70c067e9717d0dd.css?v=d80a93674872",
+    "url": "/assets/bundle/2c436f4d3a76b30ad70c067e9717d0dd.css?v=a490baf930ea",
     "refs": [],
     "generations": []
   },
   "/assets/bundle/2c436f4d3a76b30ad70c067e9717d0dd.min.css": {
-    "url": "/assets/bundle/2c436f4d3a76b30ad70c067e9717d0dd.min.css?v=39629ca45cae",
+    "url": "/assets/bundle/2c436f4d3a76b30ad70c067e9717d0dd.min.css?v=80a090e0b964",
     "refs": [
       "frontend/web/src/pug/api/editor/0.1/index.pug",
       "frontend/web/src/pug/fancy/index.pug",
@@ -193,32 +193,32 @@
     "generations": []
   },
   "/assets/bundle/9f7e52091e46e912b44bf578e14a22fd.css": {
-    "url": "/assets/bundle/9f7e52091e46e912b44bf578e14a22fd.css?v=bcf167ee32d0",
+    "url": "/assets/bundle/9f7e52091e46e912b44bf578e14a22fd.css?v=d303cfd92ccd",
     "refs": [],
     "generations": []
   },
   "/assets/bundle/9f7e52091e46e912b44bf578e14a22fd.min.css": {
-    "url": "/assets/bundle/9f7e52091e46e912b44bf578e14a22fd.min.css?v=de784d9f89b9",
+    "url": "/assets/bundle/9f7e52091e46e912b44bf578e14a22fd.min.css?v=99b2002cbd07",
     "refs": [],
     "generations": []
   },
   "/assets/bundle/892f3b9b586be27241d89b2ff9bc49a8.js": {
-    "url": "/assets/bundle/892f3b9b586be27241d89b2ff9bc49a8.js?v=88c119789893",
+    "url": "/assets/bundle/892f3b9b586be27241d89b2ff9bc49a8.js?v=bb1dcb127638",
     "refs": [],
     "generations": []
   },
   "/assets/bundle/892f3b9b586be27241d89b2ff9bc49a8.min.js": {
-    "url": "/assets/bundle/892f3b9b586be27241d89b2ff9bc49a8.min.js?v=abbac5f93114",
+    "url": "/assets/bundle/892f3b9b586be27241d89b2ff9bc49a8.min.js?v=a8269e165ff2",
     "refs": [],
     "generations": []
   },
   "/assets/bundle/b56c3fa815f2a166e4150ca98c5d5aac.js": {
-    "url": "/assets/bundle/b56c3fa815f2a166e4150ca98c5d5aac.js?v=7c003f472f67",
+    "url": "/assets/bundle/b56c3fa815f2a166e4150ca98c5d5aac.js?v=6e1cfefd9edc",
     "refs": [],
     "generations": []
   },
   "/assets/bundle/b56c3fa815f2a166e4150ca98c5d5aac.min.js": {
-    "url": "/assets/bundle/b56c3fa815f2a166e4150ca98c5d5aac.min.js?v=c3d467054020",
+    "url": "/assets/bundle/b56c3fa815f2a166e4150ca98c5d5aac.min.js?v=2894a491649b",
     "refs": [
       "frontend/web/src/pug/index.pug",
       "/Users/tkirby/workspace/maketext/server/frontend/web/src/pug/effect/index.pug"
@@ -226,12 +226,12 @@
     "generations": []
   },
   "/assets/bundle/d733ec846614e70279bf8b803b72f660.js": {
-    "url": "/assets/bundle/d733ec846614e70279bf8b803b72f660.js?v=bcc8ae749111",
+    "url": "/assets/bundle/d733ec846614e70279bf8b803b72f660.js?v=0d0fc72ca9d2",
     "refs": [],
     "generations": []
   },
   "/assets/bundle/d733ec846614e70279bf8b803b72f660.min.js": {
-    "url": "/assets/bundle/d733ec846614e70279bf8b803b72f660.min.js?v=0385f52ec0be",
+    "url": "/assets/bundle/d733ec846614e70279bf8b803b72f660.min.js?v=d5159676ec02",
     "refs": [
       "frontend/web/src/pug/api/editor/0.1/index.pug"
     ],
@@ -431,5 +431,40 @@
     "refs": [
       "frontend/web/src/pug/auth/index.pug"
     ]
+  },
+  "/js/editor/layout.js": {
+    "url": "/js/editor/layout.js?v=6d601bd5eaff",
+    "refs": [],
+    "generations": []
+  },
+  "/js/editor/layout.min.js": {
+    "url": "/js/editor/layout.min.js?v=415246e05157",
+    "refs": [],
+    "generations": []
+  },
+  "/assets/bundle/42c2e54a2b86da5f4329c8e7f10f205b.min.js": {
+    "url": "/assets/bundle/42c2e54a2b86da5f4329c8e7f10f205b.min.js?v=4d3495730a15",
+    "refs": [
+      "frontend/web/src/pug/api/editor/0.1/index.pug"
+    ],
+    "generations": []
+  },
+  "/assets/bundle/d3ca42e672edd4c705dbe9ef2d3f10ab.min.js": {
+    "url": "/assets/bundle/d3ca42e672edd4c705dbe9ef2d3f10ab.min.js?v=0a037eaac76f",
+    "refs": [
+      "frontend/web/src/pug/index.pug",
+      "/Users/tkirby/workspace/maketext/server/frontend/web/src/pug/effect/index.pug"
+    ],
+    "generations": []
+  },
+  "/assets/bundle/d3ca42e672edd4c705dbe9ef2d3f10ab.js": {
+    "url": "/assets/bundle/d3ca42e672edd4c705dbe9ef2d3f10ab.js?v=4cccc929cb60",
+    "refs": [],
+    "generations": []
+  },
+  "/assets/bundle/42c2e54a2b86da5f4329c8e7f10f205b.js": {
+    "url": "/assets/bundle/42c2e54a2b86da5f4329c8e7f10f205b.js?v=f9e07ba65f1f",
+    "refs": [],
+    "generations": []
   }
 }

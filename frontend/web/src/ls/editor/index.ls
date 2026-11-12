@@ -79,6 +79,7 @@ update-text = (node) ->
   gallery.set \text, value
   Array.from(document.querySelectorAll('#cooltext text')).map -> it.textContent = value
   text-input.value = value
+  mt-frame.refresh!
 
 window.scrollto = scrollto = (node) ->
   $('html,body').animate({ scrollTop: $(node).offset().top }, 300)
@@ -95,6 +96,7 @@ editor.update = (name, value) ->
     @effects[effects.type].js.watch @config.cur, @config.old, svg
     if name == \background => svg.style.background = value
     if name == \fontSize => Array.from(svg.querySelectorAll(\text)).map -> it.style.fontSize = "#{value}px"
+    mt-frame.refresh!
     return
   # gallery 只同步字級與背景. 舊版這裡另有一段呼叫各效果 watch 的迴圈, 但條件檢查的是
   # effects[type].watch ( watch 實際在 .js 底下 ) 而從未執行, 移植時拿掉, 行為不變.
@@ -176,6 +178,8 @@ open-effect = (type, e) ->
   html = html.replace /url\(#([^)]+)\)/g, 'url(#editing-$1)'
   document.querySelector \#cooltext .innerHTML = html
   svg = document.querySelector '#cooltext svg'
+  # 拖曳微調位置與匯出範圍 ( layout.ls )
+  mt-frame.init svg
   mt-font.of type
     .then (f) -> mt-font.apply document.querySelector(\#cooltext), f
     .catch (e) -> console.warn "[maketext] font:", e

@@ -421,7 +421,7 @@ pug_html = pug_html + "\u003Cdiv" + (" class=\"color\""+pug_attr("style", pug_st
   }
 }).call(this);
 
-pug_html = pug_html + "\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E\u003Cdiv class=\"col-12 col-sm-9 row adv\" id=\"editor-custom-options\" style=\"margin-left:0;padding:0\"\u003E\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E\u003Cbr\u003E\u003Cdiv id=\"cooltext\"\u003E\u003C\u002Fdiv\u003E\u003Cdiv class=\"footer text-center\"\u003E\u003Cdiv class=\"inline-block text-left\"\u003E\u003Clabel\u003EDownload As ...\u003C\u002Flabel\u003E\u003Cdiv class=\"block mr-2\" style=\"display:inline-block;width:300px\"\u003E\u003C!-- NOTE: editor-download-btn will be queried with API users--\u003E\u003Cdiv class=\"btn-group dropup\" id=\"editor-download-btn\"\u003E\u003Cdiv class=\"btn btn-outline-dark\" data-type=\"svg\" onclick=\"convert.svg()\"\u003ESVG\u003C\u002Fdiv\u003E\u003Cdiv class=\"btn btn-outline-dark\" data-type=\"png\" onclick=\"convert.png()\"\u003EPNG\u003C\u002Fdiv\u003E\u003Cdiv class=\"btn btn-outline-dark dropdown-toggle dropdown-toggle-split\" data-toggle=\"dropdown\" style=\"flex-grow:0\"\u003E\u003C\u002Fdiv\u003E\u003Cdiv class=\"dropdown-menu dropdown-menu-right\"\u003E";
+pug_html = pug_html + "\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E\u003Cdiv class=\"col-12 col-sm-9 row adv\" id=\"editor-custom-options\" style=\"margin-left:0;padding:0\"\u003E\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E\u003Cbr\u003E\u003Cdiv id=\"cooltext\"\u003E\u003C\u002Fdiv\u003E\u003Cdiv class=\"footer text-center\"\u003E\u003Cdiv class=\"inline-block text-left mr-2 mt-export-opt\"\u003E\u003Clabel\u003EPadding\u003C\u002Flabel\u003E\u003Cinput class=\"form-control\" id=\"export-padding\" type=\"number\" min=\"0\" max=\"300\" step=\"1\"\u003E\u003C\u002Fdiv\u003E\u003Cdiv class=\"inline-block text-left mr-2 mt-export-opt\"\u003E\u003Clabel\u003EScale\u003C\u002Flabel\u003E\u003Cselect class=\"form-control\" id=\"export-scale\"\u003E\u003Coption value=\"1\"\u003E1x\u003C\u002Foption\u003E\u003Coption value=\"2\"\u003E2x\u003C\u002Foption\u003E\u003Coption value=\"3\"\u003E3x\u003C\u002Foption\u003E\u003C\u002Fselect\u003E\u003C\u002Fdiv\u003E\u003Cdiv class=\"inline-block text-left\"\u003E\u003Clabel\u003EDownload As ...\u003C\u002Flabel\u003E\u003Cdiv class=\"block mr-2\" style=\"display:inline-block;width:300px\"\u003E\u003C!-- NOTE: editor-download-btn will be queried with API users--\u003E\u003Cdiv class=\"btn-group dropup\" id=\"editor-download-btn\"\u003E\u003Cdiv class=\"btn btn-outline-dark\" data-type=\"svg\" onclick=\"convert.svg()\"\u003ESVG\u003C\u002Fdiv\u003E\u003Cdiv class=\"btn btn-outline-dark\" data-type=\"png\" onclick=\"convert.png()\"\u003EPNG\u003C\u002Fdiv\u003E\u003Cdiv class=\"btn btn-outline-dark dropdown-toggle dropdown-toggle-split\" data-toggle=\"dropdown\" style=\"flex-grow:0\"\u003E\u003C\u002Fdiv\u003E\u003Cdiv class=\"dropdown-menu dropdown-menu-right\"\u003E";
 // iterate ["png", "jpg", "webp", "gif"]
 ;(function(){
   var $$obj = ["png", "jpg", "webp", "gif"];
@@ -440,7 +440,7 @@ pug_html = pug_html + "\u003Ca" + (" class=\"dropdown-item\""+" href=\"#\""+pug_
   }
 }).call(this);
 
-pug_html = pug_html + "\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E\u003Cdiv class=\"inline-block\"\u003E\u003Cdiv class=\"btn btn-outline-dark mr-2\" onclick=\"editor.toggle(false)\"\u003E\u003Cbig style=\"line-height:1em\"\u003E&times;\u003C\u002Fbig\u003E Close\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E";
+pug_html = pug_html + "\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E\u003Cdiv class=\"inline-block\"\u003E\u003Cdiv class=\"btn btn-outline-dark mr-2 d-none\" id=\"editor-reset-offset\" onclick=\"mtFrame.reset()\" title=\"reset text position\"\u003E&#x21ba; Position\u003C\u002Fdiv\u003E\u003Cdiv class=\"btn btn-outline-dark mr-2\" onclick=\"editor.toggle(false)\"\u003E\u003Cbig style=\"line-height:1em\"\u003E&times;\u003C\u002Fbig\u003E Close\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E\u003Cdiv class=\"mt-drag-hint\"\u003Edrag the text to adjust its position\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E";
 if (!isApi) {
 pug_html = pug_html + "\u003Ctemplate id=\"mt-core-scripts\"\u003E";
 pug_mixins["script"]([
@@ -522,6 +522,7 @@ pug_mixins["script"]([
     "/js/editor/index.js",
     "/js/editor/palette.js",
     "/js/editor/font.js",
+    "/js/editor/layout.js",
     "/js/editor/download.js",
     "/js/editor/star.js"
   ], {pack: true});

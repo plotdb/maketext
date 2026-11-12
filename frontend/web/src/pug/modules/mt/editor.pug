@@ -53,6 +53,16 @@ include @/ldpalettepicker/ldpp.pug
   br
   #cooltext
   .footer.text-center
+    //- 匯出範圍 ( 文字外框加 padding, 預覽上的虛線框 ) 與倍率, 見 src/ls/editor/layout.ls
+    .inline-block.text-left.mr-2.mt-export-opt
+      label Padding
+      input#export-padding.form-control(type="number",min="0",max="300",step="1")
+    .inline-block.text-left.mr-2.mt-export-opt
+      label Scale
+      select#export-scale.form-control
+        option(value="1") 1x
+        option(value="2") 2x
+        option(value="3") 3x
     .inline-block.text-left
       label Download As ...
       .block.mr-2(style="display:inline-block;width:300px")
@@ -66,4 +76,7 @@ include @/ldpalettepicker/ldpp.pug
             each f in ["png", "jpg", "webp", "gif"]
               a.dropdown-item(href="#",data-type=f,onclick="convert.raster('" + f + "');return false")= f.toUpperCase()
     .inline-block
+      //- 拖曳過文字時出現: 回到原本的位置
+      .btn.btn-outline-dark.mr-2.d-none#editor-reset-offset(onclick="mtFrame.reset()",title="reset text position") &#x21ba; Position
       .btn.btn-outline-dark.mr-2(onclick="editor.toggle(false)") #[big(style="line-height:1em") &times;] Close
+    .mt-drag-hint drag the text to adjust its position
