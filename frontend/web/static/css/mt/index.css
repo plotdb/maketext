@@ -2957,6 +2957,23 @@ body.editing #cooltext.dragging {
   width: 520px;
   max-width: 95vw;
 }
+#share-panel .mt-share-x,
+#share-panel .mt-share-fb {
+  width: 34px;
+  height: 34px;
+  padding: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  line-height: 1;
+}
+#share-panel .mt-share-x .mt-x-icon,
+#share-panel .mt-share-fb .mt-x-icon {
+  width: 14px;
+  height: 14px;
+  vertical-align: 0;
+}
 .gallery {
   max-width: 1024px;
   width: 90%;
