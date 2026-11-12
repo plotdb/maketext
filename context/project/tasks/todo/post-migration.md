@@ -116,3 +116,9 @@ gallery 一開始顯示 build 時以固定文字、預設字型 render 的 webp 
  - `effect.yaml` 的 `order` 改為 `no` ( 效果編號，頁面上顯示為 #37 )。舊站原有的 36 個為 1 ~ 36 ( 依原順序 )，之後新增的從 37 起
  - 列表：新效果 ( no > 36，build-effects.ls 的 LEGACY ) 在前、編號大的在最上面，接著是舊效果依原順序。新增效果時用目前最大編號 + 1
  - GA 改送 GA4 ( G-9220DQ9M90 )，不再送已停用的 UA
+
+## 移除 v1 舊資源的 fallback ( 約 2026-12 )
+
+2026-11-12 上線時，舊的靜態版 HTML 沒帶 Cache-Control，瀏覽器會自行快取約一天，期間會去要新版沒有的舊資源，畫面就沒有樣式。
+因此在正式機 nginx 加了 `config/web/nginx/production-v1-assets.ngx` 這段，從 `server-v1/static` 提供 `/css/pack/`、`/js/pack/`、舊字型等。
+等 nginx log 裡不再有這些路徑的請求，就把這段從 `/etc/nginx/sites-available/maketext.io.ngx` 拿掉，再刪除 mwb 上的 `server-v1`（約 1.1GB）。

@@ -1,0 +1,11 @@
+  # temporary, production only: inserted by hand into the 443 server block of
+  # /etc/nginx/sites-available/maketext.io.ngx, before the first asset rule.
+  # the v1 static site ( until 2026-11-12 ) served html without Cache-Control, so browsers
+  # keep it heuristically ( ~1 day ) and ask for v1 assets that v2 no longer has.
+  # serve those from the old tree; remove once no request hits these paths ( ~2026-12 ).
+  location ~ ^/(?:css/pack/|js/pack/|js/global\.js$|assets/fonts/|assets/fontawesome/|assets/ion-rangeslider/) {
+    root /home/web/projects/maketext.io/server-v1/static/;
+    add_header X-Content-Type-Options "nosniff" always;
+    add_header Cache-Control "no-cache" always;
+  }
+
