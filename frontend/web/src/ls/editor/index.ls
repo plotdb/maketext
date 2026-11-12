@@ -327,14 +327,15 @@ Array.from(document.querySelectorAll('#font-size-slider .up.irs-input')).map (d,
       onChange: (data) -> editor.update \fontSize, data.from
       max: 200
 
-# 分享的網址 ( share.ls ): /effect/<name>/?edit=1&... 以網址上的設定打開 editor
+# 分享的網址 ( share.ls ): /effect/<name>/?d=... ( 或舊的 ?edit=1&... ) 以網址上的設定打開 editor
 do ->
   q = {}
   for [k, v] in queries => q[decodeURIComponent k] = decodeURIComponent((v or '').replace /\+/g, ' ')
-  if !(q.edit and (m = /^\/effect\/([^\/]+)/.exec location.pathname) and effects[m.1]) => return
-  mteffect.load m.1
-    .then (e) ->
+  if !((q.d or q.edit) and (m = /^\/effect\/([^\/]+)/.exec location.pathname) and effects[m.1]) => return
+  Promise.all [mteffect.load(m.1), mt-share.parse(q)]
+    .then ([e, s]) ->
+      if !s => return
       open-effect m.1, e
-      mt-share.apply q
+      mt-share.apply s, !!q.d
     .catch (e) -> console.warn "[maketext] share:", e
 
