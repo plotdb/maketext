@@ -1,7 +1,8 @@
 require! <[@plotdb/block jsdom]>
 
-# for @plotdb/block in node context
-dom = new jsdom.JSDOM "<DOCTYPE html><html><body></body></html>"
+# for @plotdb/block in node context. `url` gives the window a real origin: without it
+# localStorage throws SecurityError, e.g. when bundling the auth block ( @servebase/consent )
+dom = new jsdom.JSDOM "<!DOCTYPE html><html><body></body></html>", {url: "http://localhost/"}
 win = dom.window
 block.env win
 

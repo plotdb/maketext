@@ -1,6 +1,31 @@
 ## master
 
  - fixes:
+   - deps: `@plotdb/srcbuild` ^0.1.12. 0.1.11 was published with `dist/` flattened, so
+     `@plotdb/srcbuild/dist/view/pug` was not found and the server didn't start.
+   - nginx sample ( `config/base/nginx/config.ngx` ): the catch-all location, which serves
+     the pre-built html pages, had no `Cache-Control`, so browsers guessed a lifetime from
+     `Last-Modified` and kept showing old pages after a deploy. It's now `no-cache` ( with
+     the security headers repeated, since `add_header` doesn't inherit ). `cachecheck`
+     checks a page too. Derived projects need the same change in their own nginx config.
+   - deps: `nodemailer` ^9 -> ^10.5.0 for security advisories ( address parsing DoS, SMTP
+     credential disclosure across transports ). 10.x requires Node.js 20+, so `engines.node` is
+     now `>=20.0.0`; nothing changes in how `mail-queue` uses it.
+   - deps: `stylus` ^0.55 -> ^0.64.0 and `@plotdb/srcbuild` ^0.1.11 ( which uses the same ),
+     dropping the vulnerable `css` / `source-map-resolve` / `decode-uri-component` chain
+     ( build time only ). Every `.styl` file and `:stylus` block here renders the same css.
+   - `@servebase/core`: when errors keep coming ( melt down in the error handler ), it called
+     `alert` for every following error, which blocked the page ( and browser automation ),
+     e.g. user code throwing in an animation loop. It now shows a plain DOM reload splash
+     ( built once and reused; new `core.fatal(e)` ), and later errors stay on it instead of
+     opening error covers. Customizable with corecfg `fatal`. Not relying on
+     `ldcvmgr.fatal`, so it works with any ldcvmgr version. Also fixed a typo ( `<<` for
+     `<<<` ) in the melt down counter reset.
+   - block bundling: the jsdom window for `@plotdb/block` ( `backend/base/manager.ls` and
+     the fallback in `backend/engine/index.ls` ) had no url, so it was an opaque origin
+     and bundling a block that touches `localStorage` failed with `SecurityError`
+     ( e.g. the `block.auth` bundle via `@servebase/consent` ). It now uses
+     `http://localhost/`.
    - error handler: client errors from `body-parser` ( unsupported content encoding /
      charset, body too large, too many parameters ) were logged as unhandled exceptions
      and sent as 500. They now get their own status ( `413` / `415` ) and are logged

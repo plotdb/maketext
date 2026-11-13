@@ -214,6 +214,11 @@ The edge has to distinguish them, because the whole point of the hash is to allo
     /js /css /assets/bundle /modules with ?v=<hash>   public, max-age=31536000, immutable
     /js /css /assets/bundle /modules bare    no-cache
     images / fonts                           expires 1d
+    anything else ( pre-built html pages )   no-cache
+
+The last row is the catch-all `location ~ ^/(.*)$`. Without a `Cache-Control` there, the
+browser derives a lifetime from `Last-Modified` and keeps showing the old page after a
+deploy.
 
 `no-cache` does not mean "do not store" - the response is stored and revalidated, and
 nginx answers 304 from the ETag. On this project's index that is 40 conditional requests

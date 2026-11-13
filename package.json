@@ -10,7 +10,7 @@
     "url": "https://github.com/plotdb/servebase"
   },
   "engines": {
-    "node": ">=15.11.0",
+    "node": ">=20.0.0",
     "npm": ">=7.0.15"
   },
   "workspaces": [
@@ -84,7 +84,7 @@
     "ls-lint": "^0.1.2",
     "marked": "^4.0.10",
     "node-fetch": "^2.7.0",
-    "nodemailer": "^9.0.3",
+    "nodemailer": "^10.5.0",
     "nodemailer-mailgun-transport": "^2.1.5",
     "passport": "^0.6.0",
     "passport-facebook": "^3.0.0",
@@ -103,7 +103,7 @@
     "re2js": "^2.8.6",
     "redis": "^4.2.0",
     "require-reload": "^0.2.2",
-    "stylus": "^0.55.0",
+    "stylus": "^0.64.0",
     "template-text": "^0.1.2",
     "uglify-js": "^3.13.1",
     "uglifycss": "^0.0.29",

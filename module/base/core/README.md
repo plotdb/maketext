@@ -11,6 +11,7 @@ service core module that initializes, constructs and provides following members:
  - `captcha`: captcha provider
  - `zmgr`: z-index manager
  - `error`: error handler
+ - `fatal(e)`: show a reload splash ( plain DOM, no dependency ). return a never-resolved Promise.
  - `i18n`: i18n object. use this instead accessing `i18next` directly for module abstraction.
  - `hint`: additional information for above modules.
 
@@ -94,6 +95,11 @@ Both the option in `servebase.config` or the `corecfg` ldc module are something 
              {supportedLng: ["en, "zh-TW"], fallbackLng: "zh-TW", fallbackNS: "", defaultNS: ""}
 
      - `driver`: optional i18n module object. if omitted, i18next will be used if available.
+   - `fatal`: optional. customize the splash shown when errors keep coming ( more than 4 in 500ms
+     or 11 in 2s ). once shown, following errors go to it instead of error covers. either:
+     - an object with `message` and `action` ( text of the reload button ). Default to built-in
+       English / Chinese text, chosen by current language.
+     - a function `(e) ->`, called with `core` context. called only once.
  - a function. In this case, it will be called with `core` context and should return an object defined above.
 
 `servebase.config` should always be called only once and before any possible core initialization to prevent inconsistent behavior.
