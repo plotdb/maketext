@@ -2111,56 +2111,17 @@ star = window.mtStar = {
       });
     });
   },
-  panel: function(core){
-    var a, this$ = this;
-    a = core.auth;
-    if (a._authpanel) {
-      return Promise.resolve();
-    }
-    return this._panel = this._panel || a.get().then(function(g){
-      var v;
-      if (g && g.user && g.user.key) {
-        return;
-      }
-      v = (/\?v=[^&]*/.exec(tpl.content.querySelector('script').getAttribute('src')) || [''])[0];
-      return core.manager.debundle({
-        url: "/assets/bundle/auth.min.html" + v
-      })['catch'](function(e){
-        return console.warn("[maketext] auth bundle:", e);
-      }).then(function(){
-        return core.manager.from({
-          ns: 'local',
-          name: 'authpanel'
-        }, {
-          autoTransform: 'i18n',
-          root: document.body,
-          data: {
-            auth: a,
-            zmgr: core.zmgr
-          }
-        });
-      }).then(function(p){
-        return a._authpanel = p['interface'];
-      });
-    })['catch'](function(e){
-      this$._panel = null;
-      return console.warn("[maketext] authpanel preload:", e);
-    });
-  },
   preload: function(){
-    var this$ = this;
     return this.core().then(function(core){
-      return this$.panel(core);
+      return core.auth.preload();
     })['catch'](function(e){
-      return console.warn("[maketext] core preload:", e);
+      return console.warn("[maketext] authpanel preload:", e);
     });
   },
   toggle: function(name){
     var this$ = this;
     return this.core().then(function(core){
-      return this$.panel(core).then(function(){
-        return core.auth.ensure();
-      });
+      return core.auth.ensure();
     }).then(function(){
       return this$.fetch();
     }).then(function(){

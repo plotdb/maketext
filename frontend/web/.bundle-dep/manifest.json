@@ -62,12 +62,12 @@
     "generations": []
   },
   "/js/editor/star.js": {
-    "url": "/js/editor/star.js?v=9c484ba23b6e",
+    "url": "/js/editor/star.js?v=6c7611a1d732",
     "refs": [],
     "generations": []
   },
   "/js/editor/star.min.js": {
-    "url": "/js/editor/star.min.js?v=f33dc58943ef",
+    "url": "/js/editor/star.min.js?v=82f3877a0327",
     "refs": [],
     "generations": []
   },
@@ -94,12 +94,12 @@
     "generations": []
   },
   "/js/site.js": {
-    "url": "/js/site.js?v=6a1ba529081e",
+    "url": "/js/site.js?v=a079f4c7b0af",
     "refs": [],
     "generations": []
   },
   "/js/site.min.js": {
-    "url": "/js/site.min.js?v=61768fa9166b",
+    "url": "/js/site.min.js?v=ac663122c6b2",
     "refs": [
       "frontend/web/src/pug/auth/index.pug"
     ],
@@ -150,12 +150,12 @@
     "generations": []
   },
   "/assets/bundle/core.js": {
-    "url": "/assets/bundle/core.js?v=f3437eea4a41",
+    "url": "/assets/bundle/core.js?v=ecac708788a3",
     "refs": [],
     "generations": []
   },
   "/assets/bundle/core.min.js": {
-    "url": "/assets/bundle/core.min.js?v=97efd11e4f16",
+    "url": "/assets/bundle/core.min.js?v=fa589b7e9440",
     "refs": [],
     "generations": []
   },
@@ -170,12 +170,12 @@
     "generations": []
   },
   "/assets/bundle/9fb504458c56ef5cd5bad3d90546e74d.js": {
-    "url": "/assets/bundle/9fb504458c56ef5cd5bad3d90546e74d.js?v=131972078e77",
+    "url": "/assets/bundle/9fb504458c56ef5cd5bad3d90546e74d.js?v=cec0c44c0ebc",
     "refs": [],
     "generations": []
   },
   "/assets/bundle/9fb504458c56ef5cd5bad3d90546e74d.min.js": {
-    "url": "/assets/bundle/9fb504458c56ef5cd5bad3d90546e74d.min.js?v=2f7f8765938c",
+    "url": "/assets/bundle/9fb504458c56ef5cd5bad3d90546e74d.min.js?v=65feaf5c784c",
     "refs": [
       "frontend/web/src/pug/index.pug",
       "/Users/tkirby/workspace/maketext/server/frontend/web/src/pug/effect/index.pug"
@@ -213,12 +213,12 @@
     "generations": []
   },
   "/assets/bundle/b56c3fa815f2a166e4150ca98c5d5aac.js": {
-    "url": "/assets/bundle/b56c3fa815f2a166e4150ca98c5d5aac.js?v=434f0c55d1bc",
+    "url": "/assets/bundle/b56c3fa815f2a166e4150ca98c5d5aac.js?v=75325843c192",
     "refs": [],
     "generations": []
   },
   "/assets/bundle/b56c3fa815f2a166e4150ca98c5d5aac.min.js": {
-    "url": "/assets/bundle/b56c3fa815f2a166e4150ca98c5d5aac.min.js?v=efa73dbabf1b",
+    "url": "/assets/bundle/b56c3fa815f2a166e4150ca98c5d5aac.min.js?v=c381dd17d527",
     "refs": [
       "frontend/web/src/pug/index.pug",
       "/Users/tkirby/workspace/maketext/server/frontend/web/src/pug/effect/index.pug"
@@ -450,7 +450,7 @@
     "generations": []
   },
   "/assets/bundle/d3ca42e672edd4c705dbe9ef2d3f10ab.min.js": {
-    "url": "/assets/bundle/d3ca42e672edd4c705dbe9ef2d3f10ab.min.js?v=fbfe5e876017",
+    "url": "/assets/bundle/d3ca42e672edd4c705dbe9ef2d3f10ab.min.js?v=abbcf0a128f9",
     "refs": [
       "frontend/web/src/pug/index.pug",
       "/Users/tkirby/workspace/maketext/server/frontend/web/src/pug/effect/index.pug"
@@ -458,7 +458,7 @@
     "generations": []
   },
   "/assets/bundle/d3ca42e672edd4c705dbe9ef2d3f10ab.js": {
-    "url": "/assets/bundle/d3ca42e672edd4c705dbe9ef2d3f10ab.js?v=f5356f847b56",
+    "url": "/assets/bundle/d3ca42e672edd4c705dbe9ef2d3f10ab.js?v=a34c777f8439",
     "refs": [],
     "generations": []
   },
@@ -485,7 +485,7 @@
     "generations": []
   },
   "/assets/bundle/68a0587ca442d67d5714724de10ef366.min.js": {
-    "url": "/assets/bundle/68a0587ca442d67d5714724de10ef366.min.js?v=fa980cfc4059",
+    "url": "/assets/bundle/68a0587ca442d67d5714724de10ef366.min.js?v=a94f173a75d3",
     "refs": [
       "frontend/web/src/pug/index.pug",
       "/Users/tkirby/workspace/maketext/server/frontend/web/src/pug/effect/index.pug"
@@ -498,7 +498,7 @@
     "generations": []
   },
   "/assets/bundle/68a0587ca442d67d5714724de10ef366.js": {
-    "url": "/assets/bundle/68a0587ca442d67d5714724de10ef366.js?v=52c5757667cc",
+    "url": "/assets/bundle/68a0587ca442d67d5714724de10ef366.js?v=0d946e268694",
     "refs": [],
     "generations": []
   },
@@ -520,7 +520,7 @@
     "generations": []
   },
   "/assets/bundle/bdbd1949e80f72b0f2641ff91a2007ad.min.js": {
-    "url": "/assets/bundle/bdbd1949e80f72b0f2641ff91a2007ad.min.js?v=dae22ada86a1",
+    "url": "/assets/bundle/bdbd1949e80f72b0f2641ff91a2007ad.min.js?v=44945dfe423d",
     "refs": [
       "frontend/web/src/pug/index.pug",
       "/Users/tkirby/workspace/maketext/server/frontend/web/src/pug/effect/index.pug"
@@ -533,7 +533,7 @@
     "generations": []
   },
   "/assets/bundle/bdbd1949e80f72b0f2641ff91a2007ad.js": {
-    "url": "/assets/bundle/bdbd1949e80f72b0f2641ff91a2007ad.js?v=969e8ab68772",
+    "url": "/assets/bundle/bdbd1949e80f72b0f2641ff91a2007ad.js?v=bdf2426ad851",
     "refs": [],
     "generations": []
   },

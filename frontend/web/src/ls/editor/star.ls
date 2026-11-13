@@ -38,30 +38,12 @@ star = window.mt-star = do
     .catch (e) ~>
       @_core = null
       Promise.reject e
-  # 登入面板 ( block, src/pug/modules/block/authpanel ) 要串連載入多層 html / js / css, 正式站約 4 秒;
-  # 事先建好 ( 不顯示 ), 按收藏時就能馬上跳出. 同 @servebase/auth 的 ui.authpanel, 但不顯示 loader.
-  # 已登入的不需要 ( 也避免觸發面板裡的 consent 檢查 )
-  panel: (core) ->
-    a = core.auth
-    if a._authpanel => return Promise.resolve!
-    @_panel = @_panel or a.get!then (g) ->
-      if g and g.user and g.user.key => return
-      # 面板用到的 block 與相依的 js / css 打包成一個檔 ( bundle.json 的 block.auth ), 一次載入,
-      # 不必逐層抓. 版本參數沿用 core script 的 ?v=
-      v = (/\?v=[^&]*/.exec(tpl.content.querySelector(\script).getAttribute(\src)) or [''])[0]
-      core.manager.debundle {url: "/assets/bundle/auth.min.html#v"}
-        .catch (e) -> console.warn "[maketext] auth bundle:", e
-        # 與 src/ls/site.ls 的 auth.authpanel 相同
-        .then -> core.manager.from {ns: \local, name: \authpanel}, {autoTransform: \i18n, root: document.body, data: {auth: a, zmgr: core.zmgr}}
-        .then (p) -> a._authpanel = p.interface
-    .catch (e) ~>
-      @_panel = null
-      console.warn "[maketext] authpanel preload:", e
-  preload: -> @core!then((core) ~> @panel core).catch (e) -> console.warn "[maketext] core preload:", e
+  # 登入面板要串連載入多層 html / js / css; 事先建好 ( 不顯示, 已登入略過 ), 按收藏時就能馬上跳出.
+  # 由 @servebase/auth 的 preload 處理 ( 從 bundle 一次載入, 見 src/ls/site.ls 的 auth.bundle )
+  preload: -> @core!then((core) -> core.auth.preload!).catch (e) -> console.warn "[maketext] authpanel preload:", e
   toggle: (name) ->
     @core!
-      # 預載還沒完成時等它, 不要另外再建一個面板
-      .then (core) ~> @panel(core).then -> core.auth.ensure!
+      .then (core) -> core.auth.ensure!
       # 剛登入時重新取得這個帳號的收藏
       .then ~> @fetch!
       .then ~>

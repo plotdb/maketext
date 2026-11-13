@@ -1,3 +1,5 @@
+var ver;
+ver = ((document.currentScript && /\?v=[^&]*/.exec(document.currentScript.src)) || [''])[0];
 ldc.register('locales', [], function(){
   return {
     "@servebase/navtop": {
@@ -58,7 +60,8 @@ ldc.register('corecfg', ['locales'], function(arg$){
         authpanel: {
           ns: 'local',
           name: "authpanel"
-        }
+        },
+        bundle: "/assets/bundle/auth.min.html" + ver
       },
       challenge: /\.test$/.test(location.hostname) ? {
         sitekey: '1x00000000000000000000AA',

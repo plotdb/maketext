@@ -7195,22 +7195,25 @@ function import$(obj, src){
         failed: 10000
       };
       this.evtHandler = {};
-      this.ui = {
-        loader: opt.loader || {
-          on: function(){},
-          off: function(){},
-          cancel: function(){}
-        },
-        authpanel: function(tgl, o){
-          var bid;
-          o == null && (o = {});
-          if (this$._authpanel) {
-            return this$._authpanel(tgl, o);
-          }
-          this$.ui.loader.on(350);
-          bid = opt.authpanel || {
-            name: "@servebase/auth"
-          };
+      this._authpanelPrepare = function(){
+        var that, bid, deb;
+        if (this$._authpanel) {
+          return Promise.resolve(this$._authpanel);
+        }
+        if (that = this$._authpanelP) {
+          return that;
+        }
+        bid = opt.authpanel || {
+          name: "@servebase/auth"
+        };
+        deb = !opt.bundle
+          ? Promise.resolve()
+          : this$._manager.debundle({
+            url: opt.bundle
+          })['catch'](function(e){
+            return console.warn("[@servebase/auth] debundle " + opt.bundle + " failed, load authpanel without it", e);
+          });
+        return this$._authpanelP = deb.then(function(){
           return this$._manager.from(bid, {
             autoTransform: 'i18n',
             root: document.body,
@@ -7218,10 +7221,29 @@ function import$(obj, src){
               auth: this$,
               zmgr: opt.zmgr
             }
-          }).then(function(p){
-            return this$._authpanel = p['interface'];
+          });
+        }).then(function(p){
+          return this$._authpanel = p['interface'];
+        })['catch'](function(e){
+          this$._authpanelP = null;
+          return Promise.reject(e);
+        });
+      };
+      this.ui = {
+        loader: opt.loader || {
+          on: function(){},
+          off: function(){},
+          cancel: function(){}
+        },
+        authpanel: function(tgl, o){
+          o == null && (o = {});
+          if (this$._authpanel) {
+            return this$._authpanel(tgl, o);
+          }
+          this$.ui.loader.on(350);
+          return this$._authpanelPrepare()['finally'](function(){
+            return this$.ui.loader.off();
           }).then(function(i){
-            this$.ui.loader.off();
             return i(tgl, o);
           });
         },
@@ -7382,6 +7404,18 @@ function import$(obj, src){
       },
       prompt: function(o){
         return this.ui.authpanel(true, o);
+      },
+      preload: function(){
+        var this$ = this;
+        if (this._authpanel) {
+          return Promise.resolve();
+        }
+        return this.get().then(function(g){
+          g == null && (g = {});
+          if (!(g.user || (g.user = {})).key) {
+            return this$._authpanelPrepare();
+          }
+        }).then(function(){});
       },
       oauth: function(arg$){
         var name, inviteToken, this$ = this;
@@ -8288,7 +8322,8 @@ function import$(obj, src){
           manager: this$.manager,
           zmgr: this$.zmgr,
           loader: this$.loader,
-          authpanel: this$._cfg.auth ? this$._cfg.auth.authpanel : null
+          authpanel: this$._cfg.auth ? this$._cfg.auth.authpanel : null,
+          bundle: this$._cfg.auth ? this$._cfg.auth.bundle : null
         });
         if (typeof ldc != 'undefined' && ldc !== null) {
           ldc.action('ldcvmgr', this$.ldcvmgr);
@@ -8344,6 +8379,8 @@ function import$(obj, src){
     return false;
   }
 }).call(this);
+var ver;
+ver = ((document.currentScript && /\?v=[^&]*/.exec(document.currentScript.src)) || [''])[0];
 ldc.register('locales', [], function(){
   return {
     "@servebase/navtop": {
@@ -8404,7 +8441,8 @@ ldc.register('corecfg', ['locales'], function(arg$){
         authpanel: {
           ns: 'local',
           name: "authpanel"
-        }
+        },
+        bundle: "/assets/bundle/auth.min.html" + ver
       },
       challenge: /\.test$/.test(location.hostname) ? {
         sitekey: '1x00000000000000000000AA',

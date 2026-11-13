@@ -1,3 +1,7 @@
+# 版本參數: 沿用載入這個檔 ( core 的打包 ) 的 ?v=, 給登入面板的 bundle 網址用 ( 部署後不會拿到舊的 )
+# document.currentScript 只在 script 執行當下有值, 要在最上層取
+ver = ((document.currentScript and /\?v=[^&]*/.exec(document.currentScript.src)) or [''])[0]
+
 ldc.register \locales, <[]>, ->
   "@servebase/navtop":
     en:
@@ -30,7 +34,10 @@ ldc.register \corecfg, <[locales]>, ({locales}) -> ->
       return "/modules/block/#name/#path"
     "/assets/lib/#{name}/#{version or 'main'}/#path"
   # login / signup panel: src/pug/modules/block/authpanel
-  auth: authpanel: {ns: \local, name: "authpanel"}
+  auth:
+    authpanel: {ns: \local, name: "authpanel"}
+    # 面板與相依的 js / css 打包成一個檔 ( bundle.json 的 block.auth ), 一次載入
+    bundle: "/assets/bundle/auth.min.html#ver"
   # cloudflare challenge ( turnstile pre-clearance ), see @servebase/captcha src/challenge.ls.
   # only the dev mock ( backend/engine/cf-challenge-mock.ls, on when config.dev.cf-challenge-mock is set )
   # is wired up here: cloudflare's test sitekey ( always passes ) and the mock's clear endpoint.
