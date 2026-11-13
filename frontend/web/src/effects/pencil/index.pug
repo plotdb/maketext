@@ -1,0 +1,13 @@
+svg(xmlns="http://www.w3.org/2000/svg",viewBox="0 0 500 150",style="background:#fbfaf4")
+  defs
+    filter#pencil-fill(x="-10%",y="-30%",width="120%",height="160%")
+      //- 紙張的紋路: 高頻雜訊的低點留白
+      feTurbulence(type="fractalNoise",baseFrequency="1.1 0.35",numOctaves="2",seed="5",result="noise")
+      feColorMatrix(in="noise",type="matrix",values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  3.2 0 0 0 -1.05",result="tooth")
+      feComposite(in="SourceGraphic",in2="tooth",operator="in")
+    filter#pencil-line(x="-10%",y="-30%",width="120%",height="160%")
+      //- 線條抖一點
+      feTurbulence(type="fractalNoise",baseFrequency="0.08",numOctaves="2",seed="2",result="wobble")
+      feDisplacementMap(in="SourceGraphic",in2="wobble",scale="3",xChannelSelector="R",yChannelSelector="G")
+  text.face(x="250",y="75",fill="#3d8bfd",fill-opacity="0.85",filter="url(#pencil-fill)") Hello World!
+  text.line(x="250",y="75",fill="none",stroke="#1f3f7a",stroke-width="1.3",stroke-linejoin="round",filter="url(#pencil-line)") Hello World!

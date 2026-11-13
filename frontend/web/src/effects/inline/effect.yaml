@@ -1,0 +1,13 @@
+# 效果描述 ( 名稱 / 排序 / 參數等 ), 欄位說明見 tool/maketext/build-effects.ls
+desc: "Bold letters with a thin inline gap tracing the outline, like vintage signage."
+no: 90
+font: Shrikhand
+edit:
+  fill:
+    name: fill
+    type: color
+    default: '#ff5a36'
+  gap:
+    name: gap
+    type: color
+    default: '#fff3e0'

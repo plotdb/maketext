@@ -1,0 +1,14 @@
+svg(xmlns="http://www.w3.org/2000/svg",viewBox="0 0 500 150",style="background:#04110a")
+  defs
+    //- 掃描線: 每 3 單位一條暗線
+    pattern#terminal-lines(width="3",height="3",patternUnits="userSpaceOnUse")
+      rect(width="3",height="1.2",fill="#000000",fill-opacity="0.45")
+    filter#terminal(x="-20%",y="-50%",width="140%",height="200%")
+      feGaussianBlur(in="SourceGraphic",stdDeviation="6",result="bloom-wide")
+      feGaussianBlur(in="SourceGraphic",stdDeviation="2",result="bloom")
+      feMerge
+        feMergeNode(in="bloom-wide")
+        feMergeNode(in="bloom")
+        feMergeNode(in="SourceGraphic")
+  text(x="250",y="75",fill="#39ff7a",filter="url(#terminal)") Hello World!
+  text(x="250",y="75",fill="url(#terminal-lines)") Hello World!

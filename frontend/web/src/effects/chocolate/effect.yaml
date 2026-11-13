@@ -1,0 +1,13 @@
+# 效果描述 ( 名稱 / 排序 / 參數等 ), 欄位說明見 tool/maketext/build-effects.ls
+desc: "Rich glossy chocolate letters with a thick molded edge."
+no: 85
+font: Paytone One
+edit:
+  fill:
+    name: fill
+    type: color
+    default: '#6b3a1e'
+  edge:
+    name: edge
+    type: color
+    default: '#3a1d0c'

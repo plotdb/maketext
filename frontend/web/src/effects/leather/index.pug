@@ -1,0 +1,23 @@
+svg(xmlns="http://www.w3.org/2000/svg",viewBox="0 0 500 150",style="background:#2a1d17")
+  defs
+    filter#leather(x="-10%",y="-30%",width="120%",height="160%")
+      //- 皮革的顆粒
+      feTurbulence(type="turbulence",baseFrequency="0.45",numOctaves="2",seed="19",result="noise")
+      feDiffuseLighting(in="noise",surfaceScale="1.2",diffuseConstant="1",lighting-color="#ffffff",result="grain")
+        feDistantLight(azimuth="225",elevation="60")
+      feComposite(in="SourceGraphic",in2="grain",operator="arithmetic",k1="1.2",result="textured")
+      feComposite(in="textured",in2="SourceAlpha",operator="in",result="hide")
+      feGaussianBlur(in="SourceAlpha",stdDeviation="2.5",result="bevel")
+      feSpecularLighting(in="bevel",surfaceScale="4",specularConstant="0.6",specularExponent="14",lighting-color="#ffe6cc",result="spec")
+        fePointLight(x="120",y="-80",z="150")
+      feComposite(in="spec",in2="SourceAlpha",operator="in",result="shine")
+      feGaussianBlur(in="SourceAlpha",stdDeviation="3",result="shadow-blur")
+      feOffset(in="shadow-blur",dy="4",result="shadow-shape")
+      feFlood(flood-color="#000000",flood-opacity="0.6",result="shadow-color")
+      feComposite(in="shadow-color",in2="shadow-shape",operator="in",result="shadow")
+      feMerge
+        feMergeNode(in="shadow")
+        feMergeNode(in="hide")
+        feMergeNode(in="shine")
+  text.face(x="250",y="75",fill="#7a4526",filter="url(#leather)") Hello World!
+  text.stitch(x="250",y="75",fill="none",stroke="#e9c46a",stroke-width="1",stroke-dasharray="3.5 2.5") Hello World!

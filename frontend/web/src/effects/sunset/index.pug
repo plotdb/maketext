@@ -1,0 +1,19 @@
+svg(xmlns="http://www.w3.org/2000/svg",viewBox="0 0 500 150",style="background:#241038")
+  defs
+    linearGradient#sunset-grad(x1="0",y1="0",x2="0",y2="1")
+      stop(offset="0.15",stop-color="#ffd23f")
+      stop(offset="0.85",stop-color="#ff2e7e")
+    //- 下半部的橫向切線, 越往下越粗
+    mask#sunset-cut(maskUnits="userSpaceOnUse",x="0",y="-200",width="500",height="550")
+      rect(x="-500",y="-200",width="1500",height="550",fill="#fff")
+      each c, i in [[78,1.2],[86,2],[94,2.8],[102,3.6],[110,4.4]]
+        rect(x="-500",y=c[0],width="1500",height=c[1],fill="#000")
+    filter#sunset(x="-20%",y="-50%",width="140%",height="200%")
+      feGaussianBlur(in="SourceAlpha",stdDeviation="7",result="glow-blur")
+      feFlood(flood-color="#ff8a3d",flood-opacity="0.55",result="glow-color")
+      feComposite(in="glow-color",in2="glow-blur",operator="in",result="glow")
+      feMerge
+        feMergeNode(in="glow")
+        feMergeNode(in="SourceGraphic")
+  g(filter="url(#sunset)")
+    text(x="250",y="75",fill="url(#sunset-grad)",mask="url(#sunset-cut)") Hello World!

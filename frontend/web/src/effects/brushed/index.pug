@@ -1,0 +1,21 @@
+svg(xmlns="http://www.w3.org/2000/svg",viewBox="0 0 500 150",style="background:#1c1e22")
+  defs
+    filter#brushed(x="-10%",y="-30%",width="120%",height="160%")
+      //- 只在縱向變化的高頻雜訊: 橫向的拉絲
+      feTurbulence(type="fractalNoise",baseFrequency="0.004 1.2",numOctaves="2",seed="3",result="noise")
+      feColorMatrix(in="noise",type="saturate",values="0",result="streak")
+      feComposite(in="SourceGraphic",in2="streak",operator="arithmetic",k1="1.1",k2="0.35",result="metal")
+      feComposite(in="metal",in2="SourceAlpha",operator="in",result="metal-in")
+      feGaussianBlur(in="SourceAlpha",stdDeviation="1.5",result="bevel")
+      feSpecularLighting(in="bevel",surfaceScale="3",specularConstant="0.9",specularExponent="25",lighting-color="#ffffff",result="spec")
+        feDistantLight(azimuth="235",elevation="40")
+      feComposite(in="spec",in2="SourceAlpha",operator="in",result="shine")
+      feGaussianBlur(in="SourceAlpha",stdDeviation="3",result="shadow-blur")
+      feOffset(in="shadow-blur",dy="4",result="shadow-shape")
+      feFlood(flood-color="#000000",flood-opacity="0.7",result="shadow-color")
+      feComposite(in="shadow-color",in2="shadow-shape",operator="in",result="shadow")
+      feMerge
+        feMergeNode(in="shadow")
+        feMergeNode(in="metal-in")
+        feMergeNode(in="shine")
+  text(x="250",y="75",fill="#b9bec6",letter-spacing="2",filter="url(#brushed)") Hello World!

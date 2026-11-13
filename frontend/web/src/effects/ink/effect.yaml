@@ -1,0 +1,9 @@
+# 效果描述 ( 名稱 / 排序 / 參數等 ), 欄位說明見 tool/maketext/build-effects.ls
+desc: "Fountain-pen ink soaking into paper, with feathered edges and a faint bleed."
+no: 79
+font: Courgette
+edit:
+  fill:
+    name: fill
+    type: color
+    default: '#1d2b5a'

@@ -1,0 +1,22 @@
+svg(xmlns="http://www.w3.org/2000/svg",viewBox="0 0 500 150",style="background:#f7d9c9")
+  defs
+    filter#chocolate(x="-10%",y="-30%",width="120%",height="170%")
+      feGaussianBlur(in="SourceAlpha",stdDeviation="2.5",result="bevel")
+      feSpecularLighting(in="bevel",surfaceScale="5",specularConstant="1.1",specularExponent="35",lighting-color="#ffe9d6",result="spec")
+        fePointLight(x="130",y="-70",z="130")
+      feComposite(in="spec",in2="SourceAlpha",operator="in",result="shine")
+      //- 厚度: 往下疊一層深色
+      feMorphology(in="SourceAlpha",operator="dilate",radius="1.5",result="fat")
+      feOffset(in="fat",dy="6",result="edge-shape")
+      feFlood(flood-color="#3a1d0c",result="edge-color")
+      feComposite(in="edge-color",in2="edge-shape",operator="in",result="edge")
+      feGaussianBlur(in="edge-shape",stdDeviation="3",result="shadow-blur")
+      feOffset(in="shadow-blur",dy="5",result="shadow-shape")
+      feFlood(flood-color="#5a2a10",flood-opacity="0.35",result="shadow-color")
+      feComposite(in="shadow-color",in2="shadow-shape",operator="in",result="shadow")
+      feMerge
+        feMergeNode(in="shadow")
+        feMergeNode(in="edge")
+        feMergeNode(in="SourceGraphic")
+        feMergeNode(in="shine")
+  text(x="250",y="72",fill="#6b3a1e",filter="url(#chocolate)") Hello World!

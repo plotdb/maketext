@@ -1,0 +1,19 @@
+svg(xmlns="http://www.w3.org/2000/svg",viewBox="0 0 500 150",style="background:#3b3d40")
+  defs
+    pattern#hazard-stripes(width="16",height="16",patternUnits="userSpaceOnUse",patternTransform="rotate(45)")
+      rect.a(width="16",height="16",fill="#ffd200")
+      rect.b(width="8",height="16",fill="#151515")
+    filter#hazard(x="-10%",y="-30%",width="120%",height="160%")
+      feGaussianBlur(in="SourceAlpha",stdDeviation="2",result="shadow-blur")
+      feOffset(in="shadow-blur",dx="3",dy="4",result="shadow-shape")
+      feFlood(flood-color="#000000",flood-opacity="0.6",result="shadow-color")
+      feComposite(in="shadow-color",in2="shadow-shape",operator="in",result="shadow")
+      //- 磨損的斑點
+      feTurbulence(type="fractalNoise",baseFrequency="0.12",numOctaves="4",seed="31",result="noise")
+      feColorMatrix(in="noise",type="matrix",values="0 0 0 0 0.25  0 0 0 0 0.25  0 0 0 0 0.25  6 0 0 0 -3.6",result="wear-all")
+      feComposite(in="wear-all",in2="SourceAlpha",operator="in",result="wear")
+      feMerge
+        feMergeNode(in="shadow")
+        feMergeNode(in="SourceGraphic")
+        feMergeNode(in="wear")
+  text(x="250",y="75",fill="url(#hazard-stripes)",stroke="#151515",stroke-width="2.5",paint-order="stroke",filter="url(#hazard)") Hello World!

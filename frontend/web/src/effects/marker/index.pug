@@ -1,0 +1,15 @@
+svg(xmlns="http://www.w3.org/2000/svg",viewBox="0 0 500 150",style="background:#c9a06a")
+  defs
+    filter#marker(x="-10%",y="-30%",width="120%",height="160%")
+      feTurbulence(type="fractalNoise",baseFrequency="0.5",numOctaves="2",seed="17",result="noise")
+      feDisplacementMap(in="SourceGraphic",in2="noise",scale="1.5",xChannelSelector="R",yChannelSelector="G",result="rough")
+      //- 筆跡中間淡, 邊緣墨水較濃
+      feMorphology(in="rough",operator="erode",radius="2",result="core")
+      feGaussianBlur(in="core",stdDeviation="2",result="core-blur")
+      feFlood(flood-color="#ffffff",flood-opacity="0.07",result="core-color")
+      feComposite(in="core-color",in2="core-blur",operator="in",result="lighter")
+      feComposite(in="lighter",in2="rough",operator="in",result="center")
+      feMerge
+        feMergeNode(in="rough")
+        feMergeNode(in="center")
+  text(x="250",y="75",fill="#1b1b1b",filter="url(#marker)") Hello World!

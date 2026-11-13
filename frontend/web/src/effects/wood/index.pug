@@ -1,0 +1,27 @@
+svg(xmlns="http://www.w3.org/2000/svg",viewBox="0 0 500 150",style="background:#f1e6d4")
+  defs
+    filter#wood(x="-10%",y="-30%",width="120%",height="170%")
+      //- 橫向拉長的雜訊是木紋
+      feTurbulence(type="fractalNoise",baseFrequency="0.008 0.22",numOctaves="3",seed="21",result="noise")
+      feColorMatrix(in="noise",type="matrix",values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  4 0 0 0 -1.6",result="rings")
+      feFlood(flood-color="#5e3416",flood-opacity="0.75",result="grain-color")
+      feComposite(in="grain-color",in2="rings",operator="in",result="grain-all")
+      feComposite(in="grain-all",in2="SourceAlpha",operator="in",result="grain")
+      feGaussianBlur(in="SourceAlpha",stdDeviation="2",result="bevel")
+      feSpecularLighting(in="bevel",surfaceScale="3",specularConstant="0.7",specularExponent="16",lighting-color="#fff3dd",result="spec")
+        fePointLight(x="120",y="-80",z="160")
+      feComposite(in="spec",in2="SourceAlpha",operator="in",result="shine")
+      feOffset(in="SourceAlpha",dy="5",result="side-shape")
+      feFlood(flood-color="#4a2810",result="side-color")
+      feComposite(in="side-color",in2="side-shape",operator="in",result="side")
+      feGaussianBlur(in="SourceAlpha",stdDeviation="3",result="shadow-blur")
+      feOffset(in="shadow-blur",dy="9",result="shadow-shape")
+      feFlood(flood-color="#000000",flood-opacity="0.3",result="shadow-color")
+      feComposite(in="shadow-color",in2="shadow-shape",operator="in",result="shadow")
+      feMerge
+        feMergeNode(in="shadow")
+        feMergeNode(in="side")
+        feMergeNode(in="SourceGraphic")
+        feMergeNode(in="grain")
+        feMergeNode(in="shine")
+  text(x="250",y="72",fill="#b8783c",filter="url(#wood)") Hello World!

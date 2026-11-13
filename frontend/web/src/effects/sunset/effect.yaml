@@ -1,0 +1,17 @@
+# 效果描述 ( 名稱 / 排序 / 參數等 ), 欄位說明見 tool/maketext/build-effects.ls
+desc: "Retro sunset gradient letters sliced by horizontal stripes toward the bottom."
+no: 89
+font: Righteous
+edit:
+  top:
+    name: top
+    type: color
+    default: '#ffd23f'
+  bottom:
+    name: bottom
+    type: color
+    default: '#ff2e7e'
+  glow:
+    name: glow
+    type: color
+    default: '#ff8a3d'

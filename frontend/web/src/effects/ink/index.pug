@@ -1,0 +1,14 @@
+svg(xmlns="http://www.w3.org/2000/svg",viewBox="0 0 500 150",style="background:#f4eddd")
+  defs
+    filter#ink(x="-15%",y="-40%",width="130%",height="180%")
+      //- 墨水沿著紙纖維暈開
+      feTurbulence(type="fractalNoise",baseFrequency="0.06",numOctaves="4",seed="15",result="fiber")
+      feDisplacementMap(in="SourceGraphic",in2="fiber",scale="3.5",xChannelSelector="R",yChannelSelector="G",result="wet")
+      feGaussianBlur(in="wet",stdDeviation="0.6",result="soft")
+      feGaussianBlur(in="wet",stdDeviation="3.5",result="bleed-blur")
+      feComponentTransfer(in="bleed-blur",result="bleed")
+        feFuncA(type="linear",slope="0.35")
+      feMerge
+        feMergeNode(in="bleed")
+        feMergeNode(in="soft")
+  text(x="250",y="75",fill="#1d2b5a",filter="url(#ink)") Hello World!

@@ -1,0 +1,25 @@
+svg(xmlns="http://www.w3.org/2000/svg",viewBox="0 0 500 150",style="background:#e6f3ff")
+  defs
+    filter#balloon(x="-20%",y="-40%",width="140%",height="190%")
+      //- 模糊的形狀當成鼓起的高度, 打一道亮光
+      feGaussianBlur(in="SourceAlpha",stdDeviation="5",result="blur")
+      feSpecularLighting(in="blur",surfaceScale="9",specularConstant="1",specularExponent="22",lighting-color="#ffffff",result="spec")
+        fePointLight(x="140",y="-60",z="120")
+      feComposite(in="spec",in2="SourceAlpha",operator="in",result="shine")
+      //- 邊緣暗一些, 看起來是圓的
+      feMorphology(in="SourceAlpha",operator="erode",radius="4",result="inner")
+      feGaussianBlur(in="inner",stdDeviation="4",result="inner-blur")
+      feComposite(in="SourceAlpha",in2="inner-blur",operator="out",result="rim-shape")
+      feFlood(flood-color="#000000",flood-opacity="0.25",result="rim-color")
+      feComposite(in="rim-color",in2="rim-shape",operator="in",result="rim")
+      feGaussianBlur(in="SourceAlpha",stdDeviation="6",result="shadow-blur")
+      feOffset(in="shadow-blur",dy="12",result="shadow-shape")
+      feFlood(flood-color="#1a3a5c",flood-opacity="0.22",result="shadow-color")
+      feComposite(in="shadow-color",in2="shadow-shape",operator="in",result="shadow")
+      feMerge
+        feMergeNode(in="shadow")
+        feMergeNode(in="SourceGraphic")
+        feMergeNode(in="rim")
+        feMergeNode(in="shine")
+  //- 同色的粗圓角外框讓字變胖
+  text(x="250",y="75",fill="#ff4f9a",stroke="#ff4f9a",stroke-width="7",stroke-linejoin="round",filter="url(#balloon)") Hello World!
