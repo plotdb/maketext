@@ -16,17 +16,32 @@ auth = (opt={}) ->
   @_manager = opt.manager
   @timeout = {loader: 1000, failed: 10000}
   @evt-handler = {}
+  # build the authpanel once. shared by `ui.authpanel` and `preload`, so a second call
+  # while the first is still loading doesn't create another panel.
+  @_authpanel-prepare = ~>
+    if @_authpanel => return Promise.resolve @_authpanel
+    if @_authpanel-p => return that
+    bid = (opt.authpanel or {name: "@servebase/auth"})
+    # with `bundle`, register the panel and its dependencies from one file first.
+    # failing that, `from` below still loads them one by one.
+    deb = if !opt.bundle => Promise.resolve!
+    else
+      @_manager.debundle {url: opt.bundle}
+        .catch (e) -> console.warn "[@servebase/auth] debundle #{opt.bundle} failed, load authpanel without it", e
+    @_authpanel-p = deb
+      .then ~> @_manager.from bid, {autoTransform: \i18n, root: document.body, data: {auth: @, zmgr: opt.zmgr}}
+      .then (p) ~> @_authpanel = p.interface
+      .catch (e) ~>
+        @_authpanel-p = null
+        Promise.reject e
   @ui = do
     loader: opt.loader or {on: ->, off: ->, cancel: ->}
     authpanel: (tgl, o = {}) ~>
       if @_authpanel => return @_authpanel tgl, o
       @ui.loader.on 350
-      bid = (opt.authpanel or {name: "@servebase/auth"})
-      @_manager.from bid, {autoTransform: \i18n, root: document.body, data: {auth: @, zmgr: opt.zmgr}}
-        .then (p) ~> @_authpanel = p.interface
-        .then (i) ~>
-          @ui.loader.off!
-          i tgl, o
+      @_authpanel-prepare!
+        .finally ~> @ui.loader.off!
+        .then (i) ~> i tgl, o
     timeout: -> new Promise (res, rej) -> # do nothing
 
   if !@_api-root => @_api-root = opt.api or "/api/auth"
@@ -136,6 +151,15 @@ auth.prototype = Object.create(Object.prototype) <<< do
         new Promise (res, rej) ->
 
   prompt: (o) -> @ui.authpanel true, o
+  # build the authpanel without showing it, so a later prompt opens without waiting.
+  # no loader: nothing is shown. skipped when logged in, since the panel isn't needed and
+  # building it may run things meant for a real prompt ( e.g. consent ensure ).
+  # when to call it ( idle, hover ) is up to the project.
+  preload: ->
+    if @_authpanel => return Promise.resolve!
+    @get!
+      .then (g = {}) ~> if !g.{}user.key => @_authpanel-prepare!
+      .then -> return
   oauth: ({name, invite-token}) ->
     @get!
       .then (g = {}) ~>

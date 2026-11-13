@@ -1,6 +1,21 @@
 ## master
 
+ - features:
+   - `@servebase/auth`: the authpanel can load from the `block.auth` bundle in one request
+     instead of about 7 levels of serial requests ( panel -> base -> ldview / ldnotify /
+     ldform / curegex -> css ). Set corecfg `auth.bundle` ( e.g.
+     `/assets/bundle/auth.min.html` ) or the auth option `bundle`; if loading it fails, it
+     warns and loads one by one as before. New `auth.preload()` builds the panel without
+     showing it ( no loader; skipped when logged in ), so a later prompt opens at once -
+     when to call it is up to the project.
+   - block bundling: the backend registries ( `backend/base/manager.ls`,
+     `backend/engine/index.ls` ) resolve `ns: local` to `static/modules/block/<name>/<path>`,
+     same as the frontend, so `bundle.json` can list a project's own blocks such as an
+     authpanel override. The demo bundles its local authpanel and sets `auth.bundle`.
+
  - fixes:
+   - `@servebase/auth`: calling `ui.authpanel` again while the panel was still loading
+     created a second panel. Loading is now shared.
    - deps: `@plotdb/srcbuild` ^0.1.12. 0.1.11 was published with `dist/` flattened, so
      `@plotdb/srcbuild/dist/view/pug` was not found and the server didn't start.
    - nginx sample ( `config/base/nginx/config.ngx` ): the catch-all location, which serves

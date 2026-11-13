@@ -51,6 +51,14 @@ with following constructor options:
  - `zmgr`: a global zmgr for aligning z-index between widgets.
  - `initFetch`: default true. invoke `fetch` automatically when constructs if true.
  - `authpanel`: id of the authpanel block to use. optional. use `{name: '@servebase/auth'}` if omitted.
+ - `bundle`: url of a block bundle containing the authpanel and its dependencies, e.g.
+   `/assets/bundle/auth.min.html` built from `block.auth` in `bundle.json`. optional.
+   - the authpanel is then loaded in one request, instead of one per block / js / css.
+   - if the authpanel is overridden ( a local block ), list it in `block.auth` too
+     ( `{"ns": "local", "name": "authpanel", "path": "index.html"}` ).
+   - the plain name is served `no-cache` ( revalidated on each load ); a project may pass a
+     versioned url instead.
+   - if it fails to load, a warning is logged and blocks are loaded one by one.
 
 
 APIs of the auth object:
@@ -82,6 +90,10 @@ APIs of the auth object:
    - `tab`: either `login` or `signup`, indicating tab to show. previous state (or `login`) if omitted.
    - `lock`: if true, force user to not dismiss this panel unless authenticated.
    - `redirect`: indicating that this panel is triggered by redireting, instead of a explicit action of login.
+ - `preload()`: build the authpanel without showing it, so a later `prompt` opens at once.
+   - no loader is shown. skipped if the user is logged in.
+   - when to call it ( idle, hovering a login button ) is up to the project.
+   - shares the loading with `ui.authpanel`, so calling both never builds two panels.
  - `oauth(opt)`: trigger oauth login. options:
    - `name`: oauth login name. e.g., `facebook`, `google` or `line`.
  - `reset()`: reset user cookie by redirecting user to `/auth/reset`.

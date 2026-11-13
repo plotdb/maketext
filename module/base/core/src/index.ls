@@ -197,6 +197,7 @@ servebase =
         zmgr: @zmgr
         loader: @loader
         authpanel: if @_cfg.auth => @_cfg.auth.authpanel else null
+        bundle: if @_cfg.auth => @_cfg.auth.bundle else null
 
     if ldc? => ldc.action \ldcvmgr, @ldcvmgr
 

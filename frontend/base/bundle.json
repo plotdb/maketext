@@ -2,7 +2,8 @@
   "block": {
     "auth": [
       {"name": "@servebase/auth", "path": "base.html"},
-      {"name": "@servebase/auth", "path": "index.html"}
+      {"name": "@servebase/auth", "path": "index.html"},
+      {"ns": "local", "name": "authpanel", "path": "index.html"}
     ]
   },
   "css": {
