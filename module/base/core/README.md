@@ -71,6 +71,9 @@ Both the option in `servebase.config` or the `corecfg` ldc module are something 
    - `manager`: a `@plotdb/block` block manager. Optional, it will replace the default manager if provided.
    - `auth`: an object to customize auth behavior, with following fields:
      - `authpanel`: block id of the authpanel to use.
+     - `bundle`: url of a block bundle ( e.g. `/assets/bundle/auth.min.html`, from `block.auth`
+       in `bundle.json` ) to load the authpanel and its dependencies from in one request.
+       optional. see `bundle` in `@servebase/auth`.
    - `i18n`: optional i18n related configs. if provided, should be an object with following fields:
      - `placeholder`: should consider i18n module as a placeholder. see `i18n` in `hint` for more information.
      - `locales`: i18n resource objects for core modules translation. namespaced. (such as navtop )

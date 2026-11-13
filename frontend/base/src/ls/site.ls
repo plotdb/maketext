@@ -26,7 +26,11 @@ ldc.register \corecfg, <[locales]>, ({locales}) -> ->
       if name in <[error cover]> => return "/modules/#name/#path"
       return "/modules/block/#name/#path"
     "/assets/lib/#{name}/#{version or 'main'}/#path"
-  auth: authpanel: {ns: \local, name: "authpanel"}
+  auth:
+    authpanel: {ns: \local, name: "authpanel"}
+    # authpanel and its dependencies in one file ( bundle.json -> block.auth ). the plain
+    # name is served no-cache; a page can pass the content-addressed url instead.
+    bundle: "/assets/bundle/auth.min.html"
   # cloudflare challenge ( turnstile pre-clearance ), see @servebase/captcha src/challenge.ls.
   # demo uses cloudflare's test sitekey ( always passes ) and the dev mock's clear endpoint
   # ( backend/engine/cf-challenge-mock.ls ). a real site uses its own pre-clearance widget

@@ -264,7 +264,8 @@
           manager: this$.manager,
           zmgr: this$.zmgr,
           loader: this$.loader,
-          authpanel: this$._cfg.auth ? this$._cfg.auth.authpanel : null
+          authpanel: this$._cfg.auth ? this$._cfg.auth.authpanel : null,
+          bundle: this$._cfg.auth ? this$._cfg.auth.bundle : null
         });
         if (typeof ldc != 'undefined' && ldc !== null) {
           ldc.action('ldcvmgr', this$.ldcvmgr);

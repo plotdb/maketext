@@ -196,7 +196,7 @@ backend.prototype = Object.create(Object.prototype) <<< do
           path = d.path or if d.type == \block => \index.html
           else if d.type == \js => \index.min.js
           else \index.min.css
-          # 專案自己的 block ( ns: local, 如 bundle.json 裡覆寫的 authpanel ), 同前端 registry 的 /modules/block/<name>/<path>
+          # project-local blocks, see backend/base/manager.ls
           if d.ns == \local => return base + "/static/modules/block/#{d.name}/#path"
           return base + "/static/assets/lib/#{d.name}/#{d.version or \main}/#path"
 
