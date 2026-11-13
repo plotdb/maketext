@@ -519,7 +519,7 @@ pug_html = pug_html + "\u003Cdiv class=\"input-group\"\u003E\u003Cinput class=\"
 }
 pug_html = pug_html + "\u003Cdiv id=\"top\" style=\"transform:translate(0,-80px)\"\u003E\u003C\u002Fdiv\u003E\u003Cbr\u003E\u003Cdiv class=\"text-center\"\u003E\u003Cdiv class=\"big\"\u003EThen, pick an effect you'd like to use\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E";
 if (!isApi) {
-pug_html = pug_html + "\u003Cdiv class=\"text-center mt-star-filter d-none\"\u003E\u003Ca class=\"active\" href=\"#\" data-star-filter=\"all\"\u003Eall effects\u003C\u002Fa\u003E\u003Cspan class=\"mx-2\"\u003E\u002F\u003C\u002Fspan\u003E\u003Ca href=\"#\" data-star-filter=\"starred\"\u003E&#9733; starred\u003C\u002Fa\u003E\u003C\u002Fdiv\u003E";
+pug_html = pug_html + "\u003Cdiv class=\"mt-star-filter-wrap\"\u003E\u003Cdiv class=\"mt-star-filter text-center\"\u003E\u003Cdiv class=\"btn-group btn-group-sm\"\u003E\u003Ca class=\"btn btn-outline-dark active\" href=\"#\" data-star-filter=\"all\"\u003EAll Effects \u003Cspan class=\"mt-count\"\u003E\u003C\u002Fspan\u003E\u003C\u002Fa\u003E\u003Ca class=\"btn btn-outline-dark\" href=\"#\" data-star-filter=\"starred\"\u003E&#9733; My Favorites \u003Cspan class=\"mt-count\"\u003E\u003C\u002Fspan\u003E\u003C\u002Fa\u003E\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E\u003Cdiv class=\"mt-star-empty text-center text-muted d-none\"\u003ENo favorites yet. Hover an effect and click its &#9733; to keep it here.\u003C\u002Fdiv\u003E";
 }
 pug_mixins["nbr"](2);
 pug_html = pug_html + "\u003Cdiv class=\"gallery\" id=\"gallery\"\u003E\u003C\u002Fdiv\u003E";

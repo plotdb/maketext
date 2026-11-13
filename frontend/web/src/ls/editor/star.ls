@@ -18,8 +18,9 @@ star = window.mt-star = do
   set: (list) ->
     @list = list
     style.textContent = list.map(-> "[data-star=\"#it\"]").join(',') + (if list.length => '{color:#f5b301 !important;opacity:1 !important}' else '')
-    if (node = document.querySelector \.mt-star-filter) => node.classList.toggle \d-none, !list.length
-    if !list.length and @filter == \starred => @show \all
+    if (n = document.querySelector '[data-star-filter=starred] .mt-count') => n.textContent = list.length or ''
+    # 收藏頁裡取消到一個不剩時顯示空的提示 ( 不跳回全部 )
+    if @filter == \starred => @show \starred
   fetch: -> ld$.fetch \/api/star, {method: \GET}, {type: \json} .then (list = []) ~> @set list
   # servebase core, 第一次用到時才載入
   core: ->
@@ -37,9 +38,30 @@ star = window.mt-star = do
     .catch (e) ~>
       @_core = null
       Promise.reject e
+  # 登入面板 ( block, src/pug/modules/block/authpanel ) 要串連載入多層 html / js / css, 正式站約 4 秒;
+  # 事先建好 ( 不顯示 ), 按收藏時就能馬上跳出. 同 @servebase/auth 的 ui.authpanel, 但不顯示 loader.
+  # 已登入的不需要 ( 也避免觸發面板裡的 consent 檢查 )
+  panel: (core) ->
+    a = core.auth
+    if a._authpanel => return Promise.resolve!
+    @_panel = @_panel or a.get!then (g) ->
+      if g and g.user and g.user.key => return
+      # 面板用到的 block 與相依的 js / css 打包成一個檔 ( bundle.json 的 block.auth ), 一次載入,
+      # 不必逐層抓. 版本參數沿用 core script 的 ?v=
+      v = (/\?v=[^&]*/.exec(tpl.content.querySelector(\script).getAttribute(\src)) or [''])[0]
+      core.manager.debundle {url: "/assets/bundle/auth.min.html#v"}
+        .catch (e) -> console.warn "[maketext] auth bundle:", e
+        # 與 src/ls/site.ls 的 auth.authpanel 相同
+        .then -> core.manager.from {ns: \local, name: \authpanel}, {autoTransform: \i18n, root: document.body, data: {auth: a, zmgr: core.zmgr}}
+        .then (p) -> a._authpanel = p.interface
+    .catch (e) ~>
+      @_panel = null
+      console.warn "[maketext] authpanel preload:", e
+  preload: -> @core!then((core) ~> @panel core).catch (e) -> console.warn "[maketext] core preload:", e
   toggle: (name) ->
     @core!
-      .then (core) -> core.auth.ensure!
+      # 預載還沒完成時等它, 不要另外再建一個面板
+      .then (core) ~> @panel(core).then -> core.auth.ensure!
       # 剛登入時重新取得這個帳號的收藏
       .then ~> @fetch!
       .then ~>
@@ -55,8 +77,15 @@ star = window.mt-star = do
     @filter = filter
     Array.from(document.querySelectorAll '[data-star-filter]').map -> it.classList.toggle \active, it.dataset.starFilter == filter
     editor.gallery.show(if filter == \starred => @list else null)
+    if (n = document.querySelector \.mt-star-empty) => n.classList.toggle \d-none, !(filter == \starred and !@list.length)
 
 if tpl =>
+  if (n = document.querySelector '[data-star-filter=all] .mt-count') => n.textContent = Object.keys(effects).length
+  # 篩選列捲過收合的編輯列 ( 84px, 窄螢幕 150px, 同 gallery.styl ) 時固定在它下方
+  if (wrap = document.querySelector \.mt-star-filter-wrap) =>
+    bar = wrap.querySelector \.mt-star-filter
+    document.addEventListener \scroll, ->
+      bar.classList.toggle \fixed, wrap.getBoundingClientRect!top < (if window.innerWidth <= 576 => 150 else 84)
   document.addEventListener \click, (e) ->
     if (n = e.target.closest '[data-star]') =>
       e.prevent-default!
@@ -66,3 +95,7 @@ if tpl =>
       star.show n.dataset.star-filter
 
   idle (-> star.fetch!catch (e) -> console.warn "[maketext] star:", e), 1000
+  # 預載登入面板: 閒置時, 或游標移到收藏 / 篩選上時 ( 比閒置早就提前開始 )
+  idle (-> star.preload!), 4000
+  document.addEventListener \pointerover, (e) ->
+    if e.target.closest('[data-star], [data-star-filter]') => star.preload!

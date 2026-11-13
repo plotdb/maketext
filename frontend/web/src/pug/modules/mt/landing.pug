@@ -63,12 +63,14 @@ else
 #top(style="transform:translate(0,-80px)")
 br
 .text-center: .big Then, pick an effect you'd like to use
-//- 收藏篩選, 有收藏時才出現 ( src/ls/editor/star.ls )
+//- 篩選: 全部 / 收藏 ( src/ls/editor/star.ls ). 捲過時固定在頂端 ( 收合的編輯列下方 ), 外層佔住原本的高度
 if !isApi
-  .text-center.mt-star-filter.d-none
-    a(href="#",data-star-filter="all").active all effects
-    span.mx-2 /
-    a(href="#",data-star-filter="starred") &#9733; starred
+  .mt-star-filter-wrap: .mt-star-filter.text-center
+    .btn-group.btn-group-sm
+      a.btn.btn-outline-dark.active(href="#",data-star-filter="all") All Effects #[span.mt-count]
+      a.btn.btn-outline-dark(href="#",data-star-filter="starred") &#9733; My Favorites #[span.mt-count]
+  .mt-star-empty.text-center.text-muted.d-none
+    | No favorites yet. Hover an effect and click its &#9733; to keep it here.
 +nbr(2)
 #gallery.gallery
 +nbr(2)

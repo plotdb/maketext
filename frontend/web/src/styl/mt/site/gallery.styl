@@ -42,33 +42,30 @@
         display: none
       svg
         display: block
+  // 每行的個數由 src/ls/editor/index.ls 的 gallery.cols 決定 ( .c3 / .c2 / .c1 )
   .line
     height: 180px
     justify-content: center
+    flex-wrap: nowrap
+  // basic.styl 有 flex() mixin, 寫 flex: 會被它吃掉參數, 分開寫
   .item
-    max-width: 490px
-    width: 490px
+    flex-grow: 0
+    flex-shrink: 0
+    flex-basis: auto
     height: 160px
-
-@media(max-width: 1200px)
-  .gallery
+  .line.c3
+    height: 160px
     .item
-      max-width: 400px
-      width: 400px
-
-@media(max-width: 991px)
-  .gallery
+      width: calc(33.333% - 20px)
+      height: 140px
+  .line.c2 .item
+    width: calc(50% - 20px)
+  .line.c1
+    height: auto
     .item
-      max-width: 300px
-      width: 300px
-
-@media(max-width:768px)
-  .gallery
-    .line
-      height: auto
-    .item
+      width: 100%
       max-width: 490px
-      height: 160px
+      height: 140px
 
 // 各效果獨立頁的連結 ( src/ls/editor/index.ls ) 與收藏 ( star.ls ), 滑過格子時出現;
 // 要在 .item:after 的遮罩之上才點得到. 已收藏的星號由 star.ls 產生的 css 標成金色並常駐
@@ -110,10 +107,34 @@
   opacity: .7
   pointer-events: none
 
+// 全部 / 收藏的篩選 ( landing.pug ): 捲過時 ( .fixed, src/ls/editor/star.ls ) 固定在收合的編輯列
+// ( #editor.on, 高 84px; 窄螢幕 150px ) 下方. body 的高度是視窗高, position: sticky 黏不住
+.mt-star-filter-wrap
+  height: 51px
+  margin-top: 12px
 .mt-star-filter
-  margin-top: 8px
-  a
-    color: #999
-    &.active
-      color: #333
-      text-decoration: underline
+  padding: 8px 0
+  pointer-events: none
+  &.fixed
+    position: fixed
+    top: 84px
+    left: 0
+    right: 0
+    z-index: 5
+  .btn-group
+    pointer-events: auto
+    box-shadow: 0 1px 4px rgba(0,0,0,.12)
+    border-radius: .2rem
+  .btn-outline-dark:not(.active)
+    background: #fff
+  .btn-outline-dark:not(.active):hover
+    background: #343a40
+  .mt-count
+    margin-left: 4px
+    opacity: .55
+    font-size: .85em
+@media(max-width: 576px)
+  .mt-star-filter.fixed
+    top: 150px
+.mt-star-empty
+  margin-top: 24px

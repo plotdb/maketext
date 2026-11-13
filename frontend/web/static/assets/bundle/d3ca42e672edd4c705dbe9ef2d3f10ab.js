@@ -256,9 +256,18 @@ $(document).ready(function(){
       return gallery.set(name, value);
     }
   };
+  gallery.cols = function(){
+    if (window.innerWidth >= 992) {
+      return 3;
+    } else if (window.innerWidth >= 576) {
+      return 2;
+    } else {
+      return 1;
+    }
+  };
   hasStar = !!document.querySelector('#mt-core-scripts');
   galleryRows = function(keys){
-    var list, res$, i$, ref$, k, len$, html, to$, i, code, j$, j, d, thumb, link, star, num;
+    var list, res$, i$, ref$, k, len$, html, cols, to$, i, code, j$, j, d, thumb, link, star, num;
     res$ = [];
     for (i$ = 0, len$ = (ref$ = keys || (fn$())).length; i$ < len$; ++i$) {
       k = ref$[i$];
@@ -268,10 +277,11 @@ $(document).ready(function(){
     }
     list = res$;
     html = [];
-    for (i$ = 0, to$ = list.length; i$ < to$; i$ += 2) {
+    cols = gallery.cols();
+    for (i$ = 0, to$ = list.length; cols < 0 ? i$ > to$ : i$ < to$; i$ += cols) {
       i = i$;
       code = "";
-      for (j$ = 0; j$ <= 1; ++j$) {
+      for (j$ = 0; j$ < cols; ++j$) {
         j = j$;
         d = list[i + j];
         if (!d) {
@@ -285,7 +295,7 @@ $(document).ready(function(){
         num = "<span class=\"mt-effect-no\">&#35;" + d[1].no + "</span>";
         code += "<div class=\"item\" data-type=\"" + d[0] + "\"><div class=\"inner\" style=\"background:" + d[1].bk + "\">" + thumb + "</div>" + num + star + link + "</div>";
       }
-      html.push("<div class=\"line\" style=\"visibility:hidden\">" + code + "</div>");
+      html.push("<div class=\"line c" + cols + "\" style=\"visibility:hidden\">" + code + "</div>");
     }
     return html;
     function fn$(){
@@ -297,9 +307,16 @@ $(document).ready(function(){
     }
   };
   gallery.show = function(keys){
+    gallery.keys = keys;
     clusterize.update(galleryRows(keys));
     return document.dispatchEvent(new Event('scroll'));
   };
+  window.addEventListener('resize', function(){
+    if (gallery.cols() !== gallery.curCols) {
+      gallery.curCols = gallery.cols();
+      return gallery.show(gallery.keys);
+    }
+  });
   initSlider = function(node, key, value){
     var n, x$;
     n = node.querySelector('.irs-input');
@@ -443,11 +460,13 @@ $(document).ready(function(){
     }
     return results$;
   };
+  gallery.curCols = gallery.cols();
   clusterize = new Clusterize({
     rows: galleryRows(),
     scrollElem: document.querySelector('body'),
     contentElem: document.querySelector('#gallery'),
-    rows_in_block: 10
+    rows_in_block: 10,
+    no_data_text: ''
   });
   document.addEventListener('scroll', function(e){
     var scrolltop, editor, height;
@@ -1759,7 +1778,7 @@ webpAnimate = function(frames, w, h){
     type: 'image/webp'
   });
 };
-var tpl, style, star;
+var tpl, style, star, n, wrap, bar;
 tpl = document.querySelector('#mt-core-scripts');
 style = document.createElement('style');
 document.head.appendChild(style);
@@ -1770,16 +1789,16 @@ star = window.mtStar = {
     return in$(name, this.list);
   },
   set: function(list){
-    var node;
+    var n;
     this.list = list;
     style.textContent = list.map(function(it){
       return "[data-star=\"" + it + "\"]";
     }).join(',') + (list.length ? '{color:#f5b301 !important;opacity:1 !important}' : '');
-    if (node = document.querySelector('.mt-star-filter')) {
-      node.classList.toggle('d-none', !list.length);
+    if (n = document.querySelector('[data-star-filter=starred] .mt-count')) {
+      n.textContent = list.length || '';
     }
-    if (!list.length && this.filter === 'starred') {
-      return this.show('all');
+    if (this.filter === 'starred') {
+      return this.show('starred');
     }
   },
   fetch: function(){
@@ -1822,10 +1841,56 @@ star = window.mtStar = {
       });
     });
   },
+  panel: function(core){
+    var a, this$ = this;
+    a = core.auth;
+    if (a._authpanel) {
+      return Promise.resolve();
+    }
+    return this._panel = this._panel || a.get().then(function(g){
+      var v;
+      if (g && g.user && g.user.key) {
+        return;
+      }
+      v = (/\?v=[^&]*/.exec(tpl.content.querySelector('script').getAttribute('src')) || [''])[0];
+      return core.manager.debundle({
+        url: "/assets/bundle/auth.min.html" + v
+      })['catch'](function(e){
+        return console.warn("[maketext] auth bundle:", e);
+      }).then(function(){
+        return core.manager.from({
+          ns: 'local',
+          name: 'authpanel'
+        }, {
+          autoTransform: 'i18n',
+          root: document.body,
+          data: {
+            auth: a,
+            zmgr: core.zmgr
+          }
+        });
+      }).then(function(p){
+        return a._authpanel = p['interface'];
+      });
+    })['catch'](function(e){
+      this$._panel = null;
+      return console.warn("[maketext] authpanel preload:", e);
+    });
+  },
+  preload: function(){
+    var this$ = this;
+    return this.core().then(function(core){
+      return this$.panel(core);
+    })['catch'](function(e){
+      return console.warn("[maketext] core preload:", e);
+    });
+  },
   toggle: function(name){
     var this$ = this;
     return this.core().then(function(core){
-      return core.auth.ensure();
+      return this$.panel(core).then(function(){
+        return core.auth.ensure();
+      });
     }).then(function(){
       return this$.fetch();
     }).then(function(){
@@ -1853,14 +1918,27 @@ star = window.mtStar = {
     });
   },
   show: function(filter){
+    var n;
     this.filter = filter;
     Array.from(document.querySelectorAll('[data-star-filter]')).map(function(it){
       return it.classList.toggle('active', it.dataset.starFilter === filter);
     });
-    return editor.gallery.show(filter === 'starred' ? this.list : null);
+    editor.gallery.show(filter === 'starred' ? this.list : null);
+    if (n = document.querySelector('.mt-star-empty')) {
+      return n.classList.toggle('d-none', !(filter === 'starred' && !this.list.length));
+    }
   }
 };
 if (tpl) {
+  if (n = document.querySelector('[data-star-filter=all] .mt-count')) {
+    n.textContent = Object.keys(effects).length;
+  }
+  if (wrap = document.querySelector('.mt-star-filter-wrap')) {
+    bar = wrap.querySelector('.mt-star-filter');
+    document.addEventListener('scroll', function(){
+      return bar.classList.toggle('fixed', wrap.getBoundingClientRect().top < (window.innerWidth <= 576 ? 150 : 84));
+    });
+  }
   document.addEventListener('click', function(e){
     var n;
     if (n = e.target.closest('[data-star]')) {
@@ -1877,6 +1955,14 @@ if (tpl) {
       return console.warn("[maketext] star:", e);
     });
   }, 1000);
+  idle(function(){
+    return star.preload();
+  }, 4000);
+  document.addEventListener('pointerover', function(e){
+    if (e.target.closest('[data-star], [data-star-filter]')) {
+      return star.preload();
+    }
+  });
 }
 function in$(x, xs){
   var i = -1, l = xs.length >>> 0;

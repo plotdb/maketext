@@ -117,14 +117,17 @@ editor.update = (name, value) ->
   # effects[type].watch ( watch 實際在 .js 底下 ) 而從未執行, 移植時拿掉, 行為不變.
   if name in <[fontSize background]> => gallery.set name, value
 
-# gallery 的 html ( 每行兩個效果 ). keys: 要顯示的效果, 預設全部
+# 每行幾個效果: 依視窗寬度 3 / 2 / 1 ( css: .line.c<n>, gallery.styl ). 視窗縮放跨過門檻時重排
+gallery.cols = -> if window.innerWidth >= 992 => 3 else if window.innerWidth >= 576 => 2 else 1
+# gallery 的 html ( 每行 gallery.cols! 個效果 ). keys: 要顯示的效果, 預設全部
 has-star = !!document.querySelector \#mt-core-scripts
 gallery-rows = (keys) ->
   list = [[k, effects[k]] for k in (keys or [k for k of effects]) when effects[k]]
   html = []
-  for i from 0 til list.length by 2 =>
+  cols = gallery.cols!
+  for i from 0 til list.length by cols =>
     code = ""
-    for j from 0 to 1 =>
+    for j from 0 til cols =>
       d = list[i + j]
       if !d => break
       # 預設顯示預先 render 的縮圖 ( tool/maketext/build-thumbs.ls ), 改過文字 / 字級 / 背景 / 字型後
@@ -140,13 +143,16 @@ gallery-rows = (keys) ->
       # 效果編號 ( effect.yaml 的 no ). &#35; 是 `#`. 變數不能叫 no ( LiveScript 的 false )
       num = """<span class="mt-effect-no">&#35;#{d.1.no}</span>"""
       code += """<div class="item" data-type="#{d.0}"><div class="inner" style="background:#{d.1.bk}">#thumb</div>#num#star#link</div>"""
-    html.push """<div class="line" style="visibility:hidden">#code</div>"""
+    html.push """<div class="line c#cols" style="visibility:hidden">#code</div>"""
   html
 
 # 只顯示指定的效果 ( 例: 收藏, star.ls ). 不給則顯示全部
 gallery.show = (keys) ->
+  gallery.keys = keys
   clusterize.update gallery-rows(keys)
   document.dispatchEvent new Event(\scroll)
+window.addEventListener \resize, ->
+  if gallery.cols! != gallery.cur-cols => gallery.cur-cols = gallery.cols!; gallery.show gallery.keys
 
 init-slider = (node, key, value) ->
   n = node.querySelector \.irs-input
@@ -237,11 +243,14 @@ open-effect = (type, e) ->
 
 
 
+gallery.cur-cols = gallery.cols!
 clusterize = new Clusterize do
   rows: gallery-rows!
   scrollElem: document.querySelector 'body'
   contentElem: document.querySelector '#gallery'
   rows_in_block: 10
+  # 沒有項目 ( 收藏是空的 ) 時不顯示 clusterize 預設的 "No data", 由篩選列下的提示說明 ( star.ls )
+  no_data_text: ''
 
 document.addEventListener \scroll, (e) ->
   scrolltop = document.scrollingElement.scrollTop

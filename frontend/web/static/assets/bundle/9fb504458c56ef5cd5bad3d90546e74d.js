@@ -8162,7 +8162,7 @@ function import$(obj, src){
       });
       ldcover.zmgr(this.zmgr);
       return servebase._i18nInit.apply(this).then(function(){
-        var ethr, err;
+        var fatal, ethr, err;
         this$.loader = new ldloader({
           className: "ldld full",
           autoZ: true,
@@ -8182,12 +8182,66 @@ function import$(obj, src){
           },
           zmgr: this$.zmgr
         });
+        fatal = {
+          node: null,
+          called: false
+        };
+        this$.fatal = function(e){
+          var ret, cfg, e2, zh, node, box, msg, btn;
+          ret = new Promise(function(res, rej){});
+          cfg = this$._cfg.fatal || {};
+          if (typeof cfg === 'function') {
+            if (fatal.called) {
+              return ret;
+            }
+            fatal.called = true;
+            try {
+              cfg.call(this$, e);
+            } catch (e$) {
+              e2 = e$;
+              console.error(e2);
+            }
+            return ret;
+          }
+          if (fatal.node) {
+            if (!document.body.contains(fatal.node)) {
+              document.body.appendChild(fatal.node);
+            }
+            return ret;
+          }
+          zh = /^zh/.exec((this$.i18n && this$.i18n.language) || navigator.language || '');
+          node = document.createElement('div');
+          node.className = 'servebase-fatal';
+          node.setAttribute('style', ["position:fixed", "top:0", "left:0", "width:100%", "height:100%", "z-index:2147483647", "display:flex", "align-items:center", "justify-content:center", "background:rgba(0,0,0,0.5)", "font-family:sans-serif", "color:#333"].join(';'));
+          box = document.createElement('div');
+          box.setAttribute('style', ["max-width:20rem", "margin:1rem", "padding:1.5rem", "border-radius:0.5rem", "background:white", "box-shadow:0 0.5rem 2rem rgba(0,0,0,0.3)", "text-align:center"].join(';'));
+          msg = document.createElement('div');
+          msg.setAttribute('style', "margin-bottom:1.5rem;line-height:1.5");
+          msg.textContent = cfg.message || (zh ? "發生錯誤，請重新載入頁面後再試一次。" : "Something is wrong. Please reload and try again.");
+          btn = document.createElement('button');
+          btn.setAttribute('type', 'button');
+          btn.setAttribute('style', ["padding:0.5rem 1.5rem", "border:none", "border-radius:0.25rem", "background:#333", "color:white", "cursor:pointer", "font-size:1rem"].join(';'));
+          btn.textContent = cfg.action || (zh ? "重新載入" : "Reload");
+          btn.addEventListener('click', function(){
+            return location.reload();
+          });
+          box.appendChild(msg);
+          box.appendChild(btn);
+          node.appendChild(box);
+          fatal.node = node;
+          document.body.appendChild(node);
+          return ret;
+        };
         ethr = {
           t: 0,
           c: 0
         };
         err = new lderror.handler({
           handler: function(n, e){
+            var t;
+            if (fatal.node || fatal.called) {
+              return this$.fatal(e);
+            }
             /*
             melt down mechanism - prevent infinite errors. errors limited to 4 in 500ms / 11 in 2s
             any unhandled error/rejection may trigger this handler again, which causes infinite errors
@@ -8196,18 +8250,15 @@ function import$(obj, src){
             this bug in @plotdb/block is fixed, however in case of any possible bugs in the future -
             melt down mechanism is required.
             */
-            var t;
             t = Date.now();
             if (ethr.t < t - 2000) {
               ethr.t = t;
               ethr.c = 0;
             } else if (!ethr.t) {
-              compose$({
-                t: t,
-                c: 0
-              }, ethr);
+              ethr.t = t;
+              ethr.c = 0;
             } else if (ethr.t > t - 2000 && ethr.c > 10 || ethr.t > t - 500 && ethr.c > 3) {
-              return alert("something is wrong; please reload and try again");
+              return this$.fatal(e);
             }
             ethr.c = (ethr.c || 0) + 1;
             return this$.ldcvmgr.get({
@@ -8291,17 +8342,6 @@ function import$(obj, src){
     var i = -1, l = xs.length >>> 0;
     while (++i < l) if (x === xs[i]) return true;
     return false;
-  }
-  function compose$() {
-    var functions = arguments;
-    return function() {
-      var i, result;
-      result = functions[0].apply(this, arguments);
-      for (i = 1; i < functions.length; ++i) {
-        result = functions[i](result);
-      }
-      return result;
-    };
   }
 }).call(this);
 ldc.register('locales', [], function(){
