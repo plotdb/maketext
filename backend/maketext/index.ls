@@ -12,8 +12,18 @@ effects = ->
   cache.data
 
 # 單一效果的獨立頁. 不存在的效果交給後面的 404
+# 有自己網址 ( effect.yaml 的 page, 例: /font-to-svg/ ) 的效果轉到該網址
 app.get \/effect/:name, (req, res, next) ->
   if !(effect = effects![req.params.name]) => return next!
+  if effect.page => return res.redirect 301, effect.page
+  res.render \effect/index.pug, {effect}
+
+# 有自己網址的效果的獨立頁. 網址少了結尾的 / 時補上
+app.get '*', (req, res, next) ->
+  if /\./.test(req.path) => return next!
+  p = req.path.replace(/\/?$/, '/')
+  if !(effect = [v for k, v of effects! when v.page == p].0) => return next!
+  if req.path != p => return res.redirect 301, p
   res.render \effect/index.pug, {effect}
 
 # 收藏 ( star ): 需登入. 表格見 config/web/db/star.sql

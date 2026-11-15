@@ -82,8 +82,10 @@ settings = function(){
   return o;
 };
 shareUrl = function(){
+  var type;
+  type = editor.effects.type;
   return shareEncode(settings()).then(function(d){
-    return location.origin + "/effect/" + editor.effects.type + "/?d=" + d;
+    return location.origin + "" + (effects[type].page || "/effect/" + type + "/") + "?d=" + d;
   });
 };
 window.mtShare = share = {

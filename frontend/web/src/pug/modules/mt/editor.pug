@@ -37,6 +37,18 @@ include @/ldpalettepicker/ldpp.pug
       div(style="flex:1 1 auto")
       .btn.btn-sm.btn-outline-secondary(data-ldcv-set="") close
 
+//- svg 原始碼 ( 只在 effect.yaml 有 code: true 的效果出現, 例: font to svg; src/ls/editor/download.ls 的 convert.code )
+#svg-code-panel.ldcv: .base: .inner
+  .p-4
+    h5.mb-1 SVG Code
+    .small.text-muted.mb-3 the text is converted into paths. paste it into your html, or save it as an .svg file.
+    textarea.form-control.form-control-sm.mt-svg-code(readonly,rows="8",spellcheck="false")
+    .mt-3.d-flex.align-items-center
+      .btn.btn-sm.btn-dark.mt-svg-code-copy.has-tips.manual(onclick="convert.codeCopy()") Copy
+        .hover-tip.tip-sm.tip-fit.top copied!
+      div(style="flex:1 1 auto")
+      .btn.btn-sm.btn-outline-secondary(data-ldcv-set="") close
+
 #download.modal
   .card
     .card-body
@@ -126,4 +138,5 @@ include @/ldpalettepicker/ldpp.pug
       .btn.btn-outline-dark.mr-2(onclick="editor.toggle(false)") #[big(style="line-height:1em") &times;] Close
       //- 分享目前的設定 ( 效果頁的網址帶參數, src/ls/editor/share.ls )
       .btn.btn-outline-dark.mr-2(onclick="mtShare.open()") #[i.fa.fa-share-alt] Share
+      .btn.btn-outline-dark.mr-2.d-none#editor-svg-code-btn(onclick="convert.code()") &lt;/&gt; SVG Code
     .mt-drag-hint drag the text to adjust its position

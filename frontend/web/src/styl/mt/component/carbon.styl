@@ -36,3 +36,41 @@
       position: absolute
       float: none
       margin-top: 0
+
+// 放在 hero 下方置中的橫式廣告 ( 例: 文章頁 src/pug/articles/ ): 圖在左, 文字在右
+.mt-cbad-inline-wrap
+  padding: 0 16px
+.cbad.mt-cbad-inline
+  position: relative
+  width: 360px
+  max-width: 100%
+  height: auto
+  min-height: 100px
+  margin: 0 auto 24px
+  padding: 0
+  background: #fff
+  box-shadow: 0 1px 3px rgba(0,0,0,.1)
+  border-radius: 3px
+  text-align: left
+  font-size: 13px
+  line-height: 1.4
+  .carbon-wrap
+    display: flex
+    align-items: center
+  .carbon-img
+    flex-grow: 0
+    flex-shrink: 0
+    flex-basis: auto
+    float: none
+    margin-right: 12px
+    img
+      display: block
+  .carbon-text
+    padding-right: 10px
+  .carbon-poweredby
+    position: absolute
+    right: 8px
+    bottom: 4px
+    float: none
+    font-size: 10px
+    opacity: .6

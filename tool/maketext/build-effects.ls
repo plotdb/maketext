@@ -15,6 +15,10 @@
 #    - font: 預設字型, xlfont.maketext.io 上的字型名稱 ( 使用 normal / 400 ), 或 `<名稱>/<style>/<weight>.ttf`
 #      沒寫則用 DEFAULT-FONT. 使用者以字型選擇器選的字型會蓋過它, 可一鍵還原 ( src/ls/editor/font.ls )
 #    - edit: 可調參數, { <key>: {name, type: color | number, default, min, max, step} }
+#    - page: 獨立頁的網址 ( 例: /font-to-svg/ ), 取代 /effect/<name>/. 有 page 的效果不編號 ( 不用寫 no ),
+#      列在 All Effects 的最上面, 獨立一行 ( 例: font-to-svg, 沒有效果的效果 )
+#    - transparent: true 時 editor 的背景預設為透明 ( 不套色盤的背景色 ), 匯出的 svg / png 沒有背景
+#    - code: true 時 editor 多一個「SVG Code」按鈕, 可複製產生的 svg 原始碼 ( src/ls/editor/download.ls )
 #  - index.pug: 效果的 svg ( viewBox 0 0 500 150 ), 可 include 同目錄的檔案
 #  - main.ls: `module.exports = watch: (n, o, node) -> ...`, 參數變化時更新 svg
 #
@@ -67,13 +71,14 @@ build = ->
       {name, dir, meta: js-yaml.safe-load(fs.read-file-sync path.join(dir, 'effect.yaml')) or {}}
     .filter -> !it.meta.debug
   nos = {}
-  for {name, meta} in list =>
+  for {name, meta} in list when !meta.page =>
     if !(meta.no > 0) => throw new Error("#name: missing `no` in effect.yaml")
     if nos[meta.no] => throw new Error("#name: `no` #{meta.no} is already used by #{nos[meta.no]}")
     nos[meta.no] = name
   # 新效果 ( 編號大的在前 ), 再接舊效果 ( 依原順序 )
-  rank = (n) -> if n > LEGACY => -n else n
-  list.sort (a, b) -> rank(a.meta.no) - rank(b.meta.no)
+  # 有 page 的效果放最前面
+  rank = (m) -> if m.page => -Infinity else if m.no > LEGACY => -m.no else m.no
+  list.sort (a, b) -> rank(a.meta) - rank(b.meta)
   fs.mkdir-sync des, {recursive: true}
   index = {}
   meta-out = {}
@@ -87,10 +92,14 @@ build = ->
     # 背景色: 縮圖 object-fit: contain 時容器補同色 ( src/ls/editor/index.ls )
     bk = (/^<svg[^>]*style="background:\s*([^;"]+)/.exec(html) or [])[1] or ''
     index[name] = {no: meta.no, bk, font: meta.font or DEFAULT-FONT, v: crypto.create-hash(\md5).update(body).digest(\hex).slice(0, 8)}
-    for k in <[name tags]> => if meta[k] => index[name][k] = meta[k]
+    for k in <[name tags page code transparent]> => if meta[k] => index[name][k] = meta[k]
     # 顯示名稱: 沒寫 name 時由資料夾名稱轉, 例: retro-chrome -> Retro Chrome
     label = meta.name or name.split('-').map(-> it.0.toUpperCase! + it.slice 1).join(' ')
     meta-out[name] = {key: name, no: meta.no, label, desc: meta.desc or '', tags: meta.tags or [], font: index[name].font}
+    if meta.page =>
+      meta-out[name].page = meta.page
+      # gallery 最上面那一行的說明
+      index[name].desc = meta.desc or ''
   # 清掉已移除或改為 debug 的效果
   for f in fs.readdir-sync(des) => if !(f in <[index.js meta.json]>) and !index[f.replace(/\.js$/, '')] => fs.unlink-sync path.join(des, f)
   fs.write-file-sync path.join(des, 'meta.json'), JSON.stringify(meta-out)

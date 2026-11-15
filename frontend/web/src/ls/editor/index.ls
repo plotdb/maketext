@@ -125,6 +125,16 @@ gallery-rows = (keys) ->
   list = [[k, effects[k]] for k in (keys or [k for k of effects]) when effects[k]]
   html = []
   cols = gallery.cols!
+  # 有自己網址的效果 ( effect.yaml 的 page, 例: font to svg ) 不編號不收藏: 顯示全部時獨立一行放最上面,
+  # 左邊一格同樣大小的縮圖, 右邊是說明 ( 點說明也是打開 editor ); 篩選收藏時不顯示
+  for d in list when d.1.page and !keys =>
+    thumb = """<img class="thumb" src="/assets/thumb/#{d.0}.webp" loading="lazy" alt="#{d.1.name or d.0}"
+    onerror="editor.gallery.fallback(this)">"""
+    link = """<a class="mt-effect-link" href="#{d.1.page}" title="#{d.1.name or d.0}">&#8599;</a>"""
+    item = """<div class="item" data-type="#{d.0}"><div class="inner" style="background:#{d.1.bk}">#thumb</div>#link</div>"""
+    desc = """<div class="mt-tool-desc" data-type="#{d.0}"><div class="mt-tool-name">#{d.1.name or d.0}</div><div>#{d.1.desc or ''}</div></div>"""
+    html.push """<div class="line c#cols mt-tool-line" style="visibility:hidden">#item#desc</div>"""
+  list = list.filter -> !it.1.page
   for i from 0 til list.length by cols =>
     code = ""
     for j from 0 til cols =>
@@ -174,8 +184,9 @@ init-colorpicker = (node, key, value) ->
     node.querySelector('.inner').style.background = c
 
 document.querySelector \.gallery .addEventListener \click, (e) ->
-  target = e.target
-  if !(target and target.classList  and target.classList.contains \item) => return
+  # 格子上的連結 ( 獨立頁 / 收藏 ) 不打開 editor
+  if !e.target.closest or e.target.closest(\a) => return
+  if !(target = e.target.closest '.item, .mt-tool-desc') => return
   type = target.getAttribute \data-type
   if !type => return
   mt-track \effect_select, {effect: type, from: \gallery}
@@ -215,6 +226,8 @@ open-effect = (type, e) ->
     mt-set-text it, (document.querySelector('#text-input').value or 'Hello World')
   editor.effects.type = type
   effect = editor.effects[type]
+  # 複製 svg 原始碼的按鈕 ( effect.yaml 的 code, download.ls )
+  document.querySelector(\#editor-svg-code-btn).classList.toggle \d-none, !(effects[type] and effects[type].code)
   options = document.querySelector(\#editor-custom-options)
   options.innerHTML = ''
   if effect.js and effect.js.edit =>
@@ -240,6 +253,12 @@ open-effect = (type, e) ->
     options.innerHTML = "<div class='col-sm'><div class='empty'></div></div>"
     set-palette [bkcolor]
   for k,v of editor.config.{}cur => editor.update k, v
+  # 背景透明的效果 ( effect.yaml 的 transparent, 例: font to svg ): 不用色盤的背景色, 之後選了背景色才套用
+  if effects[type].transparent =>
+    editor.update \background, ''
+    if (n = document.querySelector '#editor input[name=background]') =>
+      n.value = 'transparent'
+      n.parentNode.querySelector(\.inner).style.background = ''
 
 
 
@@ -357,11 +376,20 @@ Array.from(document.querySelectorAll('#font-size-slider .up.irs-input')).map (d,
 do ->
   q = {}
   for [k, v] in queries => q[decodeURIComponent k] = decodeURIComponent((v or '').replace /\+/g, ' ')
-  if !((q.d or q.edit) and (m = /^\/effect\/([^\/]+)/.exec location.pathname) and effects[m.1]) => return
-  Promise.all [mteffect.load(m.1), mt-share.parse(q)]
+  # 效果: /effect/<name>/, 或有自己網址 ( page ) 的效果
+  type = if /^\/effect\/([^\/]+)/.exec(location.pathname) => that.1
+  else [k for k, v of effects when v.page == location.pathname].0
+  if !(type and effects[type]) => return
+  # 有自己網址的效果 ( 例: /font-to-svg/ ) 是工具頁: 一進來就打開 editor, 關掉後可往下看說明與其它效果
+  if !(q.d or q.edit) =>
+    if !effects[type].page => return
+    return mteffect.load type
+      .then (e) -> open-effect type, e
+      .catch (e) -> console.warn "[maketext] editor:", e
+  Promise.all [mteffect.load(type), mt-share.parse(q)]
     .then ([e, s]) ->
       if !s => return
-      open-effect m.1, e
+      open-effect type, e
       mt-share.apply s, !!q.d
     .catch (e) -> console.warn "[maketext] share:", e
 

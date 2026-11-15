@@ -1,0 +1,81 @@
+extends /modules/mt/base.pug
+//- 文章: 收集好用的文字特效網站 ( listicle ). 首頁特效列表下方與頁尾有連結進來.
+//- 截圖 ( 封面 / 各網站的小縮圖 ) 由 tool/maketext/build-article-shots.ls 產生, slug 與那裡的清單對應.
+//- 收錄的網站在 2026-11 確認過還在運作; 更新清單時順便改下面的 updated
+block vars
+  - url = "https://maketext.io/articles/awesome-text-makers/"
+  - var img = "/assets/img/articles/awesome-text-makers/"
+  - thumbnail = "https://maketext.io" + img + "cover.jpg"
+  - thumb = {type: "image/jpeg", width: "1200", height: "630"}
+  - var updated = "November 2026"
+  //- maketext 自己的工具放在各類的第三個
+  -
+    var sections = [
+      {title: "Text Effect & Logo Generators", desc: "type a word, pick a style, download an image.", items: [
+        {slug: "cooltext", name: "Cool Text", url: "https://cooltext.com/", desc: "One of the classic text graphics generators, with a large set of logo styles to choose from."},
+        {slug: "flamingtext", name: "FlamingText", url: "https://flamingtext.com/", desc: "A long-running logo and text image generator with plenty of templates."},
+        {slug: "maketext", name: "maketext.io Cool Text Generator", url: "/", desc: "90+ customizable effects such as neon, 3D, metal and glitch, with 800+ fonts. Download as SVG, PNG, JPG, WEBP or GIF."},
+        {slug: "textstudio", name: "TextStudio", url: "https://www.textstudio.com/", desc: "Hundreds of text style presets like 3D, fire and gold; some fonts and effects need a premium plan."},
+        {slug: "textcraft", name: "Textcraft", url: "https://textcraft.net/", desc: "A text and logo maker known for its Minecraft and 8-bit game styles."},
+        {slug: "fontmeme", name: "FontMeme", url: "https://fontmeme.com/", desc: "A font resource with generators that render your words in the fonts of famous logos, games and movies."}
+      ]},
+      {title: "Font to SVG", desc: "turn letters into vector paths for design tools, cutting machines and the web.", items: [
+        {slug: "google-font-to-svg-path", name: "Google Font to SVG Path", url: "https://danmarshall.github.io/google-font-to-svg-path/", desc: "An open source tool that converts text in any Google Font to SVG paths, and to DXF too."},
+        {slug: "text-to-svg", name: "Text-To-SVG.com", url: "https://text-to-svg.com/", desc: "A simple text to SVG path converter."},
+        {slug: "maketext-font-to-svg", name: "maketext.io Font to SVG", url: "/font-to-svg/", desc: "800+ fonts to SVG paths with an optional outline, copyable SVG code and transparent PNG export."}
+      ]},
+      {title: "Animated Text", desc: "moving letters for videos, streams and websites.", items: [
+        {slug: "loading-text", name: "loading.io Animated Text", url: "https://loading.io/animation/text/", desc: "Animated text with many motion presets, exported as SVG, GIF or APNG."},
+        {slug: "textanim", name: "Textanim", url: "https://textanim.com/", desc: "An animated text generator."},
+        {slug: "glowtxt", name: "GlowTxt", url: "https://glowtxt.com/", desc: "Glowing and glittering animated text GIFs."}
+      ]},
+      {title: "Fancy Text ( Copy & Paste )", desc: "unicode letters that look stylish but are still text, for social posts and nicknames.", items: [
+        {slug: "lingojam", name: "LingoJam Fancy Text", url: "https://lingojam.com/FancyTextGenerator", desc: "A popular copy and paste fancy font generator."},
+        {slug: "fsymbols", name: "fsymbols", url: "https://fsymbols.com/", desc: "Symbols, emoji and fancy text tools in one place."},
+        {slug: "maketext-fancy", name: "maketext.io Fancy Text Generator", url: "/fancy/", desc: "Converts your text into copyable unicode styles."},
+        {slug: "yaytext", name: "YayText", url: "https://yaytext.com/", desc: "Text styling for social media posts: bold, italic, underline and more."},
+        {slug: "coolsymbol", name: "CoolSymbol", url: "https://coolsymbol.com/", desc: "Cool symbols, emoji and fonts to copy."}
+      ]},
+      {title: "Design Tools with Text Effects", desc: "full editors when you need a whole poster or post, not just the words. most need an account.", items: [
+        {slug: "canva", name: "Canva", url: "https://www.canva.com/", desc: "An online design editor with text effects such as shadow, glow, outline and curve."},
+        {slug: "adobe-express", name: "Adobe Express", url: "https://www.adobe.com/express/", desc: "Adobe's quick design app, with text effects and templates."},
+        {slug: "kittl", name: "Kittl", url: "https://www.kittl.com/", desc: "A design platform focused on typography, logos and illustrations."},
+        {slug: "mockofun", name: "MockoFun", url: "https://www.mockofun.com/", desc: "An online graphic design tool with curved text, text on path and other text effects."}
+      ]}
+    ];
+    var total = sections.reduce(function(a, s) { return a + s.items.length; }, 0);
+    title = total + " Awesome Text Makers You Won't Want to Miss · maketext.io";
+    description = "A hand-picked list of " + total + " awesome text makers: cool text and logo generators, font to SVG converters, animated text makers and fancy unicode text tools.";
+block body
+  #landing.text-center.mt-effect-hero
+    .inner
+      .subtitle a curated list
+      h1 #[span Awesome Text Makers]
+      .mt-effect-desc #{total} text effect websites you won't want to miss. updated #{updated}.
+  //- 廣告放在 hero 下方置中, 橫式 ( src/styl/mt/component/carbon.styl 的 .mt-cbad-inline )
+  .mt-cbad-inline-wrap
+    .cbad.mt-cbad-inline
+      script#_carbonads_js(async,type="text/javascript",src="//cdn.carbonads.com/carbon.js?serve=CK7I453J&placement=maketextio")
+  #info.mt-awesome: .inner
+    img.mt-awesome-cover(src=img + "cover.webp",alt="screenshots of awesome text maker websites",width="1200",height="630")
+    p Need stylish text fast? Here is our hand-picked list of awesome text makers on the web, grouped by what you want to make: text effect images, SVG from fonts, animated text, copyable fancy text and full design tools. Know a great tool we missed? Mail us at #[b contact@maketext.io].
+    - var no = 0
+    each s in sections
+      +nbr(2)
+      h2= s.title
+      .sep
+      p.text-muted= s.desc
+      each d in s.items
+        - no++
+        .mt-awesome-item
+          a.mt-awesome-thumb(href=d.url,target=d.url[0] == "/" ? null : "_blank",rel=d.url[0] == "/" ? null : "noopener")
+            img(src=img + d.slug + ".webp",alt=d.name + " screenshot",loading="lazy",width="160",height="100")
+          .mt-awesome-body
+            h3
+              span.mt-awesome-no #{no}.
+              a(href=d.url,target=d.url[0] == "/" ? null : "_blank",rel=d.url[0] == "/" ? null : "noopener")= d.name
+            p= d.desc
+    +nbr(2)
+    p.text-muted.small Last checked #{updated}. Sites change over time; features and pricing are as we found them then.
+  +nbr(5)
+  include /modules/mt/footer.pug

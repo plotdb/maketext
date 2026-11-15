@@ -267,7 +267,7 @@ $(document).ready(function(){
   };
   hasStar = !!document.querySelector('#mt-core-scripts');
   galleryRows = function(keys){
-    var list, res$, i$, ref$, k, len$, html, cols, to$, i, code, j$, j, d, thumb, link, star, num;
+    var list, res$, i$, ref$, k, len$, html, cols, d, thumb, link, item, desc, to$, i, code, j$, j, star, num;
     res$ = [];
     for (i$ = 0, len$ = (ref$ = keys || (fn$())).length; i$ < len$; ++i$) {
       k = ref$[i$];
@@ -278,6 +278,19 @@ $(document).ready(function(){
     list = res$;
     html = [];
     cols = gallery.cols();
+    for (i$ = 0, len$ = list.length; i$ < len$; ++i$) {
+      d = list[i$];
+      if (d[1].page && !keys) {
+        thumb = "<img class=\"thumb\" src=\"/assets/thumb/" + d[0] + ".webp\" loading=\"lazy\" alt=\"" + (d[1].name || d[0]) + "\"\nonerror=\"editor.gallery.fallback(this)\">";
+        link = "<a class=\"mt-effect-link\" href=\"" + d[1].page + "\" title=\"" + (d[1].name || d[0]) + "\">&#8599;</a>";
+        item = "<div class=\"item\" data-type=\"" + d[0] + "\"><div class=\"inner\" style=\"background:" + d[1].bk + "\">" + thumb + "</div>" + link + "</div>";
+        desc = "<div class=\"mt-tool-desc\" data-type=\"" + d[0] + "\"><div class=\"mt-tool-name\">" + (d[1].name || d[0]) + "</div><div>" + (d[1].desc || '') + "</div></div>";
+        html.push("<div class=\"line c" + cols + " mt-tool-line\" style=\"visibility:hidden\">" + item + desc + "</div>");
+      }
+    }
+    list = list.filter(function(it){
+      return !it[1].page;
+    });
     for (i$ = 0, to$ = list.length; cols < 0 ? i$ > to$ : i$ < to$; i$ += cols) {
       i = i$;
       code = "";
@@ -345,8 +358,10 @@ $(document).ready(function(){
   };
   document.querySelector('.gallery').addEventListener('click', function(e){
     var target, type;
-    target = e.target;
-    if (!(target && target.classList && target.classList.contains('item'))) {
+    if (!e.target.closest || e.target.closest('a')) {
+      return;
+    }
+    if (!(target = e.target.closest('.item, .mt-tool-desc'))) {
       return;
     }
     type = target.getAttribute('data-type');
@@ -379,7 +394,7 @@ $(document).ready(function(){
     });
   };
   openEffect = function(type, e){
-    var html, svg, bkcolor, effect, options, colors, k, v, ref$, node, ref1$, results$ = [];
+    var html, svg, bkcolor, effect, options, colors, k, v, ref$, node, ref1$, n;
     html = svgHtml(e);
     html = html.replace(/id="([^"]+)"/g, 'id="editing-$1"');
     html = html.replace(/url\(#([^)]+)\)/g, 'url(#editing-$1)');
@@ -411,6 +426,7 @@ $(document).ready(function(){
     });
     editor.effects.type = type;
     effect = editor.effects[type];
+    document.querySelector('#editor-svg-code-btn').classList.toggle('d-none', !(effects[type] && effects[type].code));
     options = document.querySelector('#editor-custom-options');
     options.innerHTML = '';
     if (effect.js && effect.js.edit) {
@@ -456,9 +472,15 @@ $(document).ready(function(){
     }
     for (k in ref$ = (ref1$ = editor.config).cur || (ref1$.cur = {})) {
       v = ref$[k];
-      results$.push(editor.update(k, v));
+      editor.update(k, v);
     }
-    return results$;
+    if (effects[type].transparent) {
+      editor.update('background', '');
+      if (n = document.querySelector('#editor input[name=background]')) {
+        n.value = 'transparent';
+        return n.parentNode.querySelector('.inner').style.background = '';
+      }
+    }
   };
   gallery.curCols = gallery.cols();
   clusterize = new Clusterize({
@@ -606,22 +628,44 @@ $(document).ready(function(){
     return x$;
   });
   return function(){
-    var q, i$, ref$, len$, ref1$, k, v, m;
+    var q, i$, ref$, len$, ref1$, k, v, type, that;
     q = {};
     for (i$ = 0, len$ = (ref$ = queries).length; i$ < len$; ++i$) {
       ref1$ = ref$[i$], k = ref1$[0], v = ref1$[1];
       q[decodeURIComponent(k)] = decodeURIComponent((v || '').replace(/\+/g, ' '));
     }
-    if (!((q.d || q.edit) && (m = /^\/effect\/([^\/]+)/.exec(location.pathname)) && effects[m[1]])) {
+    type = (that = /^\/effect\/([^\/]+)/.exec(location.pathname))
+      ? that[1]
+      : (function(){
+        var ref$, results$ = [];
+        for (k in ref$ = effects) {
+          v = ref$[k];
+          if (v.page === location.pathname) {
+            results$.push(k);
+          }
+        }
+        return results$;
+      }())[0];
+    if (!(type && effects[type])) {
       return;
     }
-    return Promise.all([mteffect.load(m[1]), mtShare.parse(q)]).then(function(arg$){
+    if (!(q.d || q.edit)) {
+      if (!effects[type].page) {
+        return;
+      }
+      return mteffect.load(type).then(function(e){
+        return openEffect(type, e);
+      })['catch'](function(e){
+        return console.warn("[maketext] editor:", e);
+      });
+    }
+    return Promise.all([mteffect.load(type), mtShare.parse(q)]).then(function(arg$){
       var e, s;
       e = arg$[0], s = arg$[1];
       if (!s) {
         return;
       }
-      openEffect(m[1], e);
+      openEffect(type, e);
       return mtShare.apply(s, !!q.d);
     })['catch'](function(e){
       return console.warn("[maketext] share:", e);
@@ -1513,6 +1557,45 @@ window.convert = {
       }, ref$.width = local.width, ref$.height = local.height, ref$));
     });
   },
+  code: function(){
+    var root, textarea;
+    mtTrack('download', {
+      format: 'code',
+      effect: editor.effects.type
+    });
+    root = document.querySelector('#svg-code-panel');
+    this._codeLdcv = this._codeLdcv || new ldcover({
+      root: root
+    });
+    textarea = root.querySelector('textarea');
+    textarea.value = '';
+    this._codeLdcv.toggle(true);
+    return this.prepare().then(function(arg$){
+      var svg;
+      svg = arg$.svg;
+      Array.from(svg.querySelectorAll('style')).map(function(it){
+        return it.remove();
+      });
+      textarea.value = svg.outerHTML;
+      return svg.remove();
+    });
+  },
+  codeCopy: function(){
+    var root, textarea, p;
+    root = document.querySelector('#svg-code-panel');
+    textarea = root.querySelector('textarea');
+    p = navigator.clipboard
+      ? navigator.clipboard.writeText(textarea.value)
+      : (textarea.select(), Promise.resolve(document.execCommand('copy')));
+    return p.then(function(){
+      var btn;
+      btn = root.querySelector('.mt-svg-code-copy');
+      btn.classList.add('tip-on');
+      return setTimeout(function(){
+        return btn.classList.remove('tip-on');
+      }, 1200);
+    });
+  },
   png: function(){
     return this.raster('png');
   },
@@ -2048,7 +2131,7 @@ webpAnimate = function(frames, w, h){
     type: 'image/webp'
   });
 };
-var tpl, style, star, n, wrap, bar;
+var tpl, style, star, n, k, v, wrap, bar;
 tpl = document.querySelector('#mt-core-scripts');
 style = document.createElement('style');
 document.head.appendChild(style);
@@ -2162,7 +2245,16 @@ star = window.mtStar = {
 };
 if (tpl) {
   if (n = document.querySelector('[data-star-filter=all] .mt-count')) {
-    n.textContent = Object.keys(effects).length;
+    n.textContent = (function(){
+      var ref$, results$ = [];
+      for (k in ref$ = effects) {
+        v = ref$[k];
+        if (!v.page) {
+          results$.push(k);
+        }
+      }
+      return results$;
+    }()).length;
   }
   if (wrap = document.querySelector('.mt-star-filter-wrap')) {
     bar = wrap.querySelector('.mt-star-filter');

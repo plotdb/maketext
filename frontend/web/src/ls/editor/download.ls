@@ -141,6 +141,29 @@ window.convert = do
           name: local.text, content: local.svg.outerHTML,
           type: 'image/svg+xml', postfix: \svg
         } <<< local{width, height}
+  # svg 原始碼 ( effect.yaml 有 code: true 的效果, 例: font to svg ): 同下載的 svg, 顯示在對話框裡可複製
+  code: ->
+    mt-track \download, {format: \code, effect: editor.effects.type}
+    root = document.querySelector \#svg-code-panel
+    @_code-ldcv = @_code-ldcv or new ldcover root: root
+    textarea = root.querySelector \textarea
+    textarea.value = ''
+    @_code-ldcv.toggle true
+    @prepare!then ({svg}) ->
+      # 轉成 path 後不需要給 text 用的樣式
+      Array.from(svg.querySelectorAll \style).map -> it.remove!
+      textarea.value = svg.outerHTML
+      svg.remove!
+  code-copy: ->
+    root = document.querySelector \#svg-code-panel
+    textarea = root.querySelector \textarea
+    p = if navigator.clipboard => navigator.clipboard.writeText(textarea.value) else
+      textarea.select!
+      Promise.resolve document.execCommand(\copy)
+    p.then ->
+      btn = root.querySelector \.mt-svg-code-copy
+      btn.classList.add \tip-on
+      setTimeout (-> btn.classList.remove \tip-on), 1200
   # 點陣格式 ( 下載按鈕旁的下拉選單, src/pug/modules/mt/editor.pug ). API 使用者會用到 png ( 見 index.ls 的說明 )
   png: -> @raster \png
   raster: (format = \png) ->

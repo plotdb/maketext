@@ -49,7 +49,10 @@ settings = ->
   for k of ((e and e.js and e.js.edit) or {}) when cur[k]? => o.p[k] = cur[k]
   o
 
-share-url = -> share-encode(settings!).then (d) -> "#{location.origin}/effect/#{editor.effects.type}/?d=#d"
+# 有自己網址的效果 ( effect.yaml 的 page, 例: /font-to-svg/ ) 用該網址
+share-url = ->
+  type = editor.effects.type
+  share-encode(settings!).then (d) -> "#{location.origin}#{effects[type].page or "/effect/#type/"}?d=#d"
 
 window.mt-share = share = do
   open: -> share-url!then (url) ~>

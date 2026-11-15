@@ -1,0 +1,31 @@
+# 效果描述 ( 名稱 / 排序 / 參數等 ), 欄位說明見 tool/maketext/build-effects.ls
+# 沒有效果的效果: 只有選的字型, 可加外框. 有自己的獨立頁網址 ( page ), 不編號, 列在 All Effects 最上面
+name: Font to SVG
+desc: "Simply convert your text into SVG of the chosen font."
+page: /font-to-svg/
+code: true
+transparent: true
+font: Righteous
+edit:
+  fill:
+    name: fill
+    type: color
+    default: '#222'
+  fillOpacity:
+    name: fill opacity
+    type: number
+    default: 1
+    min: 0
+    max: 1
+    step: 0.05
+  stroke:
+    name: outline
+    type: color
+    default: '#000'
+  strokeWidth:
+    name: outline width
+    type: number
+    default: 0
+    min: 0
+    max: 10
+    step: 0.5

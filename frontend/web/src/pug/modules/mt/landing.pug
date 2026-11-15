@@ -24,18 +24,23 @@ if effect
   #landing.text-center.mt-effect-hero
     include /modules/mt/carbon.pug
     .inner
-      .subtitle text effect ##{effect.no}
+      //- 有自己網址的效果 ( effect.yaml 的 page ) 不編號, 不放收藏
+      if effect.page
+        .subtitle #{effect.label} converter
+      else
+        .subtitle text effect ##{effect.no}
       h1= effect.label
       if effect.desc
         .mt-effect-desc= effect.desc
       .mt-effect-thumb
-        img(src="/assets/thumb/" + effect.key + ".webp",alt=effect.label + " text effect")
-        a.mt-star(href="#",data-star=effect.key,title="star this effect") &#9733;
+        img(src="/assets/thumb/" + effect.key + ".webp",alt=effect.label + (effect.page ? "" : " text effect"))
+        if !effect.page
+          a.mt-star(href="#",data-star=effect.key,title="star this effect") &#9733;
       .widget
         .input-group
           input.form-control.input-lg(type="text", placeholder="type your text here")
           .input-group-append
-            .btn.btn-action.btn-block(onclick="openEffect(" + JSON.stringify(effect.key) + ")") Customize
+            .btn.btn-action.btn-block(onclick="openEffect(" + JSON.stringify(effect.key) + ")")= effect.page ? "Convert" : "Customize"
         br
         a(href="/") or, browse all cool text effects
 else
@@ -74,11 +79,22 @@ if !isApi
 +nbr(2)
 #gallery.gallery
 +nbr(2)
-.text-center: big: a(href="/fancy/")
-  div need 𝔉𝔞𝔫𝔠𝔶 𝔗𝔢𝔵𝔱 in plain text?
-  div check out the fancy text generator!
+.text-center: big
+  a(href="/fancy/")
+    div need 𝔉𝔞𝔫𝔠𝔶 𝔗𝔢𝔵𝔱 in plain text?
+    div check out the fancy text generator!
+  br
+  a(href="/font-to-svg/")
+    div just need the letters as vector shapes?
+    div convert fonts to SVG paths!
+  br
+  a(href="/articles/awesome-text-makers/")
+    div looking for more?
+    div see our list of awesome text makers!
 br
 #info: .inner
+  if effect && effect.key == "font-to-svg"
+    include /modules/mt/font-to-svg.pug
   .text-center
     span.green about this tool
     h1 Cool Text Generator for Modern Age
@@ -94,6 +110,7 @@ br
     li On the Web, on the Fly
     li Easily Customizable
     li Vector Based with Raster Support
+  p Need your text as an image? maketext.io works as a #[span.green text PNG maker] too: type your words, pick an effect and a font, and download a PNG ( background can be transparent ), SVG, JPG, WEBP or even an animated GIF. If you only need plain letters in a font as vector shapes, try our #[a(href="/font-to-svg/") font to SVG converter].
 
   +nbr(2)
   h2 Technical Consideration

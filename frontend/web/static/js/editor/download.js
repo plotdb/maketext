@@ -190,6 +190,45 @@ window.convert = {
       }, ref$.width = local.width, ref$.height = local.height, ref$));
     });
   },
+  code: function(){
+    var root, textarea;
+    mtTrack('download', {
+      format: 'code',
+      effect: editor.effects.type
+    });
+    root = document.querySelector('#svg-code-panel');
+    this._codeLdcv = this._codeLdcv || new ldcover({
+      root: root
+    });
+    textarea = root.querySelector('textarea');
+    textarea.value = '';
+    this._codeLdcv.toggle(true);
+    return this.prepare().then(function(arg$){
+      var svg;
+      svg = arg$.svg;
+      Array.from(svg.querySelectorAll('style')).map(function(it){
+        return it.remove();
+      });
+      textarea.value = svg.outerHTML;
+      return svg.remove();
+    });
+  },
+  codeCopy: function(){
+    var root, textarea, p;
+    root = document.querySelector('#svg-code-panel');
+    textarea = root.querySelector('textarea');
+    p = navigator.clipboard
+      ? navigator.clipboard.writeText(textarea.value)
+      : (textarea.select(), Promise.resolve(document.execCommand('copy')));
+    return p.then(function(){
+      var btn;
+      btn = root.querySelector('.mt-svg-code-copy');
+      btn.classList.add('tip-on');
+      return setTimeout(function(){
+        return btn.classList.remove('tip-on');
+      }, 1200);
+    });
+  },
   png: function(){
     return this.raster('png');
   },

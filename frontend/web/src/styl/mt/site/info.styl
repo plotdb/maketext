@@ -17,3 +17,47 @@
     font-size: 1.2em
     h1
       font-size: 2em
+
+// 文章 awesome text makers ( /articles/awesome-text-makers/ ): 封面圖與每一項的小縮圖
+.mt-awesome
+  .mt-awesome-cover
+    display: block
+    width: 100%
+    height: auto
+    margin: 0 auto 24px
+    border-radius: 6px
+    box-shadow: 0 2px 8px rgba(0,0,0,.15)
+  .mt-awesome-item
+    display: flex
+    align-items: flex-start
+    margin: 16px 0
+  .mt-awesome-thumb
+    flex-grow: 0
+    flex-shrink: 0
+    flex-basis: auto
+    margin-right: 16px
+    img
+      display: block
+      width: 160px
+      height: 100px
+      object-fit: cover
+      object-position: top
+      border-radius: 4px
+      border: 1px solid #ddd
+  .mt-awesome-body
+    flex-grow: 1
+    flex-shrink: 1
+    flex-basis: 0
+    min-width: 0
+    h3
+      font-size: 1.3em
+      margin: 0 0 4px
+    p
+      margin: 0
+  .mt-awesome-no
+    margin-right: 6px
+    color: #999
+@media(max-width: 576px)
+  .mt-awesome .mt-awesome-thumb img
+    width: 96px
+    height: 60px

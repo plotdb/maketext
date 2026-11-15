@@ -1,4 +1,4 @@
-var tpl, style, star, n, wrap, bar;
+var tpl, style, star, n, k, v, wrap, bar;
 tpl = document.querySelector('#mt-core-scripts');
 style = document.createElement('style');
 document.head.appendChild(style);
@@ -112,7 +112,16 @@ star = window.mtStar = {
 };
 if (tpl) {
   if (n = document.querySelector('[data-star-filter=all] .mt-count')) {
-    n.textContent = Object.keys(effects).length;
+    n.textContent = (function(){
+      var ref$, results$ = [];
+      for (k in ref$ = effects) {
+        v = ref$[k];
+        if (!v.page) {
+          results$.push(k);
+        }
+      }
+      return results$;
+    }()).length;
   }
   if (wrap = document.querySelector('.mt-star-filter-wrap')) {
     bar = wrap.querySelector('.mt-star-filter');

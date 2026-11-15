@@ -138,3 +138,25 @@
     top: 150px
 .mt-star-empty
   margin-top: 24px
+
+// 有自己網址的效果 ( 例: font to svg, src/ls/editor/index.ls 的 gallery-rows ): 獨立一行, 左邊縮圖右邊說明
+.gallery .line.mt-tool-line
+  justify-content: flex-start
+  align-items: center
+  .mt-tool-desc
+    flex-grow: 1
+    flex-shrink: 1
+    flex-basis: 0
+    margin: 10px
+    cursor: pointer
+    text-align: left
+    color: #666
+    .mt-tool-name
+      font-size: 1.4em
+      color: #222
+  &.c1
+    flex-wrap: wrap
+    .mt-tool-desc
+      flex-basis: 100%
+      text-align: center
+      margin-top: 0

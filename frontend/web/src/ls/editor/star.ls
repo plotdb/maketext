@@ -62,7 +62,7 @@ star = window.mt-star = do
     if (n = document.querySelector \.mt-star-empty) => n.classList.toggle \d-none, !(filter == \starred and !@list.length)
 
 if tpl =>
-  if (n = document.querySelector '[data-star-filter=all] .mt-count') => n.textContent = Object.keys(effects).length
+  if (n = document.querySelector '[data-star-filter=all] .mt-count') => n.textContent = [k for k, v of effects when !v.page].length
   # 篩選列捲過收合的編輯列 ( 84px, 窄螢幕 150px, 同 gallery.styl ) 時固定在它下方
   if (wrap = document.querySelector \.mt-star-filter-wrap) =>
     bar = wrap.querySelector \.mt-star-filter
