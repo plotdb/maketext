@@ -88,8 +88,11 @@ window.scrollto = scrollto = (node) ->
   $('html,body').animate({ scrollTop: $(node).offset().top }, 300)
 
 document.querySelector('#landing input').addEventListener \keyup, (e) ->
-  if e.keyCode == 13 => scrollto \#top
   update-text @
+  if e.keyCode != 13 => return
+  # 效果頁 ( hero 有 Customize / Convert 按鈕 ): enter 等同按下按鈕, 打開 editor; 首頁則捲到效果列表
+  if (btn = document.querySelector '#landing.mt-effect-hero .btn-action') => btn.click!
+  else scrollto \#top
 document.querySelector(\#text-input).addEventListener \input, -> update-text @
 # 文字欄 ( textarea, 可多行 ): 點擊時展開, 離開時收回 ( css: #editor .mt-text-box )
 do ->
@@ -379,13 +382,7 @@ do ->
   # 效果: /effect/<name>/, 或有自己網址 ( page ) 的效果
   type = if /^\/effect\/([^\/]+)/.exec(location.pathname) => that.1
   else [k for k, v of effects when v.page == location.pathname].0
-  if !(type and effects[type]) => return
-  # 有自己網址的效果 ( 例: /font-to-svg/ ) 是工具頁: 一進來就打開 editor, 關掉後可往下看說明與其它效果
-  if !(q.d or q.edit) =>
-    if !effects[type].page => return
-    return mteffect.load type
-      .then (e) -> open-effect type, e
-      .catch (e) -> console.warn "[maketext] editor:", e
+  if !((q.d or q.edit) and type and effects[type]) => return
   Promise.all [mteffect.load(type), mt-share.parse(q)]
     .then ([e, s]) ->
       if !s => return

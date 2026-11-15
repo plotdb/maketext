@@ -201,10 +201,16 @@ $(document).ready(function(){
     }, 300);
   };
   document.querySelector('#landing input').addEventListener('keyup', function(e){
-    if (e.keyCode === 13) {
-      scrollto('#top');
+    var btn;
+    updateText(this);
+    if (e.keyCode !== 13) {
+      return;
     }
-    return updateText(this);
+    if (btn = document.querySelector('#landing.mt-effect-hero .btn-action')) {
+      return btn.click();
+    } else {
+      return scrollto('#top');
+    }
   });
   document.querySelector('#text-input').addEventListener('input', function(){
     return updateText(this);
@@ -646,18 +652,8 @@ $(document).ready(function(){
         }
         return results$;
       }())[0];
-    if (!(type && effects[type])) {
+    if (!((q.d || q.edit) && type && effects[type])) {
       return;
-    }
-    if (!(q.d || q.edit)) {
-      if (!effects[type].page) {
-        return;
-      }
-      return mteffect.load(type).then(function(e){
-        return openEffect(type, e);
-      })['catch'](function(e){
-        return console.warn("[maketext] editor:", e);
-      });
     }
     return Promise.all([mteffect.load(type), mtShare.parse(q)]).then(function(arg$){
       var e, s;
