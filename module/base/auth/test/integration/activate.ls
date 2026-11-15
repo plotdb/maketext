@@ -31,7 +31,7 @@ setup = ->
     process.exit 77
   psql "-d postgres -q -c 'drop database if exists #DB'"
   psql "-d postgres -q -c 'create database #DB'"
-  psql "-d #DB -q -f #{path.join root, 'config/base/db/init.sql'}"
+  psql "-d #DB -q -f #{path.join root, 'config/base/db/000.init.sql'}"
 
 main = ->
   setup!

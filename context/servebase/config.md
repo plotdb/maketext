@@ -120,25 +120,19 @@ module.exports =
 
 ## 資料庫設定 (config/base/db/)
 
-### schema.sql
-資料庫結構定義。
+schema 檔名為 `<nnn>.<name>.sql`, 數字即執行順序 ( 三位數, 保留間隔 ):
 
-```sql
-CREATE TABLE users (
-  id SERIAL PRIMARY KEY,
-  email VARCHAR(255) UNIQUE NOT NULL,
-  password VARCHAR(255) NOT NULL,
-  name VARCHAR(255),
-  created_at TIMESTAMP DEFAULT NOW()
-);
-
-CREATE INDEX idx_users_email ON users(email);
-```
+- `000.init.sql` - users、session 等基本表, 其他檔案會參照
+- `010.consent.sql` - consent
+- `020.sharedb.sql` - sharedb ( ops / snapshots )
+- `migrate/` - 既有資料庫的升級腳本, 手動執行
 
 ### 初始化
 ```bash
-psql -U user -d dbname -f config/base/db/schema.sql
+npx lsc tool/base/database/init.ls    # -c <name> 指定 config/private/<name>.ls
 ```
+
+依檔名順序跑 `config/base/db`, 再跑專案的 `config/<secret.base>/db`; 檔名沒有數字前綴會中止.
 
 ## 郵件範本 (config/base/mail/)
 

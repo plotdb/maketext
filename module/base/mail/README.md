@@ -199,11 +199,11 @@ p 沒有邊距, email client 沒有那份 css, 不寫死的話寄出去行距就
 
 ## 資料表
 
-`mailspool` / `mailspool_item`, 定義在這個模組的 `index.sql`, 與
-`consent.sql` / `sharedb.sql` 一樣需要手動套用.
+`mailspool` / `mailspool_item`, 定義在這個模組的 `index.sql`.
 
-app 端建議在自己的 `config/*/db/` 放一個指到這裡的 symlink ( grantdash 的
-`config/base/db/mailspool.sql` 就是 ). 建站的人只會看 `config/*/db`,
+app 端建議在自己的 `config/*/db/` 放一個指到這裡的 symlink, 檔名照 `<nnn>.<name>.sql`
+排序 ( 例如 `030.mailspool.sql`; grantdash 的 `config/base/db` 就有一個 ),
+`tool/base/database/init.ls` 就會依序一起跑. 建站的人只會看 `config/*/db`,
 schema 藏在模組底下很容易被忽略; 但抄成兩份的話, 改了一邊另一邊就會悄悄
 過期. `psql -f` 吃得下 symlink.
 

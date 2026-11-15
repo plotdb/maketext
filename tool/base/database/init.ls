@@ -7,6 +7,18 @@ fs = require \fs-extra
 root    = path.join __dirname, \../../..
 sql-dir = path.join root, \config/base/db
 
+# sql files run in file name order: config/base/db first, then the project's own
+# config/<secret.base>/db, so a project's file can reference any base table.
+# every file is named `<nnn>.<name>.sql` ( e.g. `000.init.sql`, `010.consent.sql` ):
+# the number is the order, three digits so plain sorting ( `ls`, the docker
+# entrypoint ) agrees. leave gaps for files added later. a file without it stops
+# init rather than running at an unknown point. only top-level files run:
+# directories are skipped, e.g. migrate/ ( for existing databases ). to group
+# files, put them in a subdirectory and list them in a numbered file with psql's
+# `\ir <dir>/<file>.sql` ( works for both this and the docker entrypoint ).
+# all files are `if not exists`, so re-running is fine.
+sql-name = /^\d{3}\.[^/]+\.sql$/
+
 # same `-c <name>` convention as `./start`, so a repo holding several site
 # configs can init the matching database instead of only `secret`.
 cfg-name = do ->
@@ -34,17 +46,24 @@ psql-sql = (sql, db = \postgres) ->
 psql-file = (file, db = dbname) ->
   run "psql -U postgres -d #{db} -f #{file}"
 
-custom-sql-files = []
+list-sql = (dir) ->
+  fs.readdir-sync dir
+    .filter -> /\.sql$/.test it
+    .sort!
+    .map -> path.join dir, it
+
+sql-files = list-sql sql-dir
 try
+  # `base` is config/base itself, already listed
   if secret.base and secret.base != \base
     custom-dir = path.join root, "config/#{secret.base}/db"
-    if fs.path-exists-sync custom-dir
-      custom-sql-files =
-        fs.readdir-sync custom-dir
-          .filter -> /\.sql$/.test it
-          .sort!
-          .map -> path.join custom-dir, it
+    if fs.path-exists-sync custom-dir => sql-files ++= list-sql custom-dir
 catch e => # skip
+
+if (bad = sql-files.filter -> !sql-name.test path.basename(it)).length =>
+  console.error "\n[init] sql files must be named `<nnn>.<name>.sql` so their order is explicit:"
+  for f in bad => console.error "  #{path.relative root, f}"
+  process.exit 1
 
 console.log "\n[init] creating role #{username}..."
 psql-sql """
@@ -66,22 +85,7 @@ catch => false
 unless db-exists
   psql-sql "CREATE DATABASE #{dbname} OWNER #{username};"
 
-# init.sql 先跑 ( 其他表會 reference users ), 再跑 config/base/db 其餘的 .sql ( consent / sharedb 等 ).
-# 都是 if not exists, 可重複執行. migrate/ 是給既有資料庫的, 不在這裡跑
-base-sql-files =
-  fs.readdir-sync sql-dir
-    .filter -> /\.sql$/.test(it) and it != \init.sql
-    .sort!
-    .map -> path.join sql-dir, it
-
-console.log "\n[init] running config/base/db/init.sql..."
-psql-file path.join(sql-dir, \init.sql)
-
-for f in base-sql-files
-  console.log "\n[init] running #{path.relative root, f}..."
-  psql-file f
-
-for f in custom-sql-files
+for f in sql-files
   rel = path.relative root, f
   console.log "\n[init] running #{rel}..."
   psql-file f

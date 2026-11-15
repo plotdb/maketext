@@ -1,4 +1,4 @@
--- migrate-003: users.system ( 系統狀態, 不送到前端 ) 與 activatetoken ( 啟用管理員代建的帳號 ). see init.sql.
+-- migrate-003: users.system ( 系統狀態, 不送到前端 ) 與 activatetoken ( 啟用管理員代建的帳號 ). see 000.init.sql.
 
 ALTER TABLE users ADD COLUMN IF NOT EXISTS system jsonb;
 

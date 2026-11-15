@@ -108,7 +108,7 @@ user-store.prototype = Object.create(Object.prototype) <<< do
 
     username = username.toLowerCase!
     if !config => config = {}
-    # 長度上限同 users_username_len ( config/base/db/init.sql ); 要在 hashing 前擋掉
+    # 長度上限同 users_username_len ( config/base/db/000.init.sql ); 要在 hashing 前擋掉
     if username.length > 100 or !is-email(username) => return lderror.reject 1015
     if !!internal != /\.invalid$/.test(username) => return lderror.reject 1015
     Promise.resolve!

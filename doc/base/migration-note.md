@@ -21,3 +21,12 @@
    - projects with their own authpanel / admin pages: handle `1052` on login and signup
      ( see block `activate-required` ), and code that reads `config.authinfo.renewpw`
      should read `system.renewpw` too.
+
+ - numbered db schema files
+   - `config/base/db` files are renamed `000.init.sql`, `010.consent.sql`, `020.sharedb.sql`.
+     scripts or docs that point at `config/base/db/init.sql` need the new name.
+   - `tool/base/database/init.ls` now runs every `.sql` in `config/base/db` and then in
+     `config/<secret.base>/db`, in file name order, and stops if any of them isn't named
+     `<nnn>.<name>.sql`. rename the project's own files ( and symlinks, e.g. a
+     `mailspool.sql` pointing at `module/base/mail/index.sql` ) with a three digit prefix.
+     existing databases are unaffected; the files are only run by `init.ls`.

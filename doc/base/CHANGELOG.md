@@ -14,6 +14,16 @@
      authpanel override. The demo bundles its local authpanel and sets `auth.bundle`.
 
  - fixes:
+   - `tool/base/database/init.ls` only ran `config/base/db/init.sql`, so a new database had
+     no `consent` ( `/api/consent` failed with relation "consent" does not exist ) or sharedb
+     tables. It now runs every `.sql` in `config/base/db`, then in the project's
+     `config/<base>/db`, in file name order. Only top-level files run; directories such as
+     `migrate/` are skipped, and grouped files go in a subdirectory listed by a numbered file
+     with psql's `\ir`. To make that order
+     explicit, schema files are named `<nnn>.<name>.sql`: `000.init.sql`, `010.consent.sql`,
+     `020.sharedb.sql`, and `init.ls` stops on a file without the prefix. Same order as the
+     docker image's entrypoint, which sorted `consent.sql` before `init.sql`. `secret.base`
+     of `base` is no longer run twice. See `migration-note.md`.
    - `@servebase/auth`: calling `ui.authpanel` again while the panel was still loading
      created a second panel. Loading is now shared.
    - deps: `@plotdb/srcbuild` ^0.1.12. 0.1.11 was published with `dist/` flattened, so

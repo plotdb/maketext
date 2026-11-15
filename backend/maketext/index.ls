@@ -26,7 +26,7 @@ app.get '*', (req, res, next) ->
   if req.path != p => return res.redirect 301, p
   res.render \effect/index.pug, {effect}
 
-# 收藏 ( star ): 需登入. 表格見 config/web/db/star.sql
+# 收藏 ( star ): 需登入. 表格見 config/web/db/100.star.sql
 # 未登入時清單回空陣列 ( 每頁都會問, 不當成錯誤 )
 api.get \/star, (req, res) ->
   if !(req.user and req.user.key) => return res.send []

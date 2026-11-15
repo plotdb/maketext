@@ -81,9 +81,10 @@ srcbuild 無關。
 `frontend/<site>/package.json` 有一筆明確的 `@plotdb/srcbuild` devDependency 就是為此
 （它自己不建置，但 `lib.pug` 從那裡解析），不要拿掉。
 
-**`frontend/base/package-lock.json` 有進版控。**上面那次舊版復活就是它造成的——
-lockfile 記著 2023 年的解析結果，而 `package.json` 沒有直接提到 srcbuild，npm 就沒有
-理由重新解析。
+上面那次舊版復活是 `frontend/base/package-lock.json` 造成的——lockfile 記著 2023 年的
+解析結果，而 `package.json` 沒有直接提到 srcbuild，npm 就沒有理由重新解析。它早於
+`.gitignore` 的 `package-lock.json` 規則就進了版控，現已移出（ servebase 不提交 lockfile，
+見 `.gitignore` ）；本機留著的舊 lockfile 一樣會鎖住舊版，有疑慮就刪掉重裝。
 
 
 ## 生產環境

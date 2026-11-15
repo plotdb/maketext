@@ -99,7 +99,7 @@ gallery 一開始顯示 build 時以固定文字、預設字型 render 的 webp 
 ## 效果獨立頁、收藏、下載格式 ( 2026-11-12 )
 
  - 效果獨立頁 `/effect/<name>/`：說明取自 `effect.yaml` 的 `desc`，og:image 為 `static/assets/og/<name>.jpg` ( 1200 x 630，build-thumbs.ls 產生 )
- - 收藏 ( star )：表格 `config/web/db/star.sql`，API `/api/star` ( backend/maketext/index.ls )。
+ - 收藏 ( star )：表格 `config/web/db/100.star.sql`，API `/api/star` ( backend/maketext/index.ls )。
    servebase core 只在第一次按收藏時才載入 ( `modules/mt/core.pug` 的 template + `ls/editor/star.ls` )，首頁不多載
  - 下載：SVG 與 PNG / JPG / WEBP / GIF ( 靜態，gifenc 以 dynamic import 載入 )。不支援輸出 webp 的瀏覽器 ( Safari ) 不顯示 WEBP
  - GA 事件 ( `mt-track`，ls/editor/util.ls )：`effect_select` ( from: gallery / effect_page )、`download` ( format )、`star` / `unstar`、

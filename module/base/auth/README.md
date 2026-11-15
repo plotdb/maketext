@@ -3,7 +3,7 @@
 Authentication Subsystem involes following parts:
 
  - db - defines data schema for authentication.
-   - This is defined in `init.sql` under `config/base/db`.
+   - This is defined in `000.init.sql` under `config/base/db`.
  - backend - access endpoint between client and server ( via server API )
  - frontend - how website interact with users via widgets and client API
 
