@@ -47,7 +47,7 @@ then, execute following commands:
 
 based on the configuration, run command as follow:
 
-    psql -h localhost -p 15432 -U pg < config/db/init.sql
+    psql -h localhost -p 15432 -U pg < config/base/db/000.init.sql
 
 
 DB files are default written to /var/folders/postgresql/data/pgdata (see config/base/docker/compose.yaml). Backup those files for a persistent database across containers.

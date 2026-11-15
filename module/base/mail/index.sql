@@ -1,7 +1,7 @@
 -- mailspool: 有紀錄與重試的寄信佇列.
 --
 -- 這份 schema 歸模組所有 ( package.json 的 files 會把它一起發出去 ).
--- app 端的 config/base/db/mailspool.sql 是指到這裡的 symlink - 建站的人
+-- app 端的 config/base/db/<nnn>.mailspool.sql 是指到這裡的 symlink - 建站的人
 -- 只會看 config/base/db, 放在模組底下很容易被忽略; 但真的抄成兩份的話,
 -- 改了一邊另一邊就悄悄過期了.
 --

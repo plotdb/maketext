@@ -1,4 +1,4 @@
--- migrate-002: 2FA ( totp ). see mfa / mfarecovery in init.sql.
+-- migrate-002: 2FA ( totp ). see mfa / mfarecovery in 000.init.sql.
 
 CREATE TABLE IF NOT EXISTS mfa (
   key serial primary key,

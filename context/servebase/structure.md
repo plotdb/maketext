@@ -96,8 +96,10 @@ config/
 │  │  ├─ compose.yaml
 │  │  └─ Dockerfile
 │  ├─ db/            # 資料庫 schema
-│  │  ├─ schema.sql
-│  │  └─ init.sql
+│  │  ├─ 000.init.sql   # <nnn>.<name>.sql, 數字即執行順序
+│  │  ├─ 010.consent.sql
+│  │  ├─ 020.sharedb.sql
+│  │  └─ migrate/       # 既有資料庫的升級腳本
 │  └─ mail/          # 郵件範本
 │     └─ intl/       # 多語系郵件
 │        ├─ en/
