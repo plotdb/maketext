@@ -1,0 +1,19 @@
+//- module
+@import '../vars.styl'
+
+// cookie 告知的底部提示列 ( /modules/mt/cookie.pug ); 在 editor 之上, modal 之下
+#mt-cookie
+  position: fixed
+  left: 0
+  right: 0
+  bottom: 0
+  z-index: index(order, 'ldcp')
+  padding: 8px 16px
+  background: rgba(33,37,41,.95)
+  color: #fff
+  font-size: 14px
+  text-align: center
+  .btn
+    padding-top: 0
+    padding-bottom: 0
+    margin: 4px 0

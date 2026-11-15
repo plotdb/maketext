@@ -36,7 +36,7 @@ psql-file = (file, db = dbname) ->
 
 custom-sql-files = []
 try
-  if secret.base
+  if secret.base and secret.base != \base
     custom-dir = path.join root, "config/#{secret.base}/db"
     if fs.path-exists-sync custom-dir
       custom-sql-files =
@@ -66,8 +66,20 @@ catch => false
 unless db-exists
   psql-sql "CREATE DATABASE #{dbname} OWNER #{username};"
 
+# init.sql 先跑 ( 其他表會 reference users ), 再跑 config/base/db 其餘的 .sql ( consent / sharedb 等 ).
+# 都是 if not exists, 可重複執行. migrate/ 是給既有資料庫的, 不在這裡跑
+base-sql-files =
+  fs.readdir-sync sql-dir
+    .filter -> /\.sql$/.test(it) and it != \init.sql
+    .sort!
+    .map -> path.join sql-dir, it
+
 console.log "\n[init] running config/base/db/init.sql..."
 psql-file path.join(sql-dir, \init.sql)
+
+for f in base-sql-files
+  console.log "\n[init] running #{path.relative root, f}..."
+  psql-file f
 
 for f in custom-sql-files
   rel = path.relative root, f

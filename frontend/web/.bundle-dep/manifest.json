@@ -1,11 +1,11 @@
 {
   "/css/mt/index.css": {
-    "url": "/css/mt/index.css?v=bb2da1384a06",
+    "url": "/css/mt/index.css?v=8541fe63de69",
     "refs": [],
     "generations": []
   },
   "/css/mt/index.min.css": {
-    "url": "/css/mt/index.min.css?v=4d35b03e5295",
+    "url": "/css/mt/index.min.css?v=bd7ca111aff7",
     "refs": [],
     "generations": []
   },
@@ -106,12 +106,12 @@
     "generations": []
   },
   "/assets/bundle/2c436f4d3a76b30ad70c067e9717d0dd.css": {
-    "url": "/assets/bundle/2c436f4d3a76b30ad70c067e9717d0dd.css?v=33032207b6dd",
+    "url": "/assets/bundle/2c436f4d3a76b30ad70c067e9717d0dd.css?v=5e26dca7177f",
     "refs": [],
     "generations": []
   },
   "/assets/bundle/2c436f4d3a76b30ad70c067e9717d0dd.min.css": {
-    "url": "/assets/bundle/2c436f4d3a76b30ad70c067e9717d0dd.min.css?v=a4b2cebd12ed",
+    "url": "/assets/bundle/2c436f4d3a76b30ad70c067e9717d0dd.min.css?v=bb01bb752f6b",
     "refs": [
       "frontend/web/src/pug/api/editor/0.1/index.pug",
       "frontend/web/src/pug/fancy/index.pug",
@@ -193,12 +193,12 @@
     "generations": []
   },
   "/assets/bundle/9f7e52091e46e912b44bf578e14a22fd.css": {
-    "url": "/assets/bundle/9f7e52091e46e912b44bf578e14a22fd.css?v=9dc1a8d7dc65",
+    "url": "/assets/bundle/9f7e52091e46e912b44bf578e14a22fd.css?v=9b0ff27285f0",
     "refs": [],
     "generations": []
   },
   "/assets/bundle/9f7e52091e46e912b44bf578e14a22fd.min.css": {
-    "url": "/assets/bundle/9f7e52091e46e912b44bf578e14a22fd.min.css?v=fa89967f24ba",
+    "url": "/assets/bundle/9f7e52091e46e912b44bf578e14a22fd.min.css?v=6b6b87027d5c",
     "refs": [],
     "generations": []
   },
@@ -538,12 +538,12 @@
     "generations": []
   },
   "/assets/bundle/auth.html": {
-    "url": "/assets/bundle/auth.html?v=8b4b0a11e61f",
+    "url": "/assets/bundle/auth.html?v=78f0a113694e",
     "refs": [],
     "generations": []
   },
   "/assets/bundle/auth.min.html": {
-    "url": "/assets/bundle/auth.min.html?v=8b4b0a11e61f",
+    "url": "/assets/bundle/auth.min.html?v=78f0a113694e",
     "refs": [],
     "generations": []
   }

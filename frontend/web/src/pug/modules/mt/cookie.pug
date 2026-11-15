@@ -1,0 +1,17 @@
+//- module
+//- cookie 告知 ( 所有訪客 ): 底部提示列, 不擋操作. 按 OK 後記在 localStorage, 不再出現.
+//- 只是告知, GA ( ga.pug ) 照常載入. 樣式在 src/styl/mt/site/cookie.styl
+#mt-cookie.d-none
+  span.mr-2 By continuing to browse, you agree to our use of cookies.
+  a.btn.btn-sm.btn-outline-light.mr-2(href="/privacy") Details
+  .btn.btn-sm.btn-light OK
+script.
+  (function(){
+    var k = "mt-cookie-consent", n = document.getElementById("mt-cookie");
+    try { if (localStorage.getItem(k)) return; } catch (e) {}
+    n.classList.remove("d-none");
+    n.querySelector(".btn-light").addEventListener("click", function(){
+      try { localStorage.setItem(k, Date.now()); } catch (e) {}
+      n.parentNode.removeChild(n);
+    });
+  })();
