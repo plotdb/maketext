@@ -154,6 +154,21 @@ fs.readdir-sync __dirname
   .map -> require(it) backend, {api: demo-api, app: demo-app}
 ```
 
+### demo: ChatGPT 外掛程式 (backend/base/gpt-plugin/)
+
+`route.public` 的 `/demo/gpt-plugin/<name>/` ( session / CSRF 之前, 呼叫方是 OpenAI 的伺服器 ), 每個子資料夾一個 plugin, 匯出 `route(router, backend)`:
+
+- `mcp.ls`: 手寫的精簡 MCP server ( streamable HTTP, stateless + JSON response, 只有 tools / resources ), 不依賴 @modelcontextprotocol/sdk.
+  tool 的 `handler(args, req)`、resource 的 `text(req)` 拿得到這次的請求
+- UI 走 MCP Apps: tool 的 `_meta.ui.resourceUri` 指向 `ui://` 資源 ( mimeType `text/html;profile=mcp-app` ), ChatGPT 以 iframe 呈現,
+  iframe 與 host 以 postMessage JSON-RPC 溝通 ( `ui/initialize`、`ui/message`、`ui/update-model-context`、`ui/notifications/size-changed` )
+- GPT Action 形式: 另匯出 `openapi(server-url)`, 提供 `<name>/openapi.json`
+- 選用 API key: `config.gpt-plugin.apikey` ( 全部 ) 或 `config.gpt-plugin.<name>.apikey`, 以 `Authorization: Bearer <key>` 驗證
+- 錯誤由 plugin router 自己回 JSON ( 全站 error handler 會把非 /api 路徑轉成 490 頁 )
+- 範例 `minesweeper`: 對話內可玩的踩地雷, 結束時以 `ui/update-model-context` 更新戰績, 過關時以 `ui/message` 送出用時.
+  ChatGPT 開發者模式加 `https://<host>/demo/gpt-plugin/minesweeper/mcp`; `/demo/gpt-plugin/minesweeper/preview` 直接在瀏覽器玩
+- 實際使用: makechart.io 的 `backend/gpt-plugin/makechart` ( 在對話裡畫圖 )
+
 ### API vs App 路由
 
 #### API 路由 (/api/*)

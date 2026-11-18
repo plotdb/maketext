@@ -1,0 +1,408 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>踩地雷</title>
+<style>
+:root {
+  --bg: #ffffff;
+  --fg: #1f2328;
+  --muted: #6b7280;
+  --cell: #d6dbe1;
+  --cell-hover: #c8ced6;
+  --open: #f3f4f6;
+  --line: #e5e7eb;
+  --boom: #f87171;
+  --accent: #2563eb;
+  --n1: #2563eb; --n2: #16a34a; --n3: #dc2626; --n4: #7c3aed;
+  --n5: #b45309; --n6: #0891b2; --n7: #111827; --n8: #6b7280;
+  --size: 28px;
+}
+:root[data-theme="dark"] {
+  --bg: #1f1f1f;
+  --fg: #ececec;
+  --muted: #9ca3af;
+  --cell: #3b3f45;
+  --cell-hover: #4a4f56;
+  --open: #2a2a2a;
+  --line: #333;
+  --boom: #b91c1c;
+  --accent: #60a5fa;
+  --n1: #60a5fa; --n2: #4ade80; --n3: #f87171; --n4: #c084fc;
+  --n5: #fbbf24; --n6: #22d3ee; --n7: #e5e7eb; --n8: #9ca3af;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; background: var(--bg); color: var(--fg); }
+body {
+  font: 14px/1.4 -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang TC", "Noto Sans TC", sans-serif;
+  padding: 12px;
+  -webkit-user-select: none; user-select: none;
+}
+.bar {
+  display: flex; align-items: center; justify-content: space-between; gap: 8px;
+  margin: 0 auto 10px;
+}
+.stat {
+  font-variant-numeric: tabular-nums; font-weight: 600; font-size: 16px;
+  min-width: 52px; white-space: nowrap;
+}
+.stat small { color: var(--muted); font-weight: 400; font-size: 12px; margin-right: 4px; }
+.controls { display: flex; gap: 6px; align-items: center; }
+button, select {
+  font: inherit; color: var(--fg); background: var(--open);
+  border: 1px solid var(--line); border-radius: 8px; padding: 4px 10px; cursor: pointer;
+}
+button:hover, select:hover { border-color: var(--muted); }
+button[aria-pressed="true"] { background: var(--accent); border-color: var(--accent); color: #fff; }
+.face { font-size: 18px; padding: 2px 10px; }
+.wrap { overflow-x: auto; display: flex; justify-content: center; }
+.board {
+  display: grid; gap: 2px;
+  grid-template-columns: repeat(var(--cols), var(--size));
+  grid-auto-rows: var(--size);
+  touch-action: manipulation;
+}
+.cell {
+  border: 0; border-radius: 4px; padding: 0;
+  background: var(--cell);
+  font-weight: 700; font-size: calc(var(--size) * .55);
+  display: flex; align-items: center; justify-content: center;
+}
+.cell:hover { background: var(--cell-hover); }
+.cell.open { background: var(--open); cursor: default; }
+.cell.boom { background: var(--boom); }
+.cell[data-n="1"] { color: var(--n1); } .cell[data-n="2"] { color: var(--n2); }
+.cell[data-n="3"] { color: var(--n3); } .cell[data-n="4"] { color: var(--n4); }
+.cell[data-n="5"] { color: var(--n5); } .cell[data-n="6"] { color: var(--n6); }
+.cell[data-n="7"] { color: var(--n7); } .cell[data-n="8"] { color: var(--n8); }
+.msg { text-align: center; margin-top: 10px; min-height: 20px; color: var(--muted); }
+.msg.win { color: var(--n2); font-weight: 600; }
+.msg.lose { color: var(--n3); font-weight: 600; }
+</style>
+</head>
+<body>
+<div class="bar" id="bar">
+  <div class="stat"><small>💣</small><span id="left">10</span></div>
+  <div class="controls">
+    <select id="level" aria-label="難度">
+      <option value="beginner">初級 9×9</option>
+      <option value="intermediate">中級 16×16</option>
+      <option value="expert">高級 30×16</option>
+    </select>
+    <button class="face" id="face" title="重新開始">🙂</button>
+    <button id="flag" aria-pressed="false" title="插旗模式（觸控用）">🚩</button>
+  </div>
+  <div class="stat" style="text-align:right"><small>⏱</small><span id="time">0.0</span></div>
+</div>
+<div class="wrap"><div class="board" id="board"></div></div>
+<div class="msg" id="msg">左鍵翻開、右鍵插旗；點已翻開的數字可快速翻開周圍</div>
+
+<script>
+// ---------- MCP Apps bridge：JSON-RPC over postMessage ----------
+// 直接開 /preview 時沒有 host ( parent === window )，bridge 全部變成 no-op，遊戲照常可玩
+const bridge = (() => {
+  const hosted = window.parent !== window
+  let nextId = 1
+  const pending = new Map()
+  const handlers = {}
+  window.addEventListener('message', (e) => {
+    if (e.source !== window.parent) return
+    const m = e.data
+    if (!m || m.jsonrpc !== '2.0') return
+    if (m.id != null && pending.has(m.id)) {
+      const { resolve, reject } = pending.get(m.id)
+      pending.delete(m.id)
+      m.error ? reject(new Error(m.error.message)) : resolve(m.result)
+    } else if (m.method && handlers[m.method]) {
+      handlers[m.method](m.params || {})
+      // host 的 request ( 例如 ui/resource-teardown ) 需要回應
+      if (m.id != null) window.parent.postMessage({ jsonrpc: '2.0', id: m.id, result: {} }, '*')
+    }
+  })
+  return {
+    hosted,
+    request (method, params) {
+      if (!hosted) return Promise.resolve(null)
+      const id = nextId++
+      return new Promise((resolve, reject) => {
+        pending.set(id, { resolve, reject })
+        window.parent.postMessage({ jsonrpc: '2.0', id, method, params }, '*')
+      })
+    },
+    notify (method, params) {
+      if (hosted) window.parent.postMessage({ jsonrpc: '2.0', method, params }, '*')
+    },
+    on (method, fn) { handlers[method] = fn }
+  }
+})()
+
+// ---------- 遊戲 ----------
+const LEVELS = {
+  beginner: { label: '初級', rows: 9, cols: 9, mines: 10 },
+  intermediate: { label: '中級', rows: 16, cols: 16, mines: 40 },
+  expert: { label: '高級', rows: 16, cols: 30, mines: 99 }
+}
+const $ = (id) => document.getElementById(id)
+const boardEl = $('board')
+const history = []
+let level = 'beginner'
+let g = null
+let flagMode = false
+let tick = null
+
+function newGame (key = level) {
+  level = LEVELS[key] ? key : 'beginner'
+  $('level').value = level
+  const { rows, cols, mines } = LEVELS[level]
+  clearInterval(tick)
+  g = {
+    rows, cols, mines,
+    mine: new Array(rows * cols).fill(false),
+    open: new Array(rows * cols).fill(false),
+    flag: new Array(rows * cols).fill(false),
+    placed: false, over: false, opened: 0, start: 0, elapsed: 0
+  }
+  boardEl.style.setProperty('--cols', cols)
+  boardEl.innerHTML = ''
+  for (let i = 0; i < rows * cols; i++) {
+    const b = document.createElement('button')
+    b.className = 'cell'
+    b.dataset.i = i
+    b.setAttribute('aria-label', `第 ${Math.floor(i / cols) + 1} 列第 ${i % cols + 1} 行`)
+    boardEl.appendChild(b)
+  }
+  fitSize()
+  $('face').textContent = '🙂'
+  $('time').textContent = '0.0'
+  setMsg('左鍵翻開、右鍵插旗；點已翻開的數字可快速翻開周圍')
+  render()
+}
+
+function neighbors (i) {
+  const r = Math.floor(i / g.cols), c = i % g.cols, out = []
+  for (let dr = -1; dr <= 1; dr++) {
+    for (let dc = -1; dc <= 1; dc++) {
+      if (!dr && !dc) continue
+      const rr = r + dr, cc = c + dc
+      if (rr >= 0 && rr < g.rows && cc >= 0 && cc < g.cols) out.push(rr * g.cols + cc)
+    }
+  }
+  return out
+}
+
+// 第一下一定安全：避開點擊格與周圍八格再佈雷
+function placeMines (safe) {
+  const banned = new Set([safe, ...neighbors(safe)])
+  const pool = []
+  for (let i = 0; i < g.mine.length; i++) if (!banned.has(i)) pool.push(i)
+  for (let k = 0; k < g.mines; k++) {
+    const j = k + Math.floor(Math.random() * (pool.length - k))
+    ;[pool[k], pool[j]] = [pool[j], pool[k]]
+    g.mine[pool[k]] = true
+  }
+  g.placed = true
+  g.start = performance.now()
+  tick = setInterval(() => { $('time').textContent = elapsed().toFixed(1) }, 100)
+}
+
+const elapsed = () => g.over ? g.elapsed : (g.placed ? (performance.now() - g.start) / 1000 : 0)
+const count = (i) => neighbors(i).filter((j) => g.mine[j]).length
+
+function reveal (i) {
+  if (g.over || g.flag[i] || g.open[i]) return
+  if (!g.placed) placeMines(i)
+  if (g.mine[i]) return lose(i)
+  // 用 stack 展開空白區，避免大盤面遞迴過深
+  const stack = [i]
+  while (stack.length) {
+    const j = stack.pop()
+    if (g.open[j] || g.flag[j]) continue
+    g.open[j] = true
+    g.opened++
+    if (count(j) === 0) stack.push(...neighbors(j).filter((k) => !g.open[k]))
+  }
+  if (g.opened === g.rows * g.cols - g.mines) win()
+}
+
+// 點已翻開的數字：旗數等於數字時翻開其餘鄰格
+function chord (i) {
+  const ns = neighbors(i)
+  if (ns.filter((j) => g.flag[j]).length !== count(i)) return
+  for (const j of ns) if (!g.flag[j] && !g.open[j]) reveal(j)
+}
+
+function toggleFlag (i) {
+  if (g.over || g.open[i]) return
+  g.flag[i] = !g.flag[i]
+}
+
+function finish () {
+  g.elapsed = (performance.now() - g.start) / 1000
+  g.over = true
+  clearInterval(tick)
+  $('time').textContent = g.elapsed.toFixed(1)
+}
+
+function win () {
+  finish()
+  g.mine.forEach((m, i) => { if (m) g.flag[i] = true })
+  $('face').textContent = '😎'
+  const sec = +g.elapsed.toFixed(1)
+  setMsg(`過關！用時 ${sec} 秒`, 'win')
+  report(true, sec)
+}
+
+function lose (i) {
+  finish()
+  g.boom = i
+  $('face').textContent = '😵'
+  const sec = +g.elapsed.toFixed(1)
+  setMsg(`踩到地雷了（${sec} 秒）。按 🙂 再來一局`, 'lose')
+  report(false, sec)
+}
+
+// ---------- 把結果交給 GPT ----------
+// update-model-context：靜默更新，下次對話時 model 看得到完整戰績
+// ui/message：過關時以使用者身分發一則訊息，讓 GPT 立刻回應成績
+function report (won, sec) {
+  const L = LEVELS[level]
+  history.push({ level, won, seconds: sec, at: new Date().toISOString() })
+  const wins = history.filter((h) => h.won && h.level === level)
+  const best = wins.length ? Math.min(...wins.map((h) => h.seconds)) : null
+  const summary = `Minesweeper ${L.label} (${L.cols}x${L.rows}, ${L.mines} mines): ` +
+    (won ? `cleared in ${sec}s` : `hit a mine after ${sec}s`) +
+    `. Session: ${history.length} games, ${history.filter((h) => h.won).length} wins` +
+    (best != null ? `, best ${L.label} time ${best}s.` : '.')
+  bridge.request('ui/update-model-context', {
+    content: [{ type: 'text', text: summary }],
+    structuredContent: { last: history[history.length - 1], history }
+  }).catch(() => {})
+  if (won) {
+    const isBest = best === sec && wins.length > 1
+    const text = `我剛剛踩地雷過關了！難度：${L.label}（${L.cols}×${L.rows}，${L.mines} 顆雷），用時 ${sec} 秒` +
+      (isBest ? '，是這次的最佳紀錄' : '') + '。'
+    bridge.request('ui/message', { role: 'user', content: { type: 'text', text } })
+      .catch(() => setMsg(`過關！用時 ${sec} 秒（無法自動通知 ChatGPT）`, 'win'))
+  }
+}
+
+// ---------- 畫面 ----------
+function render () {
+  const cells = boardEl.children
+  for (let i = 0; i < cells.length; i++) {
+    const b = cells[i]
+    let text = '', cls = 'cell', n = ''
+    if (g.open[i]) {
+      cls += ' open'
+      const c = count(i)
+      if (c) { text = c; n = c }
+    } else if (g.over && g.mine[i] && !g.flag[i]) {
+      text = '💣'
+      cls += ' open'
+    } else if (g.flag[i]) {
+      // 輸了才標出插錯的旗
+      text = g.over && !g.mine[i] ? '❌' : '🚩'
+    }
+    if (g.boom === i) cls += ' boom'
+    b.className = cls
+    b.textContent = text
+    if (n) b.dataset.n = n; else delete b.dataset.n
+  }
+  $('left').textContent = g.mines - g.flag.filter(Boolean).length
+}
+
+function setMsg (text, cls = '') {
+  $('msg').textContent = text
+  $('msg').className = 'msg ' + cls
+}
+
+// 依容器寬度決定格子大小，高級盤面在窄 iframe 也塞得下
+function fitSize () {
+  const avail = document.documentElement.clientWidth - 24
+  const size = Math.max(18, Math.min(32, Math.floor((avail - (g.cols - 1) * 2) / g.cols)))
+  boardEl.style.setProperty('--size', size + 'px')
+  // 工具列至少 380px，初級盤面太窄時才不會把計時器擠到下一行
+  $('bar').style.maxWidth = Math.max(380, size * g.cols + (g.cols - 1) * 2) + 'px'
+}
+
+// ---------- 操作 ----------
+function act (i, flag) {
+  if (g.over) return
+  if (flag) toggleFlag(i)
+  else if (g.open[i]) chord(i)
+  else reveal(i)
+  render()
+}
+
+boardEl.addEventListener('click', (e) => {
+  const b = e.target.closest('.cell')
+  if (b) act(+b.dataset.i, flagMode)
+})
+boardEl.addEventListener('contextmenu', (e) => {
+  e.preventDefault()
+  const b = e.target.closest('.cell')
+  if (b) act(+b.dataset.i, true)
+})
+// 觸控長按插旗；長按後吞掉接著來的 click
+let press = null
+boardEl.addEventListener('touchstart', (e) => {
+  const b = e.target.closest('.cell')
+  if (!b) return
+  press = setTimeout(() => {
+    press = 'fired'
+    act(+b.dataset.i, true)
+  }, 400)
+}, { passive: true })
+boardEl.addEventListener('touchend', (e) => {
+  if (press === 'fired') e.preventDefault()
+  else clearTimeout(press)
+  press = null
+})
+boardEl.addEventListener('touchmove', () => { clearTimeout(press); press = null }, { passive: true })
+
+$('face').addEventListener('click', () => newGame())
+$('level').addEventListener('change', (e) => newGame(e.target.value))
+$('flag').addEventListener('click', () => {
+  flagMode = !flagMode
+  $('flag').setAttribute('aria-pressed', flagMode)
+})
+window.addEventListener('resize', () => { if (g) fitSize() })
+
+// ---------- 與 host 互動 ----------
+function applyContext (ctx = {}) {
+  if (ctx.theme) document.documentElement.dataset.theme = ctx.theme
+}
+
+// host 依內容調整 iframe 高度。不用 scrollHeight：它不會小於 iframe 現有高度，盤面變小時縮不回來
+new ResizeObserver(() => {
+  const r = document.body.getBoundingClientRect()
+  bridge.notify('ui/notifications/size-changed', { width: Math.ceil(r.width), height: Math.ceil(r.height) })
+}).observe(document.body)
+
+bridge.on('ui/notifications/tool-input', (p) => {
+  const d = p.arguments && p.arguments.difficulty
+  if (d && d !== level) newGame(d)
+})
+bridge.on('ui/notifications/tool-result', (p) => {
+  const d = p.structuredContent && p.structuredContent.difficulty
+  if (d && d !== level && !g.placed) newGame(d)
+})
+bridge.on('ui/notifications/host-context-changed', applyContext)
+
+if (window.matchMedia && matchMedia('(prefers-color-scheme: dark)').matches) {
+  document.documentElement.dataset.theme = 'dark'
+}
+newGame('beginner')
+
+bridge.request('ui/initialize', {
+  appInfo: { name: 'minesweeper', version: '0.1.0' },
+  appCapabilities: { availableDisplayModes: ['inline', 'fullscreen'] },
+  protocolVersion: '2026-01-26'
+}).then((r) => {
+  applyContext(r && r.hostContext)
+  bridge.notify('ui/notifications/initialized', {})
+}).catch(() => {})
+</script>
+</body>
+</html>
