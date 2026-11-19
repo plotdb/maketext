@@ -1,9 +1,10 @@
 # error-handler 對 body-parser 錯誤的處理. 用真的 body-parser 打本機 port, 確認錯誤的 type 對得上.
+# 以及非 /api 網址的 404: 有 static/err/404.html 時回真正的 404 頁, 沒有時照舊 490.
 #
 #   npm test -- error-handler
 #   ./node_modules/.bin/lsc test/unit/error-handler.ls
 
-require! <[path http express body-parser lderror]>
+require! <[fs os path http express body-parser lderror]>
 error-handler = require path.join(__dirname, \../../backend/engine/error-handler)
 
 failed = 0
@@ -24,7 +25,14 @@ app.get \/throw/:name, (req, res, next) ->
   | \plain => Object.assign new Error("oops"), {status: 415}
   | \lderror => lderror 1005
 app.post \/ok, (req, res) -> res.send \ok
-app.use error-handler {config: {log: {}}, log-error: {warn: (->), debug: (->)}}
+app.use (req, res, next) -> next lderror(404) # nothing match, as backend/engine/index.ls does
+backend = {config: {log: {}}, log-error: {warn: (->), debug: (->)}}
+app.use error-handler backend
+# 站台的 frontend root, 只有 static/err/404.html
+feroot = fs.mkdtemp-sync path.join(os.tmpdir!, 'servebase-test-')
+fs.mkdir-sync path.join(feroot, 'static/err'), {recursive: true}
+fs.write-file-sync path.join(feroot, 'static/err/404.html'), 'not found page'
+
 
 request = ({port, method = \POST, url = \/api/json, headers = {}, body = ''}) -> new Promise (res, rej) ->
   req = http.request {host: '127.0.0.1', port, method, path: url, headers}, (r) ->
@@ -66,10 +74,21 @@ server = app.listen 0, '127.0.0.1', ->
     .then (r) ->
       ok (r.status == 490 and JSON.parse(r.body).id == 1005), "lderror: 照舊回 490"
       ok !errors!, "lderror: 不記 error"
+      request {port, method: \GET, url: \/no/such/page}
+    .then (r) ->
+      ok (r.status == 490 and JSON.parse(r.body).id == 404), "404 頁面, 站台沒有 404.html: 照舊回 490"
+      backend.feroot = feroot
+      request {port, method: \GET, url: \/no/such/page}
+    .then (r) ->
+      ok (r.status == 404 and r.body == 'not found page'), "404 頁面: 回 404 與 static/err/404.html"
+      request {port, method: \GET, url: \/api/no/such/api}
+    .then (r) ->
+      ok (r.status == 490 and JSON.parse(r.body).id == 404), "404 api: 照舊回 490 與 lderror"
     .catch (e) ->
       console.log e
       failed := failed + 1
     .then ->
       server.close!
+      fs.rm-sync feroot, {recursive: true, force: true}
       if failed => console.log "\n#failed failed"
       process.exit (if failed => 1 else 0)

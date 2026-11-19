@@ -18,6 +18,7 @@ Server side errors are processed by `error-handler.ls`. Before migrating to expr
  - All Errors that are not `lderror` will be dumped, generate 500 error.
    - `EBADCSRFTOKEN` error and `URIError` will be handled separatedly, since these are errors from engine.
  - All lderror won't be dumped, but generate 490 error and sent to client.
+   - except `lderror 404` of a non-API url ( nothing matched, see the end of `backend/engine/index.ls` ): it's sent with a real 404 status and `static/err/404.html` of the frontend root ( built from `src/pug/err/404.pug` ), so search engines see a missing page instead of a blocked one. sites without that file keep the 490 page.
 
 For custom routes, you should wrap them in `routecatch` manually in case of uncaught rejections:
 
