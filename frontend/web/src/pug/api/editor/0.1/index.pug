@@ -2,6 +2,8 @@
 extends /modules/mt/base.pug
 block vars
   - url = "https://maketext.io/editor/0.1/"
+  //- 內容與首頁相同, 且網址帶著嵌入方的文字 ( ?t= ), 不給索引
+  - noindex = true
 block body
   - var isApi = true
   include /modules/mt/landing.pug

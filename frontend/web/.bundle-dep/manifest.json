@@ -119,7 +119,8 @@
       "frontend/web/src/pug/privacy/index.pug",
       "frontend/web/src/pug/index.pug",
       "/Users/tkirby/workspace/maketext/server/frontend/web/src/pug/effect/index.pug",
-      "frontend/web/src/pug/articles/awesome-text-makers/index.pug"
+      "frontend/web/src/pug/articles/awesome-text-makers/index.pug",
+      "frontend/web/src/pug/err/404.pug"
     ],
     "generations": []
   },
@@ -147,7 +148,8 @@
       "frontend/web/src/pug/privacy/index.pug",
       "frontend/web/src/pug/index.pug",
       "/Users/tkirby/workspace/maketext/server/frontend/web/src/pug/effect/index.pug",
-      "frontend/web/src/pug/articles/awesome-text-makers/index.pug"
+      "frontend/web/src/pug/articles/awesome-text-makers/index.pug",
+      "frontend/web/src/pug/err/404.pug"
     ],
     "generations": []
   },

@@ -41,3 +41,18 @@ api.put \/star/:name, aux.signedin, (req, res) ->
 api.delete \/star/:name, aux.signedin, (req, res) ->
   db.query "delete from star where owner = $1 and effect = $2", [req.user.key, req.params.name]
     .then -> res.send {}
+
+# sitemap: 固定頁面 + 每個效果的獨立頁 + 文章 ( static/articles/<name>/ )
+articles-dir = path.join __dirname, '../../frontend/web/static/articles'
+app.get \/sitemap.xml, (req, res) ->
+  urls = <[/ /fancy/ /privacy /tos]>
+  urls ++= [(v.page or "/effect/#k/") for k, v of effects!]
+  urls ++= fs.readdir-sync(articles-dir)
+    .filter -> fs.exists-sync path.join(articles-dir, it, 'index.html')
+    .map -> "/articles/#it/"
+  res.type \application/xml .send """
+  <?xml version="1.0" encoding="UTF-8"?>
+  <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  #{urls.map(-> "  <url><loc>https://maketext.io#it</loc></url>").join('\n')}
+  </urlset>
+  """

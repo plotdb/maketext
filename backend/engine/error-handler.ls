@@ -1,4 +1,4 @@
-require! <[lderror @plotdb/suuid ./aux]>
+require! <[path lderror @plotdb/suuid ./aux]>
 
 (backend) <- (->module.exports = it)  _
 
@@ -8,6 +8,9 @@ body-parser-errors = <[encoding.unsupported charset.unsupported entity.too.large
 
 # for serving a friendly error page if it's not an API and prevent looping error
 route490 = (req, res, err) ->
+  # 不存在的網頁: 用真正的 404 狀態碼送出 404 頁, 而非 490 錯誤頁 ( 搜尋引擎會把 490 當成封鎖, 且各錯誤頁內容相同被視為重複 )
+  if err.id == 404 and !/^\/api/.exec(req.originalUrl) =>
+    return res.status 404 .sendFile path.resolve(__dirname, '../..', backend.feroot, 'static/err/404.html')
   if !/^\/api/.exec(req.originalUrl) and !/^\/err\/490/.exec(req.originalUrl) =>
     # cookie domain: webmasters.stackexchange.com/questions/55790
     #  - no domain: request-host will be used

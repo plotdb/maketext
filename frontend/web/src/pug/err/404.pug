@@ -1,0 +1,12 @@
+//- 找不到網頁. 不存在的網址由 backend/engine/error-handler.ls 以 404 狀態碼送出這頁
+extends /modules/mt/base.pug
+block vars
+  - title = "Page Not Found · maketext.io"
+  - noindex = true
+block body
+  .container.text-center.py-5(style="min-height:60vh")
+    .py-5
+      h1.display-4 404
+      p.lead This page doesn't exist.
+      a.btn.btn-primary.btn-lg(href="/") Make Some Text
+  include /modules/mt/footer.pug

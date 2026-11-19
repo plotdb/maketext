@@ -9,6 +9,8 @@ doctype html
 - var title = "Cool Text Generator & Text PNG Maker - 90+ Effects x 800+ Fonts · maketext.io"
 - var description = "An awesome text maker: style your words and logos with 90+ customizable effects and 800+ fonts, then download them as transparent PNG, SVG or GIF within seconds."
 - var url = "https://maketext.io/"
+//- 不給搜尋引擎索引的頁面 ( 例: 嵌入用的 editor, 錯誤頁 ) 設為 true. 這類頁面不輸出 canonical
+- var noindex = false
 html(lang="en")
   include @/@loadingio/bootstrap.ext/index.pug
   include /modules/mt/mixins.pug
@@ -20,6 +22,10 @@ html(lang="en")
     meta(name="viewport", content="width=device-width, initial-scale=1.0, maximum-scale=1.0")
     title= title
     meta(name="description", content=description)
+    if noindex
+      meta(name="robots", content="noindex")
+    else
+      link(rel="canonical", href=url)
     meta(property="og:locale", content="en_US")
     meta(property="og:image", content=thumbnail)
     meta(property="og:image:type", content=thumb.type)

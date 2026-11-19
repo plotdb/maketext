@@ -10,7 +10,7 @@ function pug_merge(e,r){if(1===arguments.length){for(var t=e[0],g=1;g<e.length;g
 function pug_style(r){if(!r)return"";if("object"==typeof r){var t="";for(var e in r)pug_has_own_property.call(r,e)&&(t=t+e+":"+r[e]+";");return t}return r+""}function template(locals) {var pug_html = "", pug_mixins = {}, pug_interp;;
     var locals_for_with = (locals || {});
     
-    (function (Array, JSON, asseturl, b64img, blockLoader, bundleurl, c, cssLoader, debug, decache, defer, description, effect, escape, favicon, gaIds, hashfile, isApi, libLoader, md5, scriptLoader, thumb, thumbnail, title, url, version) {
+    (function (Array, JSON, asseturl, b64img, blockLoader, bundleurl, c, cssLoader, debug, decache, defer, description, effect, escape, favicon, gaIds, hashfile, isApi, libLoader, md5, noindex, scriptLoader, thumb, thumbnail, title, url, version) {
       pug_html = pug_html + "\u003C!DOCTYPE html\u003E";
 if(!libLoader) {
   libLoader = {
@@ -170,6 +170,7 @@ var favicon = "/assets/img/favicon.png"
 var title = "Cool Text Generator & Text PNG Maker - 90+ Effects x 800+ Fonts · maketext.io"
 var description = "An awesome text maker: style your words and logos with 90+ customizable effects and 800+ fonts, then download them as transparent PNG, SVG or GIF within seconds."
 var url = "https://maketext.io/"
+var noindex = false
 pug_html = pug_html + "\u003Chtml lang=\"en\"\u003E";
 if (!(libLoader || scriptLoader)) {
 if(!scriptLoader) { scriptLoader = {url: {}, config: {}}; }
@@ -291,7 +292,14 @@ pug_html = pug_html + "\u003Cscript\u003Egtag('config', '" + (pug_escape(null ==
 }).call(this);
 
 }
-pug_html = pug_html + "\u003Cmeta charset=\"utf-8\"\u003E\u003Cmeta name=\"viewport\" content=\"width=device-width, initial-scale=1.0, maximum-scale=1.0\"\u003E\u003Ctitle\u003E" + (pug_escape(null == (pug_interp = title) ? "" : pug_interp)) + "\u003C\u002Ftitle\u003E\u003Cmeta" + (" name=\"description\""+pug_attr("content", description, true, true)) + "\u003E\u003Cmeta property=\"og:locale\" content=\"en_US\"\u003E\u003Cmeta" + (" property=\"og:image\""+pug_attr("content", thumbnail, true, true)) + "\u003E\u003Cmeta" + (" property=\"og:image:type\""+pug_attr("content", thumb.type, true, true)) + "\u003E\u003Cmeta" + (" property=\"og:image:width\""+pug_attr("content", thumb.width, true, true)) + "\u003E\u003Cmeta" + (" property=\"og:image:height\""+pug_attr("content", thumb.height, true, true)) + "\u003E\u003Cmeta property=\"og:type\" content=\"website\"\u003E\u003Cmeta" + (" property=\"og:url\""+pug_attr("content", url, true, true)) + "\u003E\u003Cmeta" + (" property=\"og:title\""+pug_attr("content", title, true, true)) + "\u003E\u003Cmeta" + (" property=\"og:description\""+pug_attr("content", description, true, true)) + "\u003E\u003Cmeta name=\"twitter:card\" content=\"summary_large_image\"\u003E\u003Cmeta" + (" name=\"twitter:title\""+pug_attr("content", title, true, true)) + "\u003E\u003Cmeta" + (" name=\"twitter:description\""+pug_attr("content", description, true, true)) + "\u003E\u003Cmeta" + (" name=\"twitter:image\""+pug_attr("content", thumbnail, true, true)) + "\u003E\u003Clink" + (" rel=\"icon\" type=\"image\u002Fx-icon\""+pug_attr("href", favicon, true, true)) + "\u003E\u003Clink rel=\"preconnect\" href=\"https:\u002F\u002Fxlfont.maketext.io\"\u003E";
+pug_html = pug_html + "\u003Cmeta charset=\"utf-8\"\u003E\u003Cmeta name=\"viewport\" content=\"width=device-width, initial-scale=1.0, maximum-scale=1.0\"\u003E\u003Ctitle\u003E" + (pug_escape(null == (pug_interp = title) ? "" : pug_interp)) + "\u003C\u002Ftitle\u003E\u003Cmeta" + (" name=\"description\""+pug_attr("content", description, true, true)) + "\u003E";
+if (noindex) {
+pug_html = pug_html + "\u003Cmeta name=\"robots\" content=\"noindex\"\u003E";
+}
+else {
+pug_html = pug_html + "\u003Clink" + (" rel=\"canonical\""+pug_attr("href", url, true, true)) + "\u003E";
+}
+pug_html = pug_html + "\u003Cmeta property=\"og:locale\" content=\"en_US\"\u003E\u003Cmeta" + (" property=\"og:image\""+pug_attr("content", thumbnail, true, true)) + "\u003E\u003Cmeta" + (" property=\"og:image:type\""+pug_attr("content", thumb.type, true, true)) + "\u003E\u003Cmeta" + (" property=\"og:image:width\""+pug_attr("content", thumb.width, true, true)) + "\u003E\u003Cmeta" + (" property=\"og:image:height\""+pug_attr("content", thumb.height, true, true)) + "\u003E\u003Cmeta property=\"og:type\" content=\"website\"\u003E\u003Cmeta" + (" property=\"og:url\""+pug_attr("content", url, true, true)) + "\u003E\u003Cmeta" + (" property=\"og:title\""+pug_attr("content", title, true, true)) + "\u003E\u003Cmeta" + (" property=\"og:description\""+pug_attr("content", description, true, true)) + "\u003E\u003Cmeta name=\"twitter:card\" content=\"summary_large_image\"\u003E\u003Cmeta" + (" name=\"twitter:title\""+pug_attr("content", title, true, true)) + "\u003E\u003Cmeta" + (" name=\"twitter:description\""+pug_attr("content", description, true, true)) + "\u003E\u003Cmeta" + (" name=\"twitter:image\""+pug_attr("content", thumbnail, true, true)) + "\u003E\u003Clink" + (" rel=\"icon\" type=\"image\u002Fx-icon\""+pug_attr("href", favicon, true, true)) + "\u003E\u003Clink rel=\"preconnect\" href=\"https:\u002F\u002Fxlfont.maketext.io\"\u003E";
 pug_mixins["css"]([
       "/assets/vendor/bootstrap/4.0.0/css/bootstrap.min.css",
       "/assets/vendor/fontawesome/4.7.0/css/font-awesome.min.css",
@@ -622,7 +630,9 @@ pug_html = pug_html + "\u003C\u002Fbody\u003E\u003C\u002Fhtml\u003E";
         locals_for_with.libLoader :
         typeof libLoader !== 'undefined' ? libLoader : undefined, "md5" in locals_for_with ?
         locals_for_with.md5 :
-        typeof md5 !== 'undefined' ? md5 : undefined, "scriptLoader" in locals_for_with ?
+        typeof md5 !== 'undefined' ? md5 : undefined, "noindex" in locals_for_with ?
+        locals_for_with.noindex :
+        typeof noindex !== 'undefined' ? noindex : undefined, "scriptLoader" in locals_for_with ?
         locals_for_with.scriptLoader :
         typeof scriptLoader !== 'undefined' ? scriptLoader : undefined, "thumb" in locals_for_with ?
         locals_for_with.thumb :
