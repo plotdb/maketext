@@ -1,4 +1,4 @@
-require! <[lderror @plotdb/suuid ./aux]>
+require! <[fs path lderror @plotdb/suuid ./aux]>
 
 (backend) <- (->module.exports = it)  _
 
@@ -6,8 +6,18 @@ require! <[lderror @plotdb/suuid ./aux]>
 # `type` is set by these packages, so other 4xx / 5xx errors in our code won't match.
 body-parser-errors = <[encoding.unsupported charset.unsupported entity.too.large parameters.too.many]>
 
+# page for 404 of non-API urls: `static/err/404.html` of the frontend root, if the site has one.
+# a real 404 instead of 490: search engines read 490 as "blocked", and since every 490 page has
+# the same content, missing urls are also reported as duplicates of each other.
+page404 = ->
+  if !backend.feroot => return null
+  file = path.resolve(__dirname, '../..', backend.feroot, 'static/err/404.html')
+  if fs.exists-sync(file) => file else null
+
 # for serving a friendly error page if it's not an API and prevent looping error
 route490 = (req, res, err) ->
+  if err.id == 404 and !/^\/api/.exec(req.originalUrl) and (file = page404!) =>
+    return res.status 404 .sendFile file
   if !/^\/api/.exec(req.originalUrl) and !/^\/err\/490/.exec(req.originalUrl) =>
     # cookie domain: webmasters.stackexchange.com/questions/55790
     #  - no domain: request-host will be used

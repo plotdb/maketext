@@ -1,0 +1,16 @@
+//- 不存在的網頁. backend/engine/error-handler.ls 以 404 狀態碼送出 ( 非 /api 路徑 ).
+//- 各站可在自己的 frontend 放 src/pug/err/404.pug 換成自己的版型
+doctype html
+html(lang="en")
+  head
+    meta(charset="utf-8")
+    meta(name="viewport", content="width=device-width, initial-scale=1.0")
+    meta(name="robots", content="noindex")
+    title Page Not Found
+    style(type="text/css").
+      body { font-family: sans-serif; text-align: center; padding: 15vh 1em; color: #333 }
+      h1 { font-size: 4em; margin: 0 }
+  body
+    h1 404
+    p This page doesn't exist.
+    a(href="/") Home
